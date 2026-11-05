@@ -1,0 +1,20 @@
+import './styles/tokens.css';
+import '@fontsource/inter/cyrillic-400.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/cyrillic-600.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/manrope/cyrillic-600.css';
+import '@fontsource/manrope/latin-600.css';
+import './styles/base.css';
+import './styles/shell.css';
+import './styles/components.css';
+import './styles/pages.css';
+import './styles/session.css';
+import { StrictMode } from 'react';
+import { createRoot } from 'react-dom/client';
+import App from './app/app';
+import { ErrorBoundary } from './app/error-boundary';
+
+const root = document.getElementById('root');
+if (!root) throw new Error('Корневой элемент приложения не найден.');
+createRoot(root).render(<StrictMode><ErrorBoundary><App /></ErrorBoundary></StrictMode>);

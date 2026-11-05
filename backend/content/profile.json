@@ -1,0 +1,233 @@
+{
+  "id": "ege-math-2027-draft",
+  "year": 2027,
+  "title": "ЕГЭ по математике · Профиль 2027 — проект",
+  "status": "draft",
+  "revision": "2026-11-05.1",
+  "verified_at": "2026-11-05",
+  "verification_note": "Профиль и дата проверки перенесены из technical-spec.md от 2026-11-05. Материалы ФИПИ независимо повторно не проверялись. Сохраняется проектный статус; перед публикацией нужна новая предметная сверка.",
+  "source_urls": [
+    "https://fipi.ru/ege/demoversii-specifikacii-kodifikatory",
+    "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/ma_11_2027.zip",
+    "https://doc.fipi.ru/ege/demoversii-specifikacii-kodifikatory/2027/Plan_izmeneniya_KIM_EGE_2027.pdf"
+  ],
+  "slots": [
+    {
+      "number": 1,
+      "id": "planimetry",
+      "title": "Планиметрия",
+      "level": "Б",
+      "summary": "Углы, треугольники, четырёхугольники, окружности, подобие, длины и площади; выбор подходящей теоремы.",
+      "skills": [
+        {"id": "plane-angles", "title": "Углы и их свойства"},
+        {"id": "plane-triangles", "title": "Треугольники и их свойства"},
+        {"id": "plane-quadrilaterals", "title": "Четырёхугольники и их свойства"},
+        {"id": "plane-circles", "title": "Окружности и связанные с ними величины"},
+        {"id": "plane-similarity", "title": "Подобие фигур"},
+        {"id": "plane-lengths", "title": "Вычисление длин на плоскости"},
+        {"id": "plane-areas", "title": "Вычисление площадей плоских фигур"},
+        {"id": "plane-theorem-choice", "title": "Выбор подходящей геометрической теоремы"}
+      ],
+      "lesson_id": "intro-right-triangle"
+    },
+    {
+      "number": 2,
+      "id": "vectors-coordinates",
+      "title": "Векторы и координаты",
+      "level": "Б",
+      "summary": "Координаты и длина вектора, сумма и разность, умножение на число, скалярное произведение, угол между векторами.",
+      "skills": [
+        {"id": "vector-coordinates", "title": "Координаты вектора"},
+        {"id": "vector-length", "title": "Длина вектора"},
+        {"id": "vector-addition", "title": "Сумма векторов"},
+        {"id": "vector-subtraction", "title": "Разность векторов"},
+        {"id": "vector-scaling", "title": "Умножение вектора на число"},
+        {"id": "vector-dot-product", "title": "Скалярное произведение векторов"},
+        {"id": "vector-angle", "title": "Угол между векторами"}
+      ],
+      "lesson_id": "intro-vector-dot-product"
+    },
+    {
+      "number": 3,
+      "id": "solid-geometry",
+      "title": "Стереометрия",
+      "level": "Б",
+      "summary": "Призмы, пирамиды, параллелепипеды, цилиндры, конусы и шары; объёмы, площади поверхностей, отношения геометрических величин.",
+      "skills": [
+        {"id": "solid-prism", "title": "Призмы"},
+        {"id": "solid-pyramid", "title": "Пирамиды"},
+        {"id": "solid-parallelepiped", "title": "Параллелепипеды"},
+        {"id": "solid-cylinder", "title": "Цилиндры"},
+        {"id": "solid-cone", "title": "Конусы"},
+        {"id": "solid-sphere", "title": "Шары"},
+        {"id": "solid-volume", "title": "Объёмы пространственных тел"},
+        {"id": "solid-surface-area", "title": "Площади поверхностей"},
+        {"id": "solid-ratios", "title": "Отношения геометрических величин"}
+      ],
+      "lesson_id": "intro-prism-volume"
+    },
+    {
+      "number": 4,
+      "id": "probability-basic",
+      "title": "Вероятность: базовые модели",
+      "level": "Б",
+      "summary": "Равновозможные исходы, вероятность события, противоположное событие, чтение условия и границ события.",
+      "skills": [
+        {"id": "probability-equiprobable", "title": "Равновозможные исходы"},
+        {"id": "probability-event", "title": "Вероятность события"},
+        {"id": "probability-complement", "title": "Противоположное событие"},
+        {"id": "probability-event-boundaries", "title": "Чтение условия и границ события"}
+      ],
+      "lesson_id": "intro-complement-probability"
+    },
+    {
+      "number": 5,
+      "id": "probability-composite",
+      "title": "Вероятность: составные модели",
+      "level": "П",
+      "summary": "Сложение и умножение вероятностей, независимость и условная вероятность, полная вероятность, деревья событий, комбинаторика.",
+      "skills": [
+        {"id": "probability-addition", "title": "Сложение вероятностей"},
+        {"id": "probability-multiplication", "title": "Умножение вероятностей"},
+        {"id": "probability-independence", "title": "Независимость событий"},
+        {"id": "probability-conditional", "title": "Условная вероятность"},
+        {"id": "probability-total", "title": "Формула полной вероятности"},
+        {"id": "probability-event-tree", "title": "Деревья событий"},
+        {"id": "probability-combinatorics", "title": "Комбинаторика в вероятностных моделях"}
+      ],
+      "lesson_id": "intro-independent-events"
+    },
+    {
+      "number": 6,
+      "id": "random-variables-distributions",
+      "title": "Случайные величины и распределения",
+      "level": "П",
+      "summary": "Таблица распределения, математическое ожидание, дисперсия, стандартное отклонение; функции распределения, плотности и свойства равномерного, показательного и нормального распределений в рамках требований профиля.",
+      "skills": [
+        {"id": "distribution-table", "title": "Чтение таблицы распределения"},
+        {"id": "distribution-expectation", "title": "Математическое ожидание"},
+        {"id": "distribution-variance", "title": "Дисперсия"},
+        {"id": "distribution-standard-deviation", "title": "Стандартное отклонение"},
+        {"id": "distribution-cdf", "title": "Функция распределения"},
+        {"id": "distribution-density", "title": "Плотность распределения"},
+        {"id": "distribution-uniform", "title": "Свойства равномерного распределения"},
+        {"id": "distribution-exponential", "title": "Свойства показательного распределения"},
+        {"id": "distribution-normal", "title": "Свойства нормального распределения"}
+      ],
+      "lesson_id": "intro-distribution-moments"
+    },
+    {
+      "number": 7,
+      "id": "equations",
+      "title": "Уравнения",
+      "level": "Б",
+      "summary": "Рациональные, иррациональные, показательные, логарифмические и другие уравнения в формате краткого ответа; допустимые значения и отбор нужного корня.",
+      "skills": [
+        {"id": "equation-rational", "title": "Рациональные уравнения"},
+        {"id": "equation-irrational", "title": "Иррациональные уравнения"},
+        {"id": "equation-exponential", "title": "Показательные уравнения"},
+        {"id": "equation-logarithmic", "title": "Логарифмические уравнения"},
+        {"id": "equation-other-short-answer", "title": "Другие уравнения с кратким числовым ответом"},
+        {"id": "equation-domain", "title": "Область допустимых значений"},
+        {"id": "equation-root-selection", "title": "Отбор корня по условию"}
+      ],
+      "lesson_id": "intro-logarithmic-equation"
+    },
+    {
+      "number": 8,
+      "id": "algebra-transformations",
+      "title": "Вычисления и преобразования",
+      "level": "Б",
+      "summary": "Степени, корни, дробно-рациональные выражения, логарифмы, тригонометрические преобразования; точные вычисления.",
+      "skills": [
+        {"id": "algebra-powers", "title": "Степени и их свойства"},
+        {"id": "algebra-roots", "title": "Корни и их свойства"},
+        {"id": "algebra-rational-expressions", "title": "Дробно-рациональные выражения"},
+        {"id": "algebra-logarithms", "title": "Логарифмы и их свойства"},
+        {"id": "algebra-trigonometry", "title": "Тригонометрические преобразования"},
+        {"id": "algebra-exact-computation", "title": "Точные вычисления без округления"}
+      ],
+      "lesson_id": "intro-rational-expression"
+    },
+    {
+      "number": 9,
+      "id": "derivative-analysis",
+      "title": "Производная и математический анализ",
+      "level": "Б",
+      "summary": "Чтение графиков функции и производной, касательная, монотонность и экстремумы; первообразная и интеграл в пределах требований обобщённого плана.",
+      "skills": [
+        {"id": "calculus-function-graph", "title": "Чтение графика функции"},
+        {"id": "calculus-derivative-graph", "title": "Чтение графика производной"},
+        {"id": "calculus-tangent", "title": "Касательная и её угловой коэффициент"},
+        {"id": "calculus-monotonicity", "title": "Промежутки монотонности"},
+        {"id": "calculus-extrema", "title": "Экстремумы функции"},
+        {"id": "calculus-antiderivative", "title": "Первообразная"},
+        {"id": "calculus-integral", "title": "Интеграл в пределах требований профиля"}
+      ],
+      "lesson_id": "intro-tangent-slope"
+    },
+    {
+      "number": 10,
+      "id": "applied-formulas",
+      "title": "Прикладные зависимости и формулы",
+      "level": "П",
+      "summary": "Подстановка, выражение величины, построение простейшей модели, единицы измерения, ограничения и правдоподобность ответа.",
+      "skills": [
+        {"id": "applied-substitution", "title": "Подстановка данных в формулу"},
+        {"id": "applied-isolate-variable", "title": "Выражение неизвестной величины"},
+        {"id": "applied-simple-model", "title": "Построение простейшей прикладной модели"},
+        {"id": "applied-units", "title": "Согласование единиц измерения"},
+        {"id": "applied-constraints", "title": "Учёт ограничений модели"},
+        {"id": "applied-plausibility", "title": "Проверка правдоподобности ответа"}
+      ],
+      "lesson_id": "intro-energy-speed"
+    },
+    {
+      "number": 11,
+      "id": "word-problems",
+      "title": "Текстовые задачи",
+      "level": "П",
+      "summary": "Движение, работа и производительность, смеси и сплавы; перевод условия в уравнение или систему.",
+      "skills": [
+        {"id": "word-motion", "title": "Движение"},
+        {"id": "word-work-rate", "title": "Работа и производительность"},
+        {"id": "word-mixtures", "title": "Смеси и сплавы"},
+        {"id": "word-equation-model", "title": "Перевод условия в уравнение"},
+        {"id": "word-system-model", "title": "Перевод условия в систему уравнений"}
+      ],
+      "lesson_id": "intro-catch-up"
+    },
+    {
+      "number": 12,
+      "id": "functions-graphs",
+      "title": "Функции и графики",
+      "level": "П",
+      "summary": "Восстановление зависимости по графику и данным, значения и параметры функций, точки пересечения; свойства графиков.",
+      "skills": [
+        {"id": "function-reconstruction", "title": "Восстановление зависимости по графику и данным"},
+        {"id": "function-values", "title": "Вычисление значений функции"},
+        {"id": "function-parameters", "title": "Определение параметров функции"},
+        {"id": "function-intersections", "title": "Точки пересечения графиков"},
+        {"id": "function-graph-properties", "title": "Свойства графиков функций"}
+      ],
+      "lesson_id": "intro-line-reconstruction"
+    },
+    {
+      "number": 13,
+      "id": "financial-modeling",
+      "title": "Моделирование и финансовые задачи",
+      "level": "П",
+      "summary": "Проценты, изменение величин по периодам, кредиты, вклады и платежи, личные и семейные финансы; другие текстовые модели, соответствующие профилю.",
+      "skills": [
+        {"id": "finance-percentages", "title": "Проценты"},
+        {"id": "finance-period-changes", "title": "Изменение величин по периодам"},
+        {"id": "finance-credit", "title": "Кредитные модели"},
+        {"id": "finance-deposits", "title": "Вклады"},
+        {"id": "finance-payments", "title": "Платежи"},
+        {"id": "finance-personal-family-budget", "title": "Личные и семейные финансы"},
+        {"id": "finance-other-models", "title": "Другие текстовые модели в рамках профиля"}
+      ],
+      "lesson_id": "intro-period-percentages"
+    }
+  ]
+}

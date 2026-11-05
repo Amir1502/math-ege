@@ -1,0 +1,94 @@
+name: Verify learning core
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: verify-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  tests:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install backend in a project environment
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/bin/python -m pip install -r backend/requirements-dev.txt
+      - name: Check source hygiene
+        run: |
+          node scripts/check-source.mjs
+          node scripts/verify-infra.mjs
+      - name: Backend tests and lint
+        working-directory: backend
+        run: |
+          .venv/bin/python -m pytest -q
+          .venv/bin/python -m ruff check .
+      - name: Frontend install, lint and production build
+        working-directory: frontend
+        run: |
+          npm ci --ignore-scripts
+          npm run lint
+          npm test
+          npm run build
+          npm audit --omit=dev --audit-level=high
+      - name: Install Chromium
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - name: Browser integration and accessibility
+        working-directory: frontend
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: browser-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  containers:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: '24'
+      - name: Create an ephemeral database password
+        run: |
+          password="$(openssl rand -hex 32)"
+          echo "::add-mask::$password"
+          echo "POSTGRES_PASSWORD=$password" >> "$GITHUB_ENV"
+          echo "APP_ORIGIN=http://127.0.0.1:8080" >> "$GITHUB_ENV"
+          echo "ALLOW_DEMO_CONTENT=true" >> "$GITHUB_ENV"
+      - name: Validate, build and start Compose
+        run: |
+          docker compose config --quiet
+          docker compose build
+          docker compose up -d --wait --wait-timeout 120
+      - name: PostgreSQL API smoke checks
+        run: node scripts/container-smoke.mjs
+      - name: Stop containers without deleting volumes
+        if: always()
+        run: docker compose stop

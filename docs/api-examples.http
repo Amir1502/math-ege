@@ -1,0 +1,38 @@
+@base = http://127.0.0.1:8000/api/v1
+@origin = http://127.0.0.1:5173
+
+### Проверка состояния API и базы
+GET {{base}}/health
+
+### Проектный профиль и доступный демонстрационный банк
+GET {{base}}/profile
+
+### Короткий урок по случайным величинам
+GET {{base}}/lessons/6
+
+### Гостевой старт: HTTP-клиент должен сохранить Set-Cookie
+POST {{base}}/guest
+Content-Type: application/json
+Origin: {{origin}}
+X-Requested-With: math-ege
+
+{}
+
+### Создание серии; ключ нужно заменить новым UUID для новой серии
+POST {{base}}/sessions
+Content-Type: application/json
+Origin: {{origin}}
+X-Requested-With: math-ege
+Idempotency-Key: 6f6fb9da-77bf-41d2-934c-64e0d503f87f
+
+{
+  "mode": "practice",
+  "slots": [6, 13],
+  "length": 5
+}
+
+### Прогресс требует cookie, установленную гостевым стартом
+GET {{base}}/progress
+
+### Выгрузка гостевой истории без служебных секретов
+GET {{base}}/export
