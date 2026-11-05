@@ -88,6 +88,29 @@ recorded D runner/API processes; no process was stopped by the consumer.
 The [central protocol](verification.md) also records the whole frontend/shared
 gates and the consumption harness's self-PID selection RED/correction.
 
+D's eight redacted `browser-evidence.jsonl` records and all four saved downloads
+were subsequently consumed read-only. D contains **9 unique practice sessions**,
+not C's 7, because all preceding cases ran in the same fresh runtime. Each
+download retains the two original attempt DTOs/IDs and all **104 annotations**;
+closed assessment results remain null, and released server/local regions remain
+distinct with **13 rows each**. No raw archive contents or mailbox values were
+copied into Git.
+
+| D download | Bytes | SHA-256 |
+| --- | ---: | --- |
+| `closed-progress.json` | 503528 | `6651b9fde010c1b5555d78930381a3f6735822a491099ba3cb1ead8eb107adc2` |
+| `closed-account.json` | 503528 | `7adf54a8fc0bf8822d80a0307fcb4293c47df90317e622ccf3ff499e3282a3fd` |
+| `released-progress.json` | 546791 | `d86daf78aec4aff8a565f4de3d91bf723d3ea89fb806ec7256f31bdc408285ec` |
+| `released-account.json` | 546791 | `8ca6f8b2b1c4c32195f73340e94aa4b1a24d4f62571b2ba854072a44e8223ba7` |
+
+Both released D downloads share server snapshot hash
+`2201b49903d15e7822f4fe7e958de948b8bc83b8a595c1e682d5ac68be16c278`
+and local hash
+`61b62909ba6b51b5039ad2e69f895a189a9d623e30351e4c867167dc8fd85e0d`.
+These hashes are different from each other and from the earlier C fixture;
+neither run replaces the other. The release fixture advanced only its private
+bounded clock by **901 s**, without editing database timestamps or rows.
+
 ## Passing browser evidence
 
 ### Two guest histories and claims — A

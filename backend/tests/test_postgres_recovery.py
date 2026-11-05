@@ -550,9 +550,9 @@ def test_connection_environment_uses_explicit_pgpass_and_clears_ambient_override
     clean = gate.direct_environment(supplied)
     assert clean["PGPASSFILE"] == str(password_file)
     assert clean["PGDATABASE"] == "postgres"
-    assert all(clean[name] == "" for name in (
+    assert not {
         "PGPASSWORD", "PGSERVICE", "PGSERVICEFILE", "PGHOSTADDR", "PGOPTIONS",
-    ))
+    } & clean.keys()
     child = gate.child_environment(clean)
     assert child["DATABASE_URL"] == "sqlite:///:memory:"
     assert child["ACCOUNTS_ENABLED"] == "false"

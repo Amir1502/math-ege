@@ -150,7 +150,8 @@ class TotpCredential(Base):
     account_id: Mapped[str] = mapped_column(ForeignKey("accounts.id"), primary_key=True)
     secret_ciphertext: Mapped[str] = mapped_column(Text, nullable=False)
     enrollment_session_id: Mapped[str] = mapped_column(
-        ForeignKey("access_sessions.id"), nullable=False,
+        ForeignKey("access_sessions.id", name="fk_account_totp_credentials_enrollment_session"),
+        nullable=False,
     )
     enrollment_expires_at: Mapped[datetime] = mapped_column(UTCDateTime(), nullable=False)
     confirmed_at: Mapped[datetime | None] = mapped_column(UTCDateTime(), nullable=True)

@@ -203,14 +203,33 @@ def test_postgres_credentials_never_become_argv_or_repr():
     tools = PostgresTools(container="math-ege-db-1", environment={
         "PATH": "path", "PGUSER": "math_ege", "PGPASSWORD": private,
         "PGPASSFILE": "/run/secrets/private-pgpass", "PGSERVICE": "unintended-target",
+        "PGSERVICEFILE": "/run/secrets/private-service", "PGHOSTADDR": "192.0.2.1",
         "PGOPTIONS": "unintended-settings",
     })
     argv, env = tools.command("pg_dump", "math_ege", ("--format=custom", "--no-password"))
     assert argv[:3] == ["docker", "exec", "--interactive"]
     assert "PGPASSFILE" in argv and "/run/secrets/private-pgpass" not in argv
     assert private not in str(argv) and private not in repr(tools)
-    assert env["PGPASSWORD"] == env["PGSERVICE"] == env["PGOPTIONS"] == ""
+    assert not {"PGSERVICE", "PGSERVICEFILE", "PGHOSTADDR", "PGOPTIONS", "PGPASSWORD"} & env.keys()
     assert env["PGDATABASE"] == "math_ege"
+
+
+def test_postgres_environment_never_sets_empty_libpq_service_variables():
+    # libpq reads an empty PGSERVICE/PGSERVICEFILE as present, then fails opening the
+    # empty service file before any TCP connection. Neutralised overrides must be absent.
+    tools = PostgresTools(environment={
+        "PGUSER": "math_ege", "PGSERVICE": "production",
+        "PGSERVICEFILE": "/run/secrets/private-service", "PGHOSTADDR": "192.0.2.1",
+        "PGOPTIONS": "-c statement_timeout=0", "PGSYSCONFDIR": "/tmp",
+    })
+    argv, env = tools.command("psql", "postgres")
+    assert argv == ["psql"]
+    assert not {
+        "PGSERVICE", "PGSERVICEFILE", "PGSYSCONFDIR", "PGHOSTADDR", "PGOPTIONS",
+    } & env.keys()
+    assert env["PGAPPNAME"] == "math_ege_operations"
+    assert env["PGCLIENTENCODING"] == "UTF8"
+    assert env["PGDATABASE"] == "postgres"
 
 
 @pytest.mark.parametrize(("script", "expected_error"), [

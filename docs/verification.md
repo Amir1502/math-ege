@@ -12,6 +12,8 @@
 | Проверка | Фактический результат |
 | --- | --- |
 | Backend: Ruff, `pip check`, затем весь pytest в новом `--basetemp`, без pytest cache | **20 411 passed, 2 skipped; 607,32 с; exit 0** в свежем delivery-gate. Ruff: `All checks passed!`; pip: `No broken requirements found`. |
+| Backend после исправления PostgreSQL-схемы: Ruff, `pip check`, весь pytest в новом `--basetemp` | **20 414 passed, 2 skipped; 606,14 с; exit 0**; Ruff и `pip check` — exit 0; SHA-256 списка backend-файлов до/после совпадают. JUnit — 20 416 cases, 0 failures/errors, SHA-256 `5bc3bcd7eda694a93f0a36b56614f43099ac3d298c02bb7eec23cfc8ee907181`. Это тот же whole backend плюс два offline PostgreSQL-теста схемы и unit-проверка libpq environment; предыдущий gate `20 411` остаётся отдельным артефактом. |
+| Все shared Chromium-сценарии после исправления миграций, identity opt-in выключен | **26 passed, 4 намеренных identity skips, 0 failures/flaky; 1,9 мин; exit 0**. API поднят с нуля через `alembic upgrade head` на свежей SQLite, поэтому переименованный FK реально применяется в браузерном gate. Исходные PWA assertions не изменены. |
 | Полная серия практики из 20 задач: focused Chromium с реальным API | **1 passed, 25,0 с; exit 0**, сценарий 9,6 с. Двадцать исходных попыток/снимков и итог сохранены после reload; [границы доказательства](browser-integration.md#complete-twenty-task-practice-series). |
 | Полный frontend: ESLint, Vitest, TypeScript/Vite build | **409 passed, 20 файлов, 17,08 с**; lint/unit/build — exit 0, без пропусков. Все 9 новых PWA-регрессий включены. |
 | Все shared Chromium-сценарии, identity opt-in выключен | **26 passed, 4 намеренных identity skips, 0 failures/flaky; 108,515 с; exit 0**. Все три исходных PWA-сценария прошли без изменения их assertions. |
@@ -46,6 +48,15 @@ JUnit содержит 20 413 cases, 0 failures, 0 errors и 2 skips; его sui
 `88a02f2946f6b3bc674a75b3fbbe6dd8c511bbfeab9931faa1fa23026c7dc794`.
 Его результаты не суммируются со свежими; прежний файл и три защищённые
 проверочные базы повторно подтверждены побайтно неизменными.
+
+Повторный whole backend после исправления обеих причин CI RED выполнен в новом
+`completion-postgres-fix-0727adc789254c40ad7ec8d5ab280876`:
+**20 414 passed, 2 skipped, 606,14 с, exit 0**, JUnit SHA-256
+`5bc3bcd7eda694a93f0a36b56614f43099ac3d298c02bb7eec23cfc8ee907181`
+(20 416 cases, 0 failures/errors). Прирост — два offline PostgreSQL-теста
+(`backend/tests/test_postgres_schema.py`) и проверка отсутствия пустых libpq
+service-переменных; ни один прежний тест не удалён и не ослаблен. Список
+SHA-256 всех backend-файлов до и после прогона идентичен.
 
 ### Финальные локальные клиентские артефакты
 
@@ -137,6 +148,13 @@ frontend/браузерных gates; исходники и runtime не изме
 терминатора. Иначе `diff --check` ошибочно считает каждый сохранённый CR
 trailing whitespace; этот промежуточный RED также сохранён. Общие whitespace
 проверки не выключены, `.gitattributes` не использует `-whitespace`.
+Последующий read-only audit обнаружил, что follow-up `15e9208` заменил, а не
+дополнил прежние три строки `.gitattributes`. Они восстановлены перед новым
+commit: `* text=auto eol=lf`, `*.png binary`, `*.woff2 binary`; два адресных
+Android исключения остаются ниже общих правил. Приложение и reviewed Android
+байты не меняются. Исходная и промежуточная карты policy сохранены в
+`attributes-origin-audit.json`; эта correction не переписывает историю.
+
 - Unsigned Android gate и отдельный signed verifier завершены; исходный
   warning-strict **RED API 23+** сохранён. [Точная preview-политика](android-signature-policy.md)
   не устраняет API 23 META-INF integrity limitation. Signed APK: **90 065 байт**,
@@ -145,6 +163,79 @@ trailing whitespace; этот промежуточный RED также сохр
   alignment exit 0; все 48 исходных ZIP entries сохранены, новый ключ/повторная
   подпись не выполнялись. Private prerelease, установка и действующий HTTPS
   endpoint пока не подтверждены. [Полная хронология](android-preview.md).
+
+### Первая exact-SHA публикация и сохранённый CI RED
+
+Проверенные исходники опубликованы обычным push в private `main`, remote HEAD
+подтверждён как `15e9208431f6267d2a3d0f49aee0a791a655b4ce`. Первый command harness
+остановился на normal Git stderr из-за PowerShell 5.1 `ErrorActionPreference=Stop`;
+native push exit не был сохранён. Read-only `ls-remote` и соответствующий push
+workflow подтвердили публикацию, поэтому push не повторялся. Диагноз сохранён
+в `push-harness-red.json`, подтверждённый результат — `push-result.json`.
+
+[CI 42099335134, attempt 1](https://github.com/Amir1502/math-ege/actions/runs/42099335134)
+на этом SHA завершился **completed / failure**, `gh run watch --exit-status` —
+**exit 1**. Его нельзя считать успешным whole delivery gate:
+
+| Job | Фактический результат |
+| --- | --- |
+| `tests` | **success, 6 мин 38 с**: whole backend/Ruff, frontend lint/**409 tests**/build, production npm audit 0, shared Chromium **26 passed / 4 intentional identity skips** |
+| `containers` | **failure, 1 мин 43 с**: оба Dockerfile собраны, PostgreSQL healthy; API стал unhealthy, расширенный smoke не запускался |
+| `postgres-operations` | **failure, 2 мин 24 с**: `postgres_readiness_deadline_exceeded` до recovery/workload; `stages={}`, оба live tests и ten-minute load **не выполнены** |
+
+RED-артефакт `postgres-operations-42099335134-1`, ID `13449880526`, сохранён вне
+Git; GitHub ZIP digest
+`cf6f1c8eba8854dc9ea3dd34cdccadbb23687b49cecc96b440286b00f1ca5c2a`.
+Он содержит source/run record и честный failed summary, но не recovery JUnit
+или workload. Raw credential files не входят в этот artifact.
+Успешный `browser-report`, ID `13449461791`, digest
+`0c3869f605e1c2355ca53ff0cb9e84d964fa2426f6ca6aee697f9e3ae648df0d`,
+также скачан. Оба job/log/report среза сохранены в delivery evidence root;
+production RPO/RTO и нагрузочная приёмка по ним не установлены.
+
+Private APK assets подготовлены вне Git, но prerelease **не опубликован**:
+публикация ждёт устранения причины старта и нового exact-SHA CI GREEN, а не
+ослабления readiness, подсчётов, длительности нагрузки или тестов.
+
+### Причины первого CI RED и их исправление
+
+Оба отказа воспроизведены на своей границе до исправления; ни один gate не
+ослаблен.
+
+1. **`postgres-operations` — readiness.** `PostgresTools.command()` выставлял
+   `PGSERVICE=""` и `PGSERVICEFILE=""`. libpq проверяет эти переменные на `NULL`,
+   поэтому пустое значение считается заданным, и соединение завершается попыткой
+   открыть пустой service file — до TCP, аутентификации и readiness SQL. Ошибка
+   gate (`postgres_readiness_deadline_exceeded`) маскировала причину, потому что
+   `PsqlSession` не сохраняет stderr. Теперь эти ключи (вместе с пустыми
+   `PGPASSWORD`, `PGOPTIONS`, `PGHOSTADDR`, `PGSYSCONFDIR`) не выставляются
+   вообще; ambient `PG*` по-прежнему удаляются, `.pgpass` продолжает работать.
+   Timeout-ы, 90-секундный deadline, аутентификация, counts и 600-секундная
+   нагрузка не изменены.
+2. **`containers` — старт API.** `alembic upgrade head` не мог отрендерить DDL для
+   PostgreSQL: `IdentifierError: Identifier
+   'fk_account_totp_credentials_enrollment_session_id_access_sessions' exceeds
+   maximum length of 63 characters`. SQLite такого лимита не имеет, поэтому
+   локальный whole backend (только SQLite) и shared Chromium этого не видели;
+   контейнер падал на миграции и не отвечал на healthcheck. Имя сокращено до
+   `fk_account_totp_credentials_enrollment_session` одновременно в
+   `0002_accounts` и в модели, чтобы `compare_metadata` оставался пустым; версии,
+   состав constraints и поведение схемы не меняются.
+
+Регрессионные доказательства:
+
+- `backend/tests/test_postgres_schema.py` (**2 теста**): полная цепочка миграций
+  рендерится offline для `postgresql+psycopg` (49 680 байт DDL; batch-операции
+  `0008` компилируются в обычные `ALTER TABLE`), а все имена metadata и DDL
+  укладываются в 63 символа.
+- `test_postgres_environment_never_sets_empty_libpq_service_variables` и
+  обновлённые assertions в `test_operations.py`/`test_postgres_recovery.py`:
+  нейтрализованные overrides отсутствуют в child environment, а не равны `""`.
+- RED воспроизведён на копии pre-fix цепочки во временной директории:
+  `IdentifierError ... exceeds maximum length of 63 characters`
+  (`pg-identifier-red-reproduction.log`). Для readiness RED сохранён
+  CI-артефакт и разбор libpq 18.6; unit gate проверяет, что пустые
+  `PGSERVICE`/`PGSERVICEFILE` больше не появляются.
 
 ### Границы поставки
 

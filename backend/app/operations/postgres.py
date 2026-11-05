@@ -18,10 +18,12 @@ _CONNECTION_ENV = (
     "PGHOST", "PGPORT", "PGUSER", "PGPASSFILE", "PGSSLMODE", "PGSSLROOTCERT",
 )
 _CONTROLLED_ENV = {
-    "PGSERVICE": "", "PGSERVICEFILE": "", "PGPASSWORD": "", "PGOPTIONS": "",
-    "PGHOSTADDR": "", "PGCLIENTENCODING": "UTF8", "PGAPPNAME": "math_ege_operations",
+    "PGCLIENTENCODING": "UTF8", "PGAPPNAME": "math_ege_operations",
     "PGCONNECT_TIMEOUT": "10", "PG_COLOR": "never", "PSQL_PAGER": "", "PAGER": "",
 }
+# libpq treats an empty PGSERVICE/PGSERVICEFILE as present, then fails opening the
+# empty service file before any connection attempt. Ambient PG* values are dropped
+# by command(); overrides that must be neutralised are absent, never set to "".
 
 
 @dataclass(frozen=True)

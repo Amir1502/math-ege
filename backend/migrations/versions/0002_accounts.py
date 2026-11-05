@@ -144,7 +144,7 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(
             ["enrollment_session_id"], ["access_sessions.id"],
-            name="fk_account_totp_credentials_enrollment_session_id_access_sessions",
+            name="fk_account_totp_credentials_enrollment_session",
         ),
     )
     op.create_table(

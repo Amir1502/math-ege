@@ -8,6 +8,7 @@ const backend = read('backend/Dockerfile');
 const frontend = read('frontend/Dockerfile');
 const workflow = read('.github/workflows/ci.yml');
 const dockerignore = read('.dockerignore');
+const attributes = read('.gitattributes');
 
 assert.match(compose, /127\.0\.0\.1:8080:8080/);
 assert.doesNotMatch(compose, /^\s+-\s+["']?(?:5432:5432|8000:8000)/m);
@@ -41,6 +42,13 @@ for (const extension of ['apk', 'jks', 'keystore', 'p12']) {
   assert.ok(dockerignore.split(/\r?\n/).includes(`**/*.${extension}`), `Exclude ${extension} files from container build contexts.`);
 }
 assert.doesNotMatch(nginx, /Access-Control-Allow-Origin/);
+for (const rule of ['* text=auto eol=lf', '*.png binary', '*.woff2 binary']) {
+  assert.ok(attributes.split(/\r?\n/).includes(rule), `Preserve the existing Git attribute rule: ${rule}`);
+}
+for (const path of ['android/gradle/verification-metadata.xml', 'android/gradlew.bat']) {
+  assert.ok(attributes.split(/\r?\n/).includes(`${path} -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol`),
+    `Preserve reviewed Android bytes without disabling whitespace checks: ${path}`);
+}
 assert.match(workflow, /permissions:\s*\n\s+contents: read/);
 assert.doesNotMatch(workflow, /pull_request_target/);
 assert.doesNotMatch(workflow, /secrets\./);
