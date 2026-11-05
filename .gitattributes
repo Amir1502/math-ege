@@ -1,3 +1,2 @@
-* text=auto eol=lf
-*.png binary
-*.woff2 binary
+android/gradle/verification-metadata.xml -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+android/gradlew.bat -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

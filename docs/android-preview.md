@@ -109,6 +109,17 @@ Set-Location 'D:\math_ege\android'
 
 Путь должен вести к проверенному bootstrap внутри `%LOCALAPPDATA%\Temp\opencode`. Это путь к локальному файлу, не endpoint сервера.
 
+`.gitattributes` запрещает text/EOL-нормализацию только для
+`android/gradle/verification-metadata.xml` и `android/gradlew.bat`, чтобы Git
+сохранял точные reviewed CRLF bytes независимо от `core.autocrlf`. Это не
+изменение toolchain, checksum, lock, build script или APK payload. Raw-byte
+gate перед push отдельно проверяет совпадение всех committed source blobs с
+рабочими исходниками; первый EOL mismatch сохранён как RED в delivery evidence.
+На этих же двух путях whitespace-проверка сохраняет `blank-at-eol`,
+`blank-at-eof`, `space-before-tab`, добавляя только `cr-at-eol`, чтобы CRLF
+терминатор не считался лишним пробелом. Общее отключение `-whitespace`
+не применяется.
+
 ### Первичный capture и обновление зависимостей
 
 Эту процедуру используют только при первичной подготовке или после отдельного review изменения закреплённых версий/хешей. При первичной подготовке файл verification metadata ещё не существует:

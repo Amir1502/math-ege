@@ -123,6 +123,20 @@ frontend/браузерных gates; исходники и runtime не изме
   неизменённое исходное ТЗ сохранены. Артефакты:
   `%LOCALAPPDATA%\Temp\opencode\completion-publish-abc814e2304c4ed3a7e532d4c139e474`.
   Это статические gates, не заявление об успешном выполнении Linux workflow.
+
+Перед push raw-byte проверка Git обнаружила, что `core.autocrlf=true`
+нормализовал CRLF только у `android/gradle/verification-metadata.xml` и
+`android/gradlew.bat` в первом локальном implementation commit `f339d1a`.
+Рабочие исходники, reviewed SHA-256 metadata/locks, unsigned/signed APK и
+результаты gates не изменились. Публикация была остановлена; узкая
+`.gitattributes` policy `-text` для этих двух путей сохраняет именно проверенные
+байты в обычном follow-up commit, без amend/reset/force push. RED-карта
+`git-byte-preservation-red.json` сохранена в delivery evidence root.
+Для этих же двух CRLF-путей `whitespace` сохраняет проверки `blank-at-eol`,
+`blank-at-eof`, `space-before-tab` и признаёт только `cr-at-eol` частью
+терминатора. Иначе `diff --check` ошибочно считает каждый сохранённый CR
+trailing whitespace; этот промежуточный RED также сохранён. Общие whitespace
+проверки не выключены, `.gitattributes` не использует `-whitespace`.
 - Unsigned Android gate и отдельный signed verifier завершены; исходный
   warning-strict **RED API 23+** сохранён. [Точная preview-политика](android-signature-policy.md)
   не устраняет API 23 META-INF integrity limitation. Signed APK: **90 065 байт**,
