@@ -75,9 +75,20 @@ Production-only npm-аудит: **0** найденных уязвимостей,
 
 ## GitHub Actions и контейнеры
 
-Репозиторий: https://github.com/Amir1502/math-ege, приватный. Workflow `.github/workflows/ci.yml` содержит jobs `tests` и `containers`. На момент записи локальных результатов запуск реализации в GitHub ещё не подтверждён; ссылка и фактический результат будут добавлены после push.
+Репозиторий: https://github.com/Amir1502/math-ege, приватный. Реализация опубликована коммитом `b7c1863c9b635a9784ecfa8d90e3de183bc2f176`. Контрольный запуск [42034306795](https://github.com/Amir1502/math-ege/actions/runs/42034306795) завершён 5 ноября 2026 года: **completed / success**. `gh run watch --exit-status` завершился успешно; дополнительно прочитаны JSON состояния jobs и журналы выполненных шагов.
 
-Docker CLI/Engine локально недоступен. Рабочий Compose/PostgreSQL/nginx, миграция в PostgreSQL и контейнерный smoke **не объявляются пройденными** на основании статического разбора. Проверка `scripts/container-smoke.mjs` подготовлена для CI: гостевой цикл, конкурентная идемпотентность, экспорт, HTTP-заголовки и запрет доступа чужому гостю.
+| Job | Результат | Проверенное выполнение |
+| --- | --- | --- |
+| [`tests`](https://github.com/Amir1502/math-ege/actions/runs/42034306795/job/127268332828) | success, 2 мин 43 с | Ubuntu 24.04: **423 pytest**, 9,07 с; Ruff, ESLint, **41 Vitest**, TypeScript/Vite production build, production-only npm audit 0; **16 Chromium E2E**, 40,5 с |
+| [`containers`](https://github.com/Amir1502/math-ege/actions/runs/42034306795/job/127268332267) | success, 1 мин 58 с | Compose config, сборка обоих Dockerfile, запуск PostgreSQL/API/nginx, healthcheck всех трёх сервисов, `scripts/container-smoke.mjs`, остановка без команды удаления томов |
+
+Docker CLI/Engine локально недоступен; runtime-подтверждение получено именно в Linux CI, а не из локального статического разбора. Журнал показывает создание нового тома `math-ege_postgres_data`, готовность сервисов и `PostgreSQL + API + nginx: smoke checks passed.` Команда запуска API выполняет `alembic upgrade head` до Uvicorn; smoke использует начальную схему PostgreSQL для реальных чтений и записей через nginx.
+
+Контейнерный smoke проверил гостевой цикл, профиль на 13 позиций и банк из 65 задач, отсутствие эталона в условии, подсказку/решение, признак помощи, повтор создания/ответа/завершения, два конкурентных запроса с одним ключом, экспорт, защитные HTTP-заголовки и 404 для чужого гостя. Это отдельный набор, **не все 423 pytest на PostgreSQL**. Не проверены горячая замена API с новым IP, фактические ответы шлюза при искусственном отказе, восстановление резервной копии и нагрузка.
+
+Браузерный [артефакт 13417307778](https://github.com/Amir1502/math-ege/actions/runs/42034306795/artifacts/13417307778) успешно загружен; срок хранения workflow — 7 дней. Локальная копия журнала: игнорируемый `output/playwright/github-actions-42034306795.log`.
+
+В успешном запуске есть предупреждения: закреплённый `actions/upload-artifact` v4 объявляет Node.js 20, а runner принудительно использует Node.js 24; в его коде отмечены устаревшие `punycode` и `url.parse`. Шаг загрузки артефакта прошёл. Замена major-версии action требует отдельной проверки; предупреждения не объявляются устранёнными. npm также сообщает об устаревшем `glob`, уже учтённом в `docs/dependencies.md`.
 
 ## Не проверено и не входит в разрешение выпуска
 
