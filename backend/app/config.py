@@ -6,7 +6,8 @@ from pathlib import Path
 from urllib.parse import urlsplit
 
 BACKEND_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_CONTENT_DIR = BACKEND_ROOT / "content"
+LEGACY_CONTENT_DIR = BACKEND_ROOT / "content"
+DEFAULT_CONTENT_DIR = LEGACY_CONTENT_DIR / "course"
 DEFAULT_ORIGINS = (
     "http://127.0.0.1:5173",
     "http://localhost:5173",

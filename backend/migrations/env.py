@@ -5,8 +5,12 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy.engine import Connection
 
+from app.accounts import models as accounts_models  # noqa: F401
+from app.assessments import models as assessments_models  # noqa: F401
 from app.config import Settings
 from app.database import Database
+from app.editor import models as editor_models  # noqa: F401
+from app.learning import models as learning_models  # noqa: F401
 from app.models import Base
 
 config = context.config

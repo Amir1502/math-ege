@@ -1,0 +1,11 @@
+[Unit]
+Description=Run the Math EGE database backup every day at 02:00 UTC
+
+[Timer]
+OnCalendar=*-*-* 02:00:00 UTC
+AccuracySec=1min
+Persistent=true
+Unit=math-ege-backup.service
+
+[Install]
+WantedBy=timers.target

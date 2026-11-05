@@ -46,6 +46,8 @@ def session_view(
     return LearningSession(
         id=session.id,
         profile_id=session.profile_id,
+        profile_revision=session.profile_revision,
+        profile=session.profile_snapshot,
         mode=session.mode,
         status=session.status,
         created_at=session.created_at.isoformat(),
@@ -59,4 +61,5 @@ def session_view(
         drafts=session.drafts,
         help=session.help_state,
         summary=summary_view(session, attempts),
+        options=session.options_snapshot,
     )

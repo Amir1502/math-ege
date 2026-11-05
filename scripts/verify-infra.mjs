@@ -36,9 +36,17 @@ assert.match(nginx, /error_page 502 = @bad_gateway;/);
 assert.match(nginx, /error_page 504 = @gateway_timeout;/);
 assert.match(dockerignore, /^\*\*\/\.env$/m);
 assert.match(dockerignore, /^\*\*\/\.env\.\*$/m);
+assert.match(dockerignore, /^android\/?$/m);
+for (const extension of ['apk', 'jks', 'keystore', 'p12']) {
+  assert.ok(dockerignore.split(/\r?\n/).includes(`**/*.${extension}`), `Exclude ${extension} files from container build contexts.`);
+}
 assert.doesNotMatch(nginx, /Access-Control-Allow-Origin/);
 assert.match(workflow, /permissions:\s*\n\s+contents: read/);
 assert.doesNotMatch(workflow, /pull_request_target/);
 assert.doesNotMatch(workflow, /secrets\./);
 assert.match(workflow, /persist-credentials: false/);
+const frontendInstall = workflow.indexOf('npm ci --ignore-scripts');
+const browserInstall = workflow.indexOf('npx playwright install --with-deps chromium');
+assert.ok(frontendInstall >= 0 && browserInstall > frontendInstall && browserInstall < workflow.indexOf('npm test'),
+  'Install Chromium after frontend dependencies and before browser-mounted component tests.');
 console.log('Infrastructure invariants: loopback publish, private database, non-root images, CSP and read-only CI passed.');

@@ -1,0 +1,5369 @@
+{
+  "build_version": "stratified-v1",
+  "profile_id": "ege-math-2027-draft",
+  "profile_revision": "2026-11-05.1.course-1",
+  "review_status": "demo",
+  "reviewed_by": null,
+  "task_count": 845,
+  "legacy_task_count": 65,
+  "new_task_count": 780,
+  "lesson_count": 99,
+  "legacy_lesson_count": 13,
+  "new_exam_lesson_count": 78,
+  "foundation_lesson_count": 8,
+  "runtime_family_count": 26,
+  "seed_strata": 512,
+  "legacy_sha256": {
+    "profile.json": "bcb7ce673f9207d973fd2e3804af069ea21bbd87ae2c6a96bc6da73972b5579c",
+    "lessons.json": "fb8654f49d2969aeb4242ca20f55f8e22d3cbcbfeb084bb4fcd2f9f4b184398b",
+    "tasks.json": "f00810c2a9fe43a1cafd051929b88c202b834b5ae12554d559c8ed6f55309ff5"
+  },
+  "generator_source_sha256": {
+    "base.py": "a0a8300c6431a90d162e908e74a94f616c27fc15d4a6b378ddb91e458d2baf59",
+    "geometry_probability.py": "08f70385363a78f71ea971eb589ecf821e4ca2f7d5ec652f5cc7a156bf192e22",
+    "algebra_analysis.py": "ab731fa7ba0001b2c4ba3bc6433949f881457229f6f0a4d2b8f0cc44213fdb77",
+    "applied_finance.py": "b70704e1d1cfbccbc66d1053d000c4a1ec7275dfcc313260997eacd03ae13426",
+    "foundations.py": "0df72f1f0fc99c494e2f164427556c725d5fcd941dd9fc477492b2bc890b872a"
+  },
+  "foundation_lesson_ids": [
+    "base-fractions",
+    "base-negative-numbers",
+    "base-percentages",
+    "base-powers",
+    "base-roots",
+    "base-algebra-expressions",
+    "base-coordinates",
+    "base-linear-equations"
+  ],
+  "families": [
+    {
+      "family_id": "triangle-exterior-angle",
+      "slot": 1,
+      "skill_ids": [
+        "plane-angles",
+        "plane-triangles",
+        "plane-theorem-choice"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-triangle-exterior-angle",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 474,
+      "candidate_answer_count": 50,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        272469995,
+        539722441,
+        805768226,
+        1081738686,
+        1350354792,
+        1621773613,
+        1885690304,
+        2161312735
+      ],
+      "answers": [
+        "30",
+        "40",
+        "44",
+        "65",
+        "76",
+        "55",
+        "69",
+        "43",
+        "64",
+        "79"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-triangle-exterior-angle-0",
+        "course-triangle-exterior-angle-4294967295",
+        "course-triangle-exterior-angle-272469995"
+      ]
+    },
+    {
+      "family_id": "right-triangle-area",
+      "slot": 1,
+      "skill_ids": [
+        "plane-triangles",
+        "plane-lengths",
+        "plane-areas",
+        "plane-theorem-choice"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-right-triangle-area",
+      "candidate_seed_count": 527,
+      "candidate_condition_count": 404,
+      "candidate_answer_count": 404,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        303021973,
+        620828743,
+        820465420,
+        1092232729,
+        1344644486,
+        1612785748,
+        1881997257,
+        2160792141
+      ],
+      "answers": [
+        "6",
+        "276480",
+        "6357960",
+        "1741824",
+        "26460",
+        "1419600",
+        "454140",
+        "1864884",
+        "100920",
+        "120984"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 5,
+      "candidate_model_count": 5,
+      "model_coverage": {
+        "branch.leg_hypotenuse_ratio": [
+          "20/29",
+          "3/5",
+          "5/13",
+          "7/25",
+          "8/17"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "branch.leg_hypotenuse_ratio": 5
+      },
+      "practice_task_ids": [
+        "course-right-triangle-area-0",
+        "course-right-triangle-area-4294967295",
+        "course-right-triangle-area-303021973"
+      ]
+    },
+    {
+      "family_id": "trapezoid-area",
+      "slot": 1,
+      "skill_ids": [
+        "plane-quadrilaterals",
+        "plane-areas"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-trapezoid-area",
+      "candidate_seed_count": 525,
+      "candidate_condition_count": 524,
+      "candidate_answer_count": 429,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        279104447,
+        540915502,
+        805485561,
+        1076935287,
+        1346323872,
+        1611322290,
+        1885972306,
+        2161988231
+      ],
+      "answers": [
+        "10",
+        "1400",
+        "244",
+        "960",
+        "2415",
+        "2146",
+        "656",
+        "675",
+        "2982",
+        "1624"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 425,
+      "model_coverage": {
+        "base_difference": [
+          "16",
+          "18",
+          "2",
+          "20",
+          "30",
+          "4",
+          "44",
+          "46",
+          "50",
+          "56"
+        ],
+        "height": [
+          "16",
+          "2",
+          "21",
+          "25",
+          "28",
+          "29",
+          "35",
+          "4",
+          "42",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "base_difference": 29,
+        "height": 47
+      },
+      "practice_task_ids": [
+        "course-trapezoid-area-0",
+        "course-trapezoid-area-4294967295",
+        "course-trapezoid-area-279104447"
+      ]
+    },
+    {
+      "family_id": "cyclic-quadrilateral-angle",
+      "slot": 1,
+      "skill_ids": [
+        "plane-angles",
+        "plane-quadrilaterals",
+        "plane-circles",
+        "plane-theorem-choice"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-cyclic-quadrilateral-angle",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 100,
+      "candidate_answer_count": 100,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        275307965,
+        560794534,
+        807252329,
+        1078966693,
+        1357287971,
+        1805061020,
+        1905390361,
+        2151837067
+      ],
+      "answers": [
+        "140",
+        "73",
+        "96",
+        "127",
+        "108",
+        "85",
+        "63",
+        "111",
+        "130",
+        "90"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-cyclic-quadrilateral-angle-0",
+        "course-cyclic-quadrilateral-angle-4294967295",
+        "course-cyclic-quadrilateral-angle-275307965"
+      ]
+    },
+    {
+      "family_id": "similar-triangles-area",
+      "slot": 1,
+      "skill_ids": [
+        "plane-triangles",
+        "plane-similarity",
+        "plane-areas",
+        "plane-theorem-choice"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-similar-triangles-area",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 384,
+      "candidate_answer_count": 43,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        280842086,
+        586348104,
+        807114518,
+        1074268658,
+        1449949587,
+        1781919849,
+        1887045344,
+        2163389245,
+        2416231698
+      ],
+      "answers": [
+        "20",
+        "144",
+        "126",
+        "208",
+        "117",
+        "68",
+        "224",
+        "76",
+        "240",
+        "32"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 7,
+      "candidate_model_count": 7,
+      "model_coverage": {
+        "linear_ratio": [
+          "1/2",
+          "2/3",
+          "2/5",
+          "3/4",
+          "3/5",
+          "4/5",
+          "4/7"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "linear_ratio": 7
+      },
+      "practice_task_ids": [
+        "course-similar-triangles-area-0",
+        "course-similar-triangles-area-280842086",
+        "course-similar-triangles-area-586348104"
+      ]
+    },
+    {
+      "family_id": "intersecting-chords",
+      "slot": 1,
+      "skill_ids": [
+        "plane-circles",
+        "plane-lengths",
+        "plane-theorem-choice"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-intersecting-chords",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 509,
+      "candidate_answer_count": 256,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        274251550,
+        537266802,
+        809812257,
+        1099637848,
+        1347108464,
+        1623193869,
+        1879769948,
+        2155670399
+      ],
+      "answers": [
+        "6",
+        "45",
+        "232",
+        "49",
+        "33",
+        "638",
+        "150",
+        "551",
+        "190",
+        "540"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 488,
+      "model_coverage": {
+        "chord_ratio": [
+          "10",
+          "19",
+          "2",
+          "22",
+          "25",
+          "27",
+          "3",
+          "5",
+          "7",
+          "8"
+        ],
+        "other_segment_ratio": [
+          "11/2",
+          "19/6",
+          "20/3",
+          "29/3",
+          "29/8",
+          "29/9",
+          "3/2",
+          "3/4",
+          "7/2",
+          "9/8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "chord_ratio": 31,
+        "other_segment_ratio": 153
+      },
+      "practice_task_ids": [
+        "course-intersecting-chords-0",
+        "course-intersecting-chords-4294967295",
+        "course-intersecting-chords-274251550"
+      ]
+    },
+    {
+      "family_id": "displacement-length",
+      "slot": 2,
+      "skill_ids": [
+        "vector-coordinates",
+        "vector-length"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-displacement-length",
+      "candidate_seed_count": 528,
+      "candidate_condition_count": 528,
+      "candidate_answer_count": 313,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        275346965,
+        4294967295,
+        553709699,
+        851272312,
+        1103409862,
+        1345116701,
+        1619695428,
+        1883710569,
+        2159895172
+      ],
+      "answers": [
+        "5",
+        "1914",
+        "1632",
+        "1300",
+        "325",
+        "1575",
+        "34",
+        "841",
+        "350",
+        "949"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 10,
+      "model_coverage": {
+        "branch.direction_x": [
+          "-1",
+          "1"
+        ],
+        "branch.leg_ratio": [
+          "20/21",
+          "3/4",
+          "5/12",
+          "7/24",
+          "8/15"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "branch.direction_x": 2,
+        "branch.leg_ratio": 5
+      },
+      "practice_task_ids": [
+        "course-displacement-length-0",
+        "course-displacement-length-275346965",
+        "course-displacement-length-4294967295"
+      ]
+    },
+    {
+      "family_id": "vector-sum-length",
+      "slot": 2,
+      "skill_ids": [
+        "vector-addition",
+        "vector-length"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-vector-sum-length",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 506,
+      "candidate_answer_count": 23,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        272650813,
+        537080250,
+        811403086,
+        1084494849,
+        1349712816,
+        1610992446,
+        1880407812,
+        2169508471
+      ],
+      "answers": [
+        "5",
+        "60",
+        "25",
+        "30",
+        "10",
+        "115",
+        "110",
+        "100",
+        "50",
+        "35"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 502,
+      "model_coverage": {
+        "first_x_fraction": [
+          "-1/2",
+          "-2/15",
+          "-2/21",
+          "-2/5",
+          "-2/9",
+          "-8/3",
+          "1/23",
+          "1/60",
+          "1/66",
+          "7/18"
+        ],
+        "first_y_fraction": [
+          "-1/24",
+          "-1/88",
+          "-3/10",
+          "-3/46",
+          "-7/24",
+          "-9/4",
+          "-9/40",
+          "0",
+          "1/20",
+          "7/8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "first_x_fraction": 194,
+        "first_y_fraction": 212
+      },
+      "practice_task_ids": [
+        "course-vector-sum-length-0",
+        "course-vector-sum-length-4294967295",
+        "course-vector-sum-length-272650813"
+      ]
+    },
+    {
+      "family_id": "vector-scaled-difference",
+      "slot": 2,
+      "skill_ids": [
+        "vector-subtraction",
+        "vector-scaling"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-vector-scaled-difference",
+      "candidate_seed_count": 525,
+      "candidate_condition_count": 525,
+      "candidate_answer_count": 149,
+      "candidate_signs": [
+        -1,
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        534997350,
+        1527657931,
+        539803962,
+        845725379,
+        1113414965,
+        1663440475,
+        4294967295,
+        1886161811,
+        2149671725
+      ],
+      "answers": [
+        "-22",
+        "2",
+        "0",
+        "-136",
+        "-4",
+        "-67",
+        "-66",
+        "-55",
+        "-31",
+        "-14"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        0,
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 21,
+      "model_coverage": {
+        "first_y_sign": [
+          "-1",
+          "0",
+          "1"
+        ],
+        "multiplier": [
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "first_y_sign": 3,
+        "multiplier": 7
+      },
+      "practice_task_ids": [
+        "course-vector-scaled-difference-0",
+        "course-vector-scaled-difference-534997350",
+        "course-vector-scaled-difference-1527657931"
+      ]
+    },
+    {
+      "family_id": "vector-dot-product",
+      "slot": 2,
+      "skill_ids": [
+        "vector-dot-product"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-vector-dot-product",
+      "candidate_seed_count": 526,
+      "candidate_condition_count": 526,
+      "candidate_answer_count": 479,
+      "candidate_signs": [
+        -1,
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        280839909,
+        74,
+        537626711,
+        1626924081,
+        2449450863,
+        3035977432,
+        3678194820,
+        4294967295,
+        810257110
+      ],
+      "answers": [
+        "-148",
+        "258",
+        "0",
+        "232",
+        "-812",
+        "175",
+        "-42",
+        "756",
+        "-149",
+        "696"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        0,
+        1
+      ],
+      "normalized_model_count": 8,
+      "candidate_model_count": 9,
+      "model_coverage": {
+        "coordinate_product_signs": [
+          "-1:-1",
+          "-1:0",
+          "-1:1",
+          "0:-1",
+          "0:1",
+          "1:-1",
+          "1:0",
+          "1:1"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "coordinate_product_signs": 9
+      },
+      "practice_task_ids": [
+        "course-vector-dot-product-0",
+        "course-vector-dot-product-280839909",
+        "course-vector-dot-product-74"
+      ]
+    },
+    {
+      "family_id": "vector-angle",
+      "slot": 2,
+      "skill_ids": [
+        "vector-angle",
+        "vector-dot-product",
+        "vector-length"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-vector-angle",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 517,
+      "candidate_answer_count": 5,
+      "candidate_signs": [
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        275647608,
+        539672281,
+        805780079,
+        1076524347,
+        4294967295,
+        1346899436,
+        1611984312,
+        1886456877,
+        2152214326
+      ],
+      "answers": [
+        "0",
+        "135",
+        "45",
+        "180",
+        "90",
+        "0",
+        "45",
+        "90",
+        "90",
+        "45"
+      ],
+      "answer_count": 5,
+      "signs": [
+        0,
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-vector-angle-0",
+        "course-vector-angle-275647608",
+        "course-vector-angle-539672281"
+      ]
+    },
+    {
+      "family_id": "right-prism-volume",
+      "slot": 3,
+      "skill_ids": [
+        "solid-prism",
+        "solid-volume"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-right-prism-volume",
+      "candidate_seed_count": 524,
+      "candidate_condition_count": 523,
+      "candidate_answer_count": 511,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        273552423,
+        538792667,
+        809042980,
+        1075584807,
+        1349064383,
+        1618628024,
+        1893182667,
+        2150717506
+      ],
+      "answers": [
+        "3",
+        "51336",
+        "104520",
+        "16359",
+        "35438",
+        "2295",
+        "146189",
+        "69680",
+        "10710",
+        "32844"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 523,
+      "model_coverage": {
+        "base_ratio": [
+          "1",
+          "19/82",
+          "2/3",
+          "23/18",
+          "23/84",
+          "34/63",
+          "51/10",
+          "52/47",
+          "67/40",
+          "67/52"
+        ],
+        "height": [
+          "1",
+          "10",
+          "21",
+          "29",
+          "34",
+          "52",
+          "58",
+          "60",
+          "62",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "base_ratio": 467,
+        "height": 79
+      },
+      "practice_task_ids": [
+        "course-right-prism-volume-0",
+        "course-right-prism-volume-4294967295",
+        "course-right-prism-volume-273552423"
+      ]
+    },
+    {
+      "family_id": "rectangular-box-surface",
+      "slot": 3,
+      "skill_ids": [
+        "solid-parallelepiped",
+        "solid-surface-area"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-rectangular-box-surface",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 523,
+      "candidate_answer_count": 506,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        274882389,
+        542620719,
+        808303320,
+        1078019045,
+        1347779237,
+        1616127463,
+        1884456669,
+        2154618558
+      ],
+      "answers": [
+        "22",
+        "18424",
+        "15298",
+        "10576",
+        "8388",
+        "24480",
+        "5652",
+        "6856",
+        "7358",
+        "9690"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 521,
+      "model_coverage": {
+        "long_ratio": [
+          "17/14",
+          "22/3",
+          "3",
+          "36/23",
+          "51/22",
+          "53/10",
+          "56/25",
+          "71/9",
+          "73/30",
+          "9/2"
+        ],
+        "middle_ratio": [
+          "11/4",
+          "16/3",
+          "17/14",
+          "2",
+          "23/5",
+          "25/23",
+          "38/9",
+          "48/25",
+          "51/22",
+          "53/30"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "long_ratio": 411,
+        "middle_ratio": 346
+      },
+      "practice_task_ids": [
+        "course-rectangular-box-surface-0",
+        "course-rectangular-box-surface-4294967295",
+        "course-rectangular-box-surface-274882389"
+      ]
+    },
+    {
+      "family_id": "square-pyramid-volume",
+      "slot": 3,
+      "skill_ids": [
+        "solid-pyramid",
+        "solid-volume"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-square-pyramid-volume",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 350,
+      "candidate_answer_count": 313,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        270223601,
+        543866333,
+        815823508,
+        1089667303,
+        1344303534,
+        1615212741,
+        1880794526,
+        2151872713
+      ],
+      "answers": [
+        "4",
+        "425",
+        "2366",
+        "800",
+        "1183",
+        "392",
+        "684",
+        "9477",
+        "539",
+        "2187"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 246,
+      "model_coverage": {
+        "height_base_ratio": [
+          "1/3",
+          "12/5",
+          "13/9",
+          "19/2",
+          "21/13",
+          "24/7",
+          "3/2",
+          "33/7",
+          "42/13",
+          "51/5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "height_base_ratio": 246
+      },
+      "practice_task_ids": [
+        "course-square-pyramid-volume-0",
+        "course-square-pyramid-volume-4294967295",
+        "course-square-pyramid-volume-270223601"
+      ]
+    },
+    {
+      "family_id": "cylinder-volume-coefficient",
+      "slot": 3,
+      "skill_ids": [
+        "solid-cylinder",
+        "solid-volume"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-cylinder-volume-coefficient",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 416,
+      "candidate_answer_count": 383,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        269009420,
+        539680936,
+        805973183,
+        1081989862,
+        1345641147,
+        1611662141,
+        1884968400,
+        2161606327,
+        2435219698
+      ],
+      "answers": [
+        "2",
+        "25047",
+        "1700",
+        "30",
+        "900",
+        "8125",
+        "300",
+        "11560",
+        "10368",
+        "1587"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 310,
+      "model_coverage": {
+        "height_base_ratio": [
+          "13/25",
+          "17/10",
+          "2",
+          "23/33",
+          "3/10",
+          "3/23",
+          "3/4",
+          "30",
+          "5/17",
+          "9/10"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "height_base_ratio": 310
+      },
+      "practice_task_ids": [
+        "course-cylinder-volume-coefficient-0",
+        "course-cylinder-volume-coefficient-269009420",
+        "course-cylinder-volume-coefficient-539680936"
+      ]
+    },
+    {
+      "family_id": "cone-surface-coefficient",
+      "slot": 3,
+      "skill_ids": [
+        "solid-cone",
+        "solid-surface-area"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-cone-surface-coefficient",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 59,
+      "candidate_answer_count": 59,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        282553290,
+        537099437,
+        888279867,
+        1078572109,
+        1618124826,
+        1,
+        2,
+        3
+      ],
+      "answers": [
+        "24",
+        "62424",
+        "57624",
+        "7776",
+        "80736",
+        "4056",
+        "23064",
+        "96",
+        "216",
+        "384"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {
+        "height_base_ratio": [
+          "4/3"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "height_base_ratio": 1
+      },
+      "practice_task_ids": [
+        "course-cone-surface-coefficient-0",
+        "course-cone-surface-coefficient-4294967295",
+        "course-cone-surface-coefficient-282553290"
+      ]
+    },
+    {
+      "family_id": "sphere-volume-coefficient",
+      "slot": 3,
+      "skill_ids": [
+        "solid-sphere",
+        "solid-volume"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-sphere-volume-coefficient",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 71,
+      "candidate_answer_count": 71,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        291046009,
+        541386567,
+        873822579,
+        1161713703,
+        1518016377,
+        1668373094,
+        2364164934,
+        2472998703
+      ],
+      "answers": [
+        "36",
+        "26244",
+        "2481156",
+        "10349856",
+        "288000",
+        "7776000",
+        "632736",
+        "2862252",
+        "3981312",
+        "3737628"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-sphere-volume-coefficient-0",
+        "course-sphere-volume-coefficient-4294967295",
+        "course-sphere-volume-coefficient-291046009"
+      ]
+    },
+    {
+      "family_id": "solid-similarity-volume",
+      "slot": 3,
+      "skill_ids": [
+        "solid-prism",
+        "solid-volume",
+        "solid-ratios"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-solid-similarity-volume",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 455,
+      "candidate_answer_count": 226,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        292172925,
+        541202593,
+        810023373,
+        1076164634,
+        1349796358,
+        1612612970,
+        1880623524,
+        2173022439
+      ],
+      "answers": [
+        "54",
+        "256",
+        "23328",
+        "16000",
+        "13500",
+        "500",
+        "20577",
+        "5488",
+        "1512",
+        "27440"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 80,
+      "model_coverage": {
+        "linear_ratio": [
+          "15/14",
+          "18/13",
+          "19/15",
+          "2",
+          "20/13",
+          "3/2",
+          "5/2",
+          "6/5",
+          "7/4",
+          "7/5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "linear_ratio": 80
+      },
+      "practice_task_ids": [
+        "course-solid-similarity-volume-0",
+        "course-solid-similarity-volume-4294967295",
+        "course-solid-similarity-volume-292172925"
+      ]
+    },
+    {
+      "family_id": "urn-favorable-count",
+      "slot": 4,
+      "skill_ids": [
+        "probability-equiprobable",
+        "probability-event"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-urn-favorable-count",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 190,
+      "candidate_answer_count": 105,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        275205861,
+        540740454,
+        818682489,
+        1098566628,
+        4294967295,
+        1342285704,
+        1643149223,
+        1935527519,
+        2153004453
+      ],
+      "answers": [
+        "0,05",
+        "0,19",
+        "0,48",
+        "0,7",
+        "0,52",
+        "0,3",
+        "0,04",
+        "0,62",
+        "0,03",
+        "0,4"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 5,
+      "candidate_model_count": 5,
+      "model_coverage": {
+        "population": [
+          "100",
+          "20",
+          "25",
+          "40",
+          "50"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "population": 5
+      },
+      "practice_task_ids": [
+        "course-urn-favorable-count-0",
+        "course-urn-favorable-count-275205861",
+        "course-urn-favorable-count-540740454"
+      ]
+    },
+    {
+      "family_id": "integer-event-boundaries",
+      "slot": 4,
+      "skill_ids": [
+        "probability-equiprobable",
+        "probability-event",
+        "probability-event-boundaries"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-integer-event-boundaries",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 517,
+      "candidate_answer_count": 256,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        285033336,
+        544533697,
+        819093958,
+        1078534411,
+        1342986665,
+        1618111006,
+        1881578898,
+        2147521931
+      ],
+      "answers": [
+        "0,5",
+        "0,385",
+        "0,23",
+        "0,4275",
+        "0,71",
+        "0,3",
+        "0,808",
+        "0,8725",
+        "0,49",
+        "0,42"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 5,
+      "candidate_model_count": 5,
+      "model_coverage": {
+        "population": [
+          "100",
+          "1000",
+          "200",
+          "400",
+          "50"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "population": 5
+      },
+      "practice_task_ids": [
+        "course-integer-event-boundaries-0",
+        "course-integer-event-boundaries-4294967295",
+        "course-integer-event-boundaries-285033336"
+      ]
+    },
+    {
+      "family_id": "complement-quality",
+      "slot": 4,
+      "skill_ids": [
+        "probability-complement",
+        "probability-event"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-complement-quality",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 414,
+      "candidate_answer_count": 414,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        274584340,
+        538509430,
+        810344785,
+        1076354451,
+        1350549259,
+        1617289160,
+        1880798885,
+        2154352998
+      ],
+      "answers": [
+        "0,999",
+        "0,438",
+        "0,8",
+        "0,521",
+        "0,059",
+        "0,117",
+        "0,839",
+        "0,931",
+        "0,433",
+        "0,492"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-complement-quality-0",
+        "course-complement-quality-4294967295",
+        "course-complement-quality-274584340"
+      ]
+    },
+    {
+      "family_id": "coin-pattern-enumeration",
+      "slot": 4,
+      "skill_ids": [
+        "probability-equiprobable",
+        "probability-event",
+        "probability-event-boundaries"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-coin-pattern-enumeration",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 18,
+      "candidate_answer_count": 10,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        6,
+        9,
+        116471,
+        54656858,
+        2,
+        3,
+        8,
+        48470349
+      ],
+      "answers": [
+        "0,375",
+        "0,234375",
+        "0,3125",
+        "0,25",
+        "0,015625",
+        "0,03125",
+        "0,15625",
+        "0,09375",
+        "0,125",
+        "0,0625"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 18,
+      "model_coverage": {
+        "heads": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "tosses": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "heads": 6,
+        "tosses": 4
+      },
+      "practice_task_ids": [
+        "course-coin-pattern-enumeration-0",
+        "course-coin-pattern-enumeration-4294967295",
+        "course-coin-pattern-enumeration-6"
+      ]
+    },
+    {
+      "family_id": "spinner-sector",
+      "slot": 4,
+      "skill_ids": [
+        "probability-event",
+        "probability-event-boundaries"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-spinner-sector",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 39,
+      "candidate_answer_count": 39,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        285104701,
+        574575355,
+        2302480434,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "answers": [
+        "0,025",
+        "0,55",
+        "0,95",
+        "0,425",
+        "0,85",
+        "0,05",
+        "0,075",
+        "0,1",
+        "0,125",
+        "0,15"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-spinner-sector-0",
+        "course-spinner-sector-4294967295",
+        "course-spinner-sector-285104701"
+      ]
+    },
+    {
+      "family_id": "independent-at-least-one",
+      "slot": 5,
+      "skill_ids": [
+        "probability-multiplication",
+        "probability-independence"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-independent-at-least-one",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 507,
+      "candidate_answer_count": 456,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        268479383,
+        538942483,
+        812245740,
+        1076117596,
+        1350395595,
+        1613420150,
+        1883327353,
+        2148621338
+      ],
+      "answers": [
+        "0,145",
+        "0,8856",
+        "0,9566",
+        "0,9328",
+        "0,8326",
+        "0,5215",
+        "0,8068",
+        "0,8804",
+        "0,994",
+        "0,785"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 507,
+      "model_coverage": {
+        "first_probability": [
+          "1/2",
+          "1/20",
+          "13/100",
+          "19/50",
+          "2/25",
+          "21/25",
+          "37/50",
+          "39/50",
+          "43/50",
+          "47/50"
+        ],
+        "second_probability": [
+          "1/10",
+          "12/25",
+          "27/50",
+          "29/50",
+          "57/100",
+          "69/100",
+          "73/100",
+          "79/100",
+          "9/10",
+          "9/20"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "first_probability": 91,
+        "second_probability": 81
+      },
+      "practice_task_ids": [
+        "course-independent-at-least-one-0",
+        "course-independent-at-least-one-4294967295",
+        "course-independent-at-least-one-268479383"
+      ]
+    },
+    {
+      "family_id": "conditional-without-replacement",
+      "slot": 5,
+      "skill_ids": [
+        "probability-conditional"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-conditional-without-replacement",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 221,
+      "candidate_answer_count": 118,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        282070466,
+        586436160,
+        812486498,
+        1759978190,
+        1075820471,
+        1347079816,
+        1904876754,
+        2189473264
+      ],
+      "answers": [
+        "0,05",
+        "0,625",
+        "0,075",
+        "0,58",
+        "0,12",
+        "0,6",
+        "0,65",
+        "0,82",
+        "0,76",
+        "0,45"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 6,
+      "candidate_model_count": 6,
+      "model_coverage": {
+        "population": [
+          "101",
+          "21",
+          "26",
+          "41",
+          "51",
+          "81"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "population": 6
+      },
+      "practice_task_ids": [
+        "course-conditional-without-replacement-0",
+        "course-conditional-without-replacement-4294967295",
+        "course-conditional-without-replacement-282070466"
+      ]
+    },
+    {
+      "family_id": "overlapping-event-union",
+      "slot": 5,
+      "skill_ids": [
+        "probability-addition"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-overlapping-event-union",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 512,
+      "candidate_answer_count": 56,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        271217181,
+        539620392,
+        823075440,
+        1076355560,
+        1347295265,
+        1617791765,
+        1905374987,
+        2151823758,
+        2431586091
+      ],
+      "answers": [
+        "0,3",
+        "0,71",
+        "0,63",
+        "0,59",
+        "0,46",
+        "0,52",
+        "0,64",
+        "0,51",
+        "0,67",
+        "0,81"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 326,
+      "model_coverage": {
+        "only_first": [
+          "10",
+          "14",
+          "16",
+          "18",
+          "19",
+          "20",
+          "23",
+          "24",
+          "29",
+          "32"
+        ],
+        "only_second": [
+          "15",
+          "17",
+          "19",
+          "22",
+          "25",
+          "30",
+          "31",
+          "32",
+          "33",
+          "34"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "only_first": 26,
+        "only_second": 21
+      },
+      "practice_task_ids": [
+        "course-overlapping-event-union-0",
+        "course-overlapping-event-union-271217181",
+        "course-overlapping-event-union-539620392"
+      ]
+    },
+    {
+      "family_id": "total-probability-routing",
+      "slot": 5,
+      "skill_ids": [
+        "probability-total",
+        "probability-multiplication",
+        "probability-addition"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-total-probability-routing",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 519,
+      "candidate_answer_count": 466,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        274656690,
+        540808686,
+        811993078,
+        1080581246,
+        1388844727,
+        1615253745,
+        1881896036,
+        2155091761
+      ],
+      "answers": [
+        "0,181",
+        "0,2236",
+        "0,332",
+        "0,2596",
+        "0,2025",
+        "0,2463",
+        "0,3312",
+        "0,2511",
+        "0,206",
+        "0,326"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 519,
+      "model_coverage": {
+        "first_defect": [
+          "0,01",
+          "0,02",
+          "0,05",
+          "0,08",
+          "0,09",
+          "0,11",
+          "0,12",
+          "0,13",
+          "0,16",
+          "0,19"
+        ],
+        "first_weight": [
+          "0,1",
+          "0,2",
+          "0,26",
+          "0,27",
+          "0,31",
+          "0,37",
+          "0,42",
+          "0,46",
+          "0,58",
+          "0,83"
+        ],
+        "second_defect": [
+          "0,2",
+          "0,27",
+          "0,29",
+          "0,31",
+          "0,33",
+          "0,37",
+          "0,38",
+          "0,41",
+          "0,43",
+          "0,48"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "first_defect": 19,
+        "first_weight": 81,
+        "second_defect": 31
+      },
+      "practice_task_ids": [
+        "course-total-probability-routing-0",
+        "course-total-probability-routing-4294967295",
+        "course-total-probability-routing-274656690"
+      ]
+    },
+    {
+      "family_id": "event-tree-exactly-one",
+      "slot": 5,
+      "skill_ids": [
+        "probability-event-tree",
+        "probability-conditional",
+        "probability-multiplication",
+        "probability-addition"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-event-tree-exactly-one",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 140,
+      "candidate_answer_count": 31,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        294737254,
+        894559625,
+        564915306,
+        1096545876,
+        1435347842,
+        1712460856,
+        2038285783,
+        2310129123
+      ],
+      "answers": [
+        "0,63",
+        "0,78",
+        "0,7",
+        "0,8",
+        "0,76",
+        "0,84",
+        "0,66",
+        "0,85",
+        "0,68",
+        "0,6"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 16,
+      "model_coverage": {
+        "after_failure": [
+          "3/5",
+          "4/5",
+          "7/10",
+          "9/10"
+        ],
+        "after_success": [
+          "1/10",
+          "1/5",
+          "2/5",
+          "3/10"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "after_failure": 4,
+        "after_success": 4
+      },
+      "practice_task_ids": [
+        "course-event-tree-exactly-one-0",
+        "course-event-tree-exactly-one-4294967295",
+        "course-event-tree-exactly-one-294737254"
+      ]
+    },
+    {
+      "family_id": "combinatorial-subset",
+      "slot": 5,
+      "skill_ids": [
+        "probability-combinatorics"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-combinatorial-subset",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 10,
+      "candidate_answer_count": 10,
+      "candidate_signs": [
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "answers": [
+        "0",
+        "0,3",
+        "0,025",
+        "0,05",
+        "0,125",
+        "0,175",
+        "0,375",
+        "0,55",
+        "0,65",
+        "0,875"
+      ],
+      "answer_count": 10,
+      "signs": [
+        0,
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-combinatorial-subset-0",
+        "course-combinatorial-subset-4294967295",
+        "course-combinatorial-subset-1"
+      ]
+    },
+    {
+      "family_id": "distribution-missing-probability",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-table"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-distribution-missing-probability",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 274,
+      "candidate_answer_count": 8,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        269422696,
+        541352884,
+        811624255,
+        1125191227,
+        1423501027,
+        1615507360,
+        1893983405,
+        2150978610
+      ],
+      "answers": [
+        "0,8",
+        "0,5",
+        "0,4",
+        "0,6",
+        "0,7",
+        "0,1",
+        "0,3",
+        "0,2",
+        "0,1",
+        "0,4"
+      ],
+      "answer_count": 8,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-distribution-missing-probability-0",
+        "course-distribution-missing-probability-4294967295",
+        "course-distribution-missing-probability-269422696"
+      ]
+    },
+    {
+      "family_id": "distribution-weighted-mean",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-table",
+        "distribution-expectation"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-distribution-weighted-mean",
+      "candidate_seed_count": 527,
+      "candidate_condition_count": 503,
+      "candidate_answer_count": 295,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        284319585,
+        542002935,
+        819307873,
+        1278920880,
+        1349708820,
+        1618685509,
+        1887395768,
+        2156244423
+      ],
+      "answers": [
+        "5,1",
+        "20,2",
+        "33,8",
+        "22,6",
+        "39,9",
+        "6,5",
+        "25,3",
+        "34,4",
+        "14,8",
+        "29,1"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 143,
+      "model_coverage": {
+        "probability_weights": [
+          "1/5:2/5:2/5",
+          "1/5:3/10:1/2",
+          "2/5:2/5:1/5",
+          "2/5:3/10:3/10",
+          "3/10:2/5:3/10",
+          "3/10:3/10:2/5"
+        ],
+        "support_gaps": [
+          "2:3",
+          "2:5",
+          "2:7",
+          "3:7",
+          "4:4",
+          "4:5",
+          "4:7",
+          "5:7",
+          "6:5",
+          "6:6"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "probability_weights": 6,
+        "support_gaps": 25
+      },
+      "practice_task_ids": [
+        "course-distribution-weighted-mean-0",
+        "course-distribution-weighted-mean-4294967295",
+        "course-distribution-weighted-mean-284319585"
+      ]
+    },
+    {
+      "family_id": "distribution-weighted-variance",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-table",
+        "distribution-expectation",
+        "distribution-variance"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-distribution-weighted-variance",
+      "candidate_seed_count": 527,
+      "candidate_condition_count": 504,
+      "candidate_answer_count": 99,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        269278074,
+        548347083,
+        855506639,
+        1117149184,
+        1349739708,
+        1613439158,
+        1885280659,
+        2148291896
+      ],
+      "answers": [
+        "4,09",
+        "8,96",
+        "5,4",
+        "8,4",
+        "11,4",
+        "10,8",
+        "15,04",
+        "8,56",
+        "14,04",
+        "18,8"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 146,
+      "model_coverage": {
+        "probability_weights": [
+          "1/5:2/5:2/5",
+          "1/5:3/10:1/2",
+          "2/5:2/5:1/5",
+          "2/5:3/10:3/10",
+          "3/10:2/5:3/10",
+          "3/10:3/10:2/5"
+        ],
+        "support_gaps": [
+          "2:3",
+          "2:6",
+          "3:3",
+          "3:6",
+          "4:3",
+          "4:4",
+          "4:6",
+          "4:7",
+          "5:3",
+          "6:3"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "probability_weights": 6,
+        "support_gaps": 25
+      },
+      "practice_task_ids": [
+        "course-distribution-weighted-variance-0",
+        "course-distribution-weighted-variance-4294967295",
+        "course-distribution-weighted-variance-269278074"
+      ]
+    },
+    {
+      "family_id": "distribution-two-point-deviation",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-table",
+        "distribution-expectation",
+        "distribution-variance",
+        "distribution-standard-deviation"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-distribution-two-point-deviation",
+      "candidate_seed_count": 526,
+      "candidate_condition_count": 153,
+      "candidate_answer_count": 4,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        284887420,
+        543774699,
+        805638227,
+        1090931230,
+        1350447213,
+        1614817113,
+        1901823270,
+        2166436242
+      ],
+      "answers": [
+        "1",
+        "3",
+        "2",
+        "4",
+        "4",
+        "1",
+        "1",
+        "4",
+        "2",
+        "3"
+      ],
+      "answer_count": 4,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 4,
+      "candidate_model_count": 4,
+      "model_coverage": {
+        "support_span": [
+          "2",
+          "4",
+          "6",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "support_span": 4
+      },
+      "practice_task_ids": [
+        "course-distribution-two-point-deviation-0",
+        "course-distribution-two-point-deviation-4294967295",
+        "course-distribution-two-point-deviation-284887420"
+      ]
+    },
+    {
+      "family_id": "distribution-step-cdf",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-table",
+        "distribution-cdf"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-distribution-step-cdf",
+      "candidate_seed_count": 528,
+      "candidate_condition_count": 503,
+      "candidate_answer_count": 4,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        275221598,
+        538024167,
+        863876321,
+        1098909819,
+        1354232762,
+        1632169245,
+        1888345967,
+        2170743518
+      ],
+      "answers": [
+        "0,5",
+        "0,8",
+        "0,6",
+        "0,7",
+        "0,7",
+        "0,6",
+        "0,7",
+        "0,6",
+        "0,6",
+        "0,6"
+      ],
+      "answer_count": 4,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 144,
+      "model_coverage": {
+        "probability_weights": [
+          "1/5:2/5:2/5",
+          "1/5:3/10:1/2",
+          "2/5:2/5:1/5",
+          "2/5:3/10:3/10",
+          "3/10:2/5:3/10",
+          "3/10:3/10:2/5"
+        ],
+        "support_gaps": [
+          "2:3",
+          "2:7",
+          "3:4",
+          "4:4",
+          "4:5",
+          "5:4",
+          "6:3",
+          "6:5",
+          "6:6",
+          "6:7"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "probability_weights": 6,
+        "support_gaps": 25
+      },
+      "practice_task_ids": [
+        "course-distribution-step-cdf-0",
+        "course-distribution-step-cdf-4294967295",
+        "course-distribution-step-cdf-275221598"
+      ]
+    },
+    {
+      "family_id": "distribution-linear-density",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-density"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-distribution-linear-density",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 10,
+      "candidate_answer_count": 10,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        1,
+        2,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9
+      ],
+      "answers": [
+        "0,5",
+        "0,02",
+        "0,125",
+        "0,03125",
+        "0,0078125",
+        "0,001953125",
+        "0,005",
+        "0,00125",
+        "0,0003125",
+        "0,000078125"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-distribution-linear-density-0",
+        "course-distribution-linear-density-4294967295",
+        "course-distribution-linear-density-1"
+      ]
+    },
+    {
+      "family_id": "distribution-uniform-interval",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-uniform"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-distribution-uniform-interval",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 432,
+      "candidate_answer_count": 6,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        277876133,
+        566773798,
+        853623943,
+        1120787313,
+        1378139750,
+        4294967295,
+        1612192542,
+        1898462492,
+        2155296851
+      ],
+      "answers": [
+        "0,4",
+        "0,3",
+        "0,6",
+        "0,5",
+        "0,7",
+        "0,2",
+        "0,5",
+        "0,6",
+        "0,4",
+        "0,5"
+      ],
+      "answer_count": 6,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 12,
+      "model_coverage": {
+        "relative_end": [
+          "1/2",
+          "3/5",
+          "4/5",
+          "7/10"
+        ],
+        "relative_start": [
+          "1/10",
+          "1/5",
+          "3/10"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "relative_end": 4,
+        "relative_start": 3
+      },
+      "practice_task_ids": [
+        "course-distribution-uniform-interval-0",
+        "course-distribution-uniform-interval-277876133",
+        "course-distribution-uniform-interval-566773798"
+      ]
+    },
+    {
+      "family_id": "distribution-exponential-survival",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-exponential",
+        "distribution-cdf"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-distribution-exponential-survival",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 80,
+      "candidate_answer_count": 10,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        280079073,
+        618892228,
+        1026473917,
+        1170521881,
+        1929941944,
+        130376536,
+        1655003359,
+        2
+      ],
+      "answers": [
+        "0,5",
+        "0,1",
+        "0,0625",
+        "0,0125",
+        "0,025",
+        "0,25",
+        "0,03125",
+        "0,05",
+        "0,00625",
+        "0,125"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 8,
+      "candidate_model_count": 8,
+      "model_coverage": {
+        "rate": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "rate": 8
+      },
+      "practice_task_ids": [
+        "course-distribution-exponential-survival-0",
+        "course-distribution-exponential-survival-4294967295",
+        "course-distribution-exponential-survival-280079073"
+      ]
+    },
+    {
+      "family_id": "distribution-normal-symmetry",
+      "slot": 6,
+      "skill_ids": [
+        "distribution-normal"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-distribution-normal-symmetry",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 483,
+      "candidate_answer_count": 40,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        283241229,
+        539579644,
+        809917755,
+        1087718632,
+        1391775827,
+        1613076446,
+        1911273933,
+        2148032634
+      ],
+      "answers": [
+        "0,25",
+        "0,175",
+        "0,105",
+        "0,23",
+        "0,075",
+        "0,09",
+        "0,115",
+        "0,22",
+        "0,185",
+        "0,08"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 9,
+      "candidate_model_count": 9,
+      "model_coverage": {
+        "distance_from_mean": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "distance_from_mean": 9
+      },
+      "practice_task_ids": [
+        "course-distribution-normal-symmetry-0",
+        "course-distribution-normal-symmetry-4294967295",
+        "course-distribution-normal-symmetry-283241229"
+      ]
+    },
+    {
+      "family_id": "rational-excluded-root",
+      "slot": 7,
+      "skill_ids": [
+        "equation-rational",
+        "equation-domain",
+        "equation-root-selection"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-rational-excluded-root",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 249,
+      "candidate_answer_count": 38,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        269849979,
+        541754004,
+        806674161,
+        1104100080,
+        1345376146,
+        1625927370,
+        1884765159,
+        2158341147
+      ],
+      "answers": [
+        "3",
+        "24",
+        "21",
+        "33",
+        "32",
+        "9",
+        "20",
+        "12",
+        "17",
+        "34"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-rational-excluded-root-0",
+        "course-rational-excluded-root-4294967295",
+        "course-rational-excluded-root-269849979"
+      ]
+    },
+    {
+      "family_id": "radical-extraneous-root",
+      "slot": 7,
+      "skill_ids": [
+        "equation-irrational",
+        "equation-domain",
+        "equation-root-selection"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-radical-extraneous-root",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 99,
+      "candidate_answer_count": 43,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        275185954,
+        558460184,
+        829641060,
+        1096327094,
+        1399391010,
+        1624854271,
+        2008107420,
+        2403720496
+      ],
+      "answers": [
+        "4",
+        "38",
+        "34",
+        "16",
+        "7",
+        "36",
+        "24",
+        "29",
+        "5",
+        "40"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-radical-extraneous-root-0",
+        "course-radical-extraneous-root-4294967295",
+        "course-radical-extraneous-root-275185954"
+      ]
+    },
+    {
+      "family_id": "exponential-common-base",
+      "slot": 7,
+      "skill_ids": [
+        "equation-exponential"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-exponential-common-base",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 306,
+      "candidate_answer_count": 38,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        287970421,
+        596394878,
+        837057866,
+        1090902332,
+        1356071335,
+        1633937447,
+        1950397283,
+        2182966742
+      ],
+      "answers": [
+        "1,5",
+        "12",
+        "3",
+        "9,5",
+        "16,5",
+        "4,5",
+        "18",
+        "10",
+        "13",
+        "3,5"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 15,
+      "model_coverage": {
+        "base": [
+          "2",
+          "3",
+          "5"
+        ],
+        "right_exponent": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "base": 3,
+        "right_exponent": 5
+      },
+      "practice_task_ids": [
+        "course-exponential-common-base-0",
+        "course-exponential-common-base-4294967295",
+        "course-exponential-common-base-287970421"
+      ]
+    },
+    {
+      "family_id": "logarithmic-product-domain",
+      "slot": 7,
+      "skill_ids": [
+        "equation-logarithmic",
+        "equation-domain",
+        "equation-root-selection"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-logarithmic-product-domain",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 350,
+      "candidate_answer_count": 35,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        296220870,
+        541423716,
+        806570843,
+        1075174835,
+        1343559368,
+        1619405267,
+        1881288168,
+        2148593271
+      ],
+      "answers": [
+        "3",
+        "19",
+        "7",
+        "10",
+        "29",
+        "9",
+        "16",
+        "24",
+        "21",
+        "27"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 3,
+      "candidate_model_count": 3,
+      "model_coverage": {
+        "base": [
+          "2",
+          "3",
+          "5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "base": 3
+      },
+      "practice_task_ids": [
+        "course-logarithmic-product-domain-0",
+        "course-logarithmic-product-domain-4294967295",
+        "course-logarithmic-product-domain-296220870"
+      ]
+    },
+    {
+      "family_id": "absolute-value-selected-root",
+      "slot": 7,
+      "skill_ids": [
+        "equation-other-short-answer",
+        "equation-root-selection"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-absolute-value-selected-root",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 338,
+      "candidate_answer_count": 68,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        284659775,
+        551487765,
+        807360600,
+        1120047969,
+        1348774386,
+        1620629573,
+        1884876773,
+        2165363007
+      ],
+      "answers": [
+        "19",
+        "33",
+        "48",
+        "59",
+        "17",
+        "20",
+        "22",
+        "65",
+        "68",
+        "42"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 9,
+      "candidate_model_count": 9,
+      "model_coverage": {
+        "distance_from_center": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "distance_from_center": 9
+      },
+      "practice_task_ids": [
+        "course-absolute-value-selected-root-0",
+        "course-absolute-value-selected-root-4294967295",
+        "course-absolute-value-selected-root-284659775"
+      ]
+    },
+    {
+      "family_id": "power-product-quotient",
+      "slot": 8,
+      "skill_ids": [
+        "algebra-powers",
+        "algebra-exact-computation"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-power-product-quotient",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 80,
+      "candidate_answer_count": 20,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        292683006,
+        542476355,
+        1116782156,
+        949895717,
+        1362206028,
+        1681908989,
+        1,
+        2,
+        3
+      ],
+      "answers": [
+        "4",
+        "64",
+        "289",
+        "324",
+        "361",
+        "100",
+        "121",
+        "9",
+        "16",
+        "25"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 4,
+      "candidate_model_count": 4,
+      "model_coverage": {
+        "negative_exponent": [
+          "-1",
+          "-2",
+          "-3",
+          "-4"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "negative_exponent": 4
+      },
+      "practice_task_ids": [
+        "course-power-product-quotient-0",
+        "course-power-product-quotient-292683006",
+        "course-power-product-quotient-542476355"
+      ]
+    },
+    {
+      "family_id": "radical-conjugates",
+      "slot": 8,
+      "skill_ids": [
+        "algebra-roots",
+        "algebra-exact-computation"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-radical-conjugates",
+      "candidate_seed_count": 524,
+      "candidate_condition_count": 233,
+      "candidate_answer_count": 219,
+      "candidate_signs": [
+        -1,
+        1
+      ],
+      "seeds": [
+        0,
+        624132441,
+        4294967295,
+        270427303,
+        814229708,
+        1075211395,
+        1521818020,
+        1622446242,
+        1882222143,
+        2158991791
+      ],
+      "answers": [
+        "4",
+        "-6",
+        "241",
+        "590",
+        "897",
+        "1345",
+        "476",
+        "-32",
+        "577",
+        "1041"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        1
+      ],
+      "normalized_model_count": 7,
+      "candidate_model_count": 7,
+      "model_coverage": {
+        "subtracted_square_root": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "subtracted_square_root": 7
+      },
+      "practice_task_ids": [
+        "course-radical-conjugates-0",
+        "course-radical-conjugates-624132441",
+        "course-radical-conjugates-4294967295"
+      ]
+    },
+    {
+      "family_id": "rational-removable-factor",
+      "slot": 8,
+      "skill_ids": [
+        "algebra-rational-expressions",
+        "algebra-exact-computation"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-rational-removable-factor",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 414,
+      "candidate_answer_count": 117,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        273585644,
+        543754517,
+        816337681,
+        1081097063,
+        1351398476,
+        1624116580,
+        1886408119,
+        2169090366
+      ],
+      "answers": [
+        "3",
+        "98",
+        "103",
+        "47",
+        "78",
+        "30",
+        "64",
+        "74",
+        "43",
+        "42"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 20,
+      "model_coverage": {
+        "distance_from_excluded_point": [
+          "1",
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "2",
+          "3",
+          "6",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "distance_from_excluded_point": 20
+      },
+      "practice_task_ids": [
+        "course-rational-removable-factor-0",
+        "course-rational-removable-factor-4294967295",
+        "course-rational-removable-factor-273585644"
+      ]
+    },
+    {
+      "family_id": "logarithm-difference",
+      "slot": 8,
+      "skill_ids": [
+        "algebra-logarithms",
+        "algebra-exact-computation"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-logarithm-difference",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 249,
+      "candidate_answer_count": 3,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        380391647,
+        546464387,
+        821209785,
+        1076176214,
+        1352934025,
+        1612071181,
+        1906853638,
+        2163299862
+      ],
+      "answers": [
+        "2",
+        "4",
+        "3",
+        "4",
+        "2",
+        "2",
+        "3",
+        "2",
+        "4",
+        "2"
+      ],
+      "answer_count": 3,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 9,
+      "candidate_model_count": 9,
+      "model_coverage": {
+        "base": [
+          "10",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "base": 9
+      },
+      "practice_task_ids": [
+        "course-logarithm-difference-0",
+        "course-logarithm-difference-4294967295",
+        "course-logarithm-difference-380391647"
+      ]
+    },
+    {
+      "family_id": "trigonometric-double-angle",
+      "slot": 8,
+      "skill_ids": [
+        "algebra-trigonometry",
+        "algebra-exact-computation"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-trigonometric-double-angle",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 100,
+      "candidate_answer_count": 78,
+      "candidate_signs": [
+        -1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        272153546,
+        542510128,
+        830237073,
+        1103237227,
+        1362416386,
+        1687610555,
+        2043826380,
+        2355738719
+      ],
+      "answers": [
+        "-24",
+        "-13440",
+        "-1680",
+        "-1080",
+        "-4704",
+        "-960",
+        "-5880",
+        "-3840",
+        "-840",
+        "-480"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1
+      ],
+      "normalized_model_count": 5,
+      "candidate_model_count": 5,
+      "model_coverage": {
+        "branch.sine_ratio": [
+          "20/29",
+          "3/5",
+          "5/13",
+          "7/25",
+          "8/17"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "branch.sine_ratio": 5
+      },
+      "practice_task_ids": [
+        "course-trigonometric-double-angle-0",
+        "course-trigonometric-double-angle-4294967295",
+        "course-trigonometric-double-angle-272153546"
+      ]
+    },
+    {
+      "family_id": "piecewise-function-value",
+      "slot": 9,
+      "skill_ids": [
+        "calculus-function-graph"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-piecewise-function-value",
+      "candidate_seed_count": 526,
+      "candidate_condition_count": 497,
+      "candidate_answer_count": 12,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        271406384,
+        543675843,
+        951242933,
+        1096057987,
+        1350396552,
+        1639997642,
+        1986023998,
+        2298523207
+      ],
+      "answers": [
+        "3",
+        "10",
+        "11",
+        "7",
+        "8",
+        "9",
+        "6",
+        "12",
+        "14",
+        "4"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 25,
+      "model_coverage": {
+        "segment_rise": [
+          "10",
+          "2",
+          "4",
+          "6",
+          "8"
+        ],
+        "segment_width": [
+          "10",
+          "12",
+          "4",
+          "6",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "segment_rise": 5,
+        "segment_width": 5
+      },
+      "practice_task_ids": [
+        "course-piecewise-function-value-0",
+        "course-piecewise-function-value-4294967295",
+        "course-piecewise-function-value-271406384"
+      ]
+    },
+    {
+      "family_id": "derivative-positive-length",
+      "slot": 9,
+      "skill_ids": [
+        "calculus-derivative-graph",
+        "calculus-monotonicity"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-derivative-positive-length",
+      "candidate_seed_count": 525,
+      "candidate_condition_count": 388,
+      "candidate_answer_count": 5,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        271953029,
+        541806598,
+        842026850,
+        1168865376,
+        1359037449,
+        1621153590,
+        2150387513,
+        4294967295,
+        1883802115
+      ],
+      "answers": [
+        "6",
+        "9",
+        "18",
+        "12",
+        "15",
+        "12",
+        "18",
+        "6",
+        "18",
+        "6"
+      ],
+      "answer_count": 5,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 40,
+      "model_coverage": {
+        "amplitude": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "segment_width": [
+          "10",
+          "12",
+          "4",
+          "6",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "amplitude": 8,
+        "segment_width": 5
+      },
+      "practice_task_ids": [
+        "course-derivative-positive-length-0",
+        "course-derivative-positive-length-271953029",
+        "course-derivative-positive-length-541806598"
+      ]
+    },
+    {
+      "family_id": "tangent-from-two-points",
+      "slot": 9,
+      "skill_ids": [
+        "calculus-tangent"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-tangent-from-two-points",
+      "candidate_seed_count": 524,
+      "candidate_condition_count": 434,
+      "candidate_answer_count": 34,
+      "candidate_signs": [
+        -1,
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        270882443,
+        538523022,
+        805482174,
+        1080051273,
+        1345594602,
+        1611432705,
+        1886118010,
+        2148375336
+      ],
+      "answers": [
+        "0,5",
+        "-0,5",
+        "-3,5",
+        "7,5",
+        "3,5",
+        "-7,5",
+        "-6",
+        "-1,5",
+        "2,5",
+        "-7"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        1
+      ],
+      "normalized_model_count": 1,
+      "candidate_model_count": 1,
+      "model_coverage": {},
+      "candidate_model_value_counts": {},
+      "practice_task_ids": [
+        "course-tangent-from-two-points-0",
+        "course-tangent-from-two-points-4294967295",
+        "course-tangent-from-two-points-270882443"
+      ]
+    },
+    {
+      "family_id": "derivative-turning-point",
+      "slot": 9,
+      "skill_ids": [
+        "calculus-derivative-graph",
+        "calculus-monotonicity",
+        "calculus-extrema"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-derivative-turning-point",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 371,
+      "candidate_answer_count": 100,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        273853759,
+        543841353,
+        807246852,
+        1086599807,
+        1345517808,
+        1631745998,
+        2189282318,
+        4294967295,
+        1901935414
+      ],
+      "answers": [
+        "1",
+        "60",
+        "54",
+        "53",
+        "8",
+        "9",
+        "99",
+        "19",
+        "96",
+        "15"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 8,
+      "candidate_model_count": 8,
+      "model_coverage": {
+        "derivative_slope": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "derivative_slope": 8
+      },
+      "practice_task_ids": [
+        "course-derivative-turning-point-0",
+        "course-derivative-turning-point-273853759",
+        "course-derivative-turning-point-543841353"
+      ]
+    },
+    {
+      "family_id": "antiderivative-initial-value",
+      "slot": 9,
+      "skill_ids": [
+        "calculus-antiderivative"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-antiderivative-initial-value",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 506,
+      "candidate_answer_count": 386,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        286142207,
+        578737083,
+        817239597,
+        1079828566,
+        130622020,
+        1462514033,
+        1635965660,
+        1885234877
+      ],
+      "answers": [
+        "7",
+        "170",
+        "238",
+        "358",
+        "1198",
+        "122",
+        "82",
+        "549",
+        "30",
+        "670"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 321,
+      "model_coverage": {
+        "initial_value": [
+          "1",
+          "10",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ],
+        "linear_coefficient": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "target": [
+          "2",
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "initial_value": 10,
+        "linear_coefficient": 7,
+        "target": 8
+      },
+      "practice_task_ids": [
+        "course-antiderivative-initial-value-0",
+        "course-antiderivative-initial-value-4294967295",
+        "course-antiderivative-initial-value-286142207"
+      ]
+    },
+    {
+      "family_id": "integral-signed-areas",
+      "slot": 9,
+      "skill_ids": [
+        "calculus-function-graph",
+        "calculus-integral"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-integral-signed-areas",
+      "candidate_seed_count": 525,
+      "candidate_condition_count": 348,
+      "candidate_answer_count": 109,
+      "candidate_signs": [
+        -1,
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        518320514,
+        1022323493,
+        4294967295,
+        768086846,
+        1075711197,
+        1350448565,
+        1626531300,
+        1891501458,
+        2164815030
+      ],
+      "answers": [
+        "3",
+        "-3",
+        "0",
+        "4",
+        "10,5",
+        "15",
+        "64",
+        "28",
+        "24",
+        "34"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        0,
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 258,
+      "model_coverage": {
+        "positive_negative_height_ratio": [
+          "1",
+          "1/2",
+          "12/7",
+          "13/2",
+          "15/2",
+          "17/2",
+          "2",
+          "2/5",
+          "5/3",
+          "6/7"
+        ],
+        "segment_width": [
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "positive_negative_height_ratio": 81,
+        "segment_width": 5
+      },
+      "practice_task_ids": [
+        "course-integral-signed-areas-0",
+        "course-integral-signed-areas-518320514",
+        "course-integral-signed-areas-1022323493"
+      ]
+    },
+    {
+      "family_id": "heat-balance",
+      "slot": 10,
+      "skill_ids": [
+        "applied-substitution",
+        "applied-units",
+        "applied-plausibility"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-heat-balance",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 492,
+      "candidate_answer_count": 224,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        274724855,
+        538398884,
+        808010123,
+        1081832875,
+        1353266300,
+        1617772709,
+        1879324562,
+        2160046506
+      ],
+      "answers": [
+        "126",
+        "308,7",
+        "559,86",
+        "196,56",
+        "429,66",
+        "564,48",
+        "258,3",
+        "390,6",
+        "357,42",
+        "299,88"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 15,
+      "model_coverage": {
+        "temperature_rise": [
+          "30",
+          "31",
+          "33",
+          "34",
+          "35",
+          "36",
+          "37",
+          "41",
+          "42",
+          "43"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "temperature_rise": 15
+      },
+      "practice_task_ids": [
+        "course-heat-balance-0",
+        "course-heat-balance-4294967295",
+        "course-heat-balance-274724855"
+      ]
+    },
+    {
+      "family_id": "pressure-force",
+      "slot": 10,
+      "skill_ids": [
+        "applied-isolate-variable",
+        "applied-units"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-pressure-force",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 223,
+      "candidate_answer_count": 177,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        271365041,
+        538675197,
+        821737581,
+        1076858756,
+        1381408539,
+        1623289591,
+        2015764064,
+        2181341071
+      ],
+      "answers": [
+        "300",
+        "533",
+        "341",
+        "940",
+        "816",
+        "867",
+        "882",
+        "518",
+        "931",
+        "495"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 11,
+      "model_coverage": {
+        "area": [
+          "100",
+          "50",
+          "55",
+          "65",
+          "70",
+          "75",
+          "80",
+          "85",
+          "90",
+          "95"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "area": 11
+      },
+      "practice_task_ids": [
+        "course-pressure-force-0",
+        "course-pressure-force-4294967295",
+        "course-pressure-force-271365041"
+      ]
+    },
+    {
+      "family_id": "tank-net-flow",
+      "slot": 10,
+      "skill_ids": [
+        "applied-simple-model",
+        "applied-isolate-variable",
+        "applied-constraints",
+        "applied-plausibility"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-tank-net-flow",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 496,
+      "candidate_answer_count": 23,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        290642860,
+        607509106,
+        816372748,
+        1077811684,
+        1352348322,
+        1622322141,
+        1885909362,
+        2161495703
+      ],
+      "answers": [
+        "10",
+        "21",
+        "12",
+        "19",
+        "17",
+        "23",
+        "13",
+        "16",
+        "15",
+        "11"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 25,
+      "model_coverage": {
+        "net_flow": [
+          "3",
+          "4",
+          "5",
+          "6",
+          "7"
+        ],
+        "outflow": [
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "net_flow": 5,
+        "outflow": 5
+      },
+      "practice_task_ids": [
+        "course-tank-net-flow-0",
+        "course-tank-net-flow-4294967295",
+        "course-tank-net-flow-290642860"
+      ]
+    },
+    {
+      "family_id": "resistance-temperature",
+      "slot": 10,
+      "skill_ids": [
+        "applied-isolate-variable",
+        "applied-substitution",
+        "applied-constraints"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-resistance-temperature",
+      "candidate_seed_count": 525,
+      "candidate_condition_count": 251,
+      "candidate_answer_count": 13,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        283206932,
+        541925369,
+        812771069,
+        1111358678,
+        1359432953,
+        1624704866,
+        1926110099,
+        2209160590
+      ],
+      "answers": [
+        "30",
+        "35",
+        "50",
+        "55",
+        "85",
+        "70",
+        "60",
+        "65",
+        "80",
+        "90"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 13,
+      "model_coverage": {
+        "relative_resistance": [
+          "26/25",
+          "28/25",
+          "29/25",
+          "31/25",
+          "32/25",
+          "53/50",
+          "57/50",
+          "59/50",
+          "6/5",
+          "63/50"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "relative_resistance": 13
+      },
+      "practice_task_ids": [
+        "course-resistance-temperature-0",
+        "course-resistance-temperature-4294967295",
+        "course-resistance-temperature-283206932"
+      ]
+    },
+    {
+      "family_id": "stopping-distance",
+      "slot": 10,
+      "skill_ids": [
+        "applied-isolate-variable",
+        "applied-units",
+        "applied-constraints",
+        "applied-plausibility"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-stopping-distance",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 135,
+      "candidate_answer_count": 23,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        274946335,
+        621694133,
+        868080645,
+        1149069586,
+        1364707621,
+        1656707270,
+        1996343078,
+        2160396200,
+        2441182206
+      ],
+      "answers": [
+        "36",
+        "75,6",
+        "93,6",
+        "97,2",
+        "54",
+        "115,2",
+        "108",
+        "46,8",
+        "82,8",
+        "100,8"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 6,
+      "candidate_model_count": 6,
+      "model_coverage": {
+        "deceleration": [
+          "10",
+          "5"
+        ],
+        "reaction_time": [
+          "1",
+          "2",
+          "3/2"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "deceleration": 2,
+        "reaction_time": 3
+      },
+      "practice_task_ids": [
+        "course-stopping-distance-0",
+        "course-stopping-distance-274946335",
+        "course-stopping-distance-621694133"
+      ]
+    },
+    {
+      "family_id": "catch-up-motion",
+      "slot": 11,
+      "skill_ids": [
+        "word-motion",
+        "word-equation-model"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-catch-up-motion",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 191,
+      "candidate_answer_count": 156,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        278199846,
+        667692944,
+        4294967295,
+        872064601,
+        1075314948,
+        1532668759,
+        1817461178,
+        1880383122,
+        2192663433
+      ],
+      "answers": [
+        "2",
+        "3,825",
+        "1,6",
+        "7,65",
+        "2,25",
+        "5,9",
+        "2,58",
+        "0,9",
+        "1,525",
+        "3,42"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 9,
+      "candidate_model_count": 9,
+      "model_coverage": {
+        "delay_minutes": [
+          "30",
+          "60",
+          "90"
+        ],
+        "speed_difference": [
+          "10",
+          "20",
+          "25"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "delay_minutes": 3,
+        "speed_difference": 3
+      },
+      "practice_task_ids": [
+        "course-catch-up-motion-0",
+        "course-catch-up-motion-278199846",
+        "course-catch-up-motion-667692944"
+      ]
+    },
+    {
+      "family_id": "river-speed-system",
+      "slot": 11,
+      "skill_ids": [
+        "word-motion",
+        "word-system-model"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-river-speed-system",
+      "candidate_seed_count": 526,
+      "candidate_condition_count": 344,
+      "candidate_answer_count": 4,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        399219038,
+        563914808,
+        822109304,
+        4294967295,
+        1081350630,
+        1377834341,
+        1613865506,
+        1924279715,
+        2157373750
+      ],
+      "answers": [
+        "2",
+        "3",
+        "5",
+        "4",
+        "2",
+        "2",
+        "2",
+        "3",
+        "5",
+        "4"
+      ],
+      "answer_count": 4,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 24,
+      "model_coverage": {
+        "current_speed": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "downstream_hours": [
+          "2",
+          "3",
+          "4"
+        ],
+        "upstream_hours": [
+          "3",
+          "4"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "current_speed": 4,
+        "downstream_hours": 3,
+        "upstream_hours": 2
+      },
+      "practice_task_ids": [
+        "course-river-speed-system-0",
+        "course-river-speed-system-399219038",
+        "course-river-speed-system-563914808"
+      ]
+    },
+    {
+      "family_id": "joint-pumps",
+      "slot": 11,
+      "skill_ids": [
+        "word-work-rate",
+        "word-equation-model"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-joint-pumps",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 131,
+      "candidate_answer_count": 90,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        269463983,
+        550689718,
+        1090506894,
+        815515110,
+        1407407895,
+        1629505228,
+        1887798989,
+        2224738894
+      ],
+      "answers": [
+        "2",
+        "144",
+        "27",
+        "36",
+        "90",
+        "136",
+        "225",
+        "150",
+        "176",
+        "12"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 5,
+      "candidate_model_count": 5,
+      "model_coverage": {
+        "individual_time_ratio": [
+          "1/2",
+          "1/3",
+          "2/3",
+          "3/4",
+          "3/5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "individual_time_ratio": 5
+      },
+      "practice_task_ids": [
+        "course-joint-pumps-0",
+        "course-joint-pumps-4294967295",
+        "course-joint-pumps-269463983"
+      ]
+    },
+    {
+      "family_id": "production-deadline",
+      "slot": 11,
+      "skill_ids": [
+        "word-work-rate",
+        "word-equation-model"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-production-deadline",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 280,
+      "candidate_answer_count": 72,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        273156351,
+        541042953,
+        925288101,
+        4294967295,
+        1083103471,
+        1354415052,
+        1610728005,
+        1884067109,
+        2160113838
+      ],
+      "answers": [
+        "16",
+        "28",
+        "63",
+        "85",
+        "95",
+        "55",
+        "112",
+        "51",
+        "52",
+        "120"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 16,
+      "model_coverage": {
+        "increase_per_saved_day": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ],
+        "saved_days": [
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "increase_per_saved_day": 4,
+        "saved_days": 4
+      },
+      "practice_task_ids": [
+        "course-production-deadline-0",
+        "course-production-deadline-273156351",
+        "course-production-deadline-541042953"
+      ]
+    },
+    {
+      "family_id": "solution-dilution",
+      "slot": 11,
+      "skill_ids": [
+        "word-mixtures",
+        "word-equation-model"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-solution-dilution",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 196,
+      "candidate_answer_count": 56,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        270926151,
+        629757659,
+        4294967295,
+        813607427,
+        1100019908,
+        1390952070,
+        1810880583,
+        2556424692,
+        1983284651
+      ],
+      "answers": [
+        "10",
+        "90",
+        "56",
+        "21",
+        "64",
+        "66",
+        "32",
+        "38",
+        "75",
+        "20"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 9,
+      "candidate_model_count": 9,
+      "model_coverage": {
+        "concentration_ratio": [
+          "2",
+          "3",
+          "4"
+        ],
+        "target_concentration": [
+          "10",
+          "15",
+          "5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "concentration_ratio": 3,
+        "target_concentration": 3
+      },
+      "practice_task_ids": [
+        "course-solution-dilution-0",
+        "course-solution-dilution-270926151",
+        "course-solution-dilution-629757659"
+      ]
+    },
+    {
+      "family_id": "alloy-balance",
+      "slot": 11,
+      "skill_ids": [
+        "word-mixtures",
+        "word-system-model"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-alloy-balance",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 458,
+      "candidate_answer_count": 69,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        289506304,
+        550199732,
+        1722243537,
+        1021754687,
+        4294967295,
+        1075822795,
+        1346030009,
+        1883568447,
+        2151526771
+      ],
+      "answers": [
+        "10",
+        "48",
+        "63",
+        "112",
+        "58",
+        "42",
+        "26",
+        "30",
+        "51",
+        "15"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 80,
+      "model_coverage": {
+        "high_concentration": [
+          "60",
+          "65",
+          "70",
+          "75",
+          "80"
+        ],
+        "low_concentration": [
+          "10",
+          "15",
+          "20",
+          "25"
+        ],
+        "relative_target": [
+          "1/5",
+          "2/5",
+          "3/5",
+          "4/5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "high_concentration": 5,
+        "low_concentration": 4,
+        "relative_target": 4
+      },
+      "practice_task_ids": [
+        "course-alloy-balance-0",
+        "course-alloy-balance-289506304",
+        "course-alloy-balance-550199732"
+      ]
+    },
+    {
+      "family_id": "line-reconstruction",
+      "slot": 12,
+      "skill_ids": [
+        "function-reconstruction",
+        "function-values",
+        "function-parameters"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-line-reconstruction",
+      "candidate_seed_count": 524,
+      "candidate_condition_count": 433,
+      "candidate_answer_count": 65,
+      "candidate_signs": [
+        -1,
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        445410222,
+        541891661,
+        4294967295,
+        849810293,
+        1082473527,
+        1393093234,
+        1638311301,
+        1889666900,
+        2169911523
+      ],
+      "answers": [
+        "-7",
+        "0",
+        "11",
+        "-2",
+        "13",
+        "14",
+        "-30",
+        "-22",
+        "-15",
+        "17"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        0,
+        1
+      ],
+      "normalized_model_count": 8,
+      "candidate_model_count": 8,
+      "model_coverage": {
+        "branch.slope_sign": [
+          "-1",
+          "1"
+        ],
+        "slope": [
+          "-1/2",
+          "-3/2",
+          "-5/2",
+          "-7/2",
+          "1/2",
+          "3/2",
+          "5/2",
+          "7/2"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "branch.slope_sign": 2,
+        "slope": 8
+      },
+      "practice_task_ids": [
+        "course-line-reconstruction-0",
+        "course-line-reconstruction-445410222",
+        "course-line-reconstruction-541891661"
+      ]
+    },
+    {
+      "family_id": "parabola-vertex",
+      "slot": 12,
+      "skill_ids": [
+        "function-reconstruction",
+        "function-values",
+        "function-parameters"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-parabola-vertex",
+      "candidate_seed_count": 524,
+      "candidate_condition_count": 136,
+      "candidate_answer_count": 77,
+      "candidate_signs": [
+        -1,
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        680748157,
+        1248388385,
+        4294967295,
+        275354419,
+        869754563,
+        1453213247,
+        1830457373,
+        1938304905,
+        2186173634
+      ],
+      "answers": [
+        "-2",
+        "2",
+        "0",
+        "27",
+        "-32",
+        "25",
+        "-14",
+        "-34",
+        "-22",
+        "-25"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        0,
+        1
+      ],
+      "normalized_model_count": 6,
+      "candidate_model_count": 6,
+      "model_coverage": {
+        "branch.opening": [
+          "-1",
+          "1"
+        ],
+        "curvature": [
+          "-1",
+          "-2",
+          "-3",
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "branch.opening": 2,
+        "curvature": 6
+      },
+      "practice_task_ids": [
+        "course-parabola-vertex-0",
+        "course-parabola-vertex-680748157",
+        "course-parabola-vertex-1248388385"
+      ]
+    },
+    {
+      "family_id": "reciprocal-parameter",
+      "slot": 12,
+      "skill_ids": [
+        "function-reconstruction",
+        "function-parameters"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-reciprocal-parameter",
+      "candidate_seed_count": 525,
+      "candidate_condition_count": 200,
+      "candidate_answer_count": 129,
+      "candidate_signs": [
+        -1,
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        273029196,
+        643382622,
+        894363891,
+        1076171644,
+        1346581476,
+        1650100326,
+        1952787082,
+        2171915026
+      ],
+      "answers": [
+        "1",
+        "-48",
+        "75",
+        "-36",
+        "-28",
+        "24",
+        "17",
+        "33",
+        "-10",
+        "-12"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        1
+      ],
+      "normalized_model_count": 5,
+      "candidate_model_count": 5,
+      "model_coverage": {
+        "sample_abscissa": [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "sample_abscissa": 5
+      },
+      "practice_task_ids": [
+        "course-reciprocal-parameter-0",
+        "course-reciprocal-parameter-4294967295",
+        "course-reciprocal-parameter-273029196"
+      ]
+    },
+    {
+      "family_id": "exponential-data",
+      "slot": 12,
+      "skill_ids": [
+        "function-reconstruction",
+        "function-values",
+        "function-parameters"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-exponential-data",
+      "candidate_seed_count": 524,
+      "candidate_condition_count": 92,
+      "candidate_answer_count": 90,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        373761307,
+        548943977,
+        817760283,
+        4294967295,
+        1075251467,
+        1404428049,
+        1611143357,
+        1919986705,
+        2305432091
+      ],
+      "answers": [
+        "16",
+        "2",
+        "324",
+        "1472",
+        "104",
+        "2,5",
+        "108",
+        "0,75",
+        "1344",
+        "594"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 4,
+      "candidate_model_count": 4,
+      "model_coverage": {
+        "base": [
+          "1/2",
+          "2",
+          "3",
+          "4"
+        ],
+        "branch.growth": [
+          "-1",
+          "1"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "base": 4,
+        "branch.growth": 2
+      },
+      "practice_task_ids": [
+        "course-exponential-data-0",
+        "course-exponential-data-373761307",
+        "course-exponential-data-548943977"
+      ]
+    },
+    {
+      "family_id": "line-intersection",
+      "slot": 12,
+      "skill_ids": [
+        "function-reconstruction",
+        "function-intersections"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-line-intersection",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 440,
+      "candidate_answer_count": 23,
+      "candidate_signs": [
+        -1,
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        282008033,
+        732987856,
+        835543863,
+        4294967295,
+        1080450782,
+        1400768948,
+        1642150950,
+        2073562151,
+        2149488880
+      ],
+      "answers": [
+        "-5",
+        "14",
+        "0",
+        "-4",
+        "6",
+        "17",
+        "12",
+        "4",
+        "-2",
+        "1"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        0,
+        1
+      ],
+      "normalized_model_count": 9,
+      "candidate_model_count": 9,
+      "model_coverage": {
+        "first_slope": [
+          "1",
+          "2",
+          "3"
+        ],
+        "second_slope": [
+          "-1",
+          "-2",
+          "-3"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "first_slope": 3,
+        "second_slope": 3
+      },
+      "practice_task_ids": [
+        "course-line-intersection-0",
+        "course-line-intersection-282008033",
+        "course-line-intersection-732987856"
+      ]
+    },
+    {
+      "family_id": "polyline-maximum",
+      "slot": 12,
+      "skill_ids": [
+        "function-values",
+        "function-graph-properties"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-polyline-maximum",
+      "candidate_seed_count": 525,
+      "candidate_condition_count": 275,
+      "candidate_answer_count": 26,
+      "candidate_signs": [
+        -1,
+        0,
+        1
+      ],
+      "seeds": [
+        0,
+        415922768,
+        591205068,
+        939730496,
+        1092205998,
+        4294967295,
+        1353217021,
+        1671555087,
+        1936459916,
+        2147568761
+      ],
+      "answers": [
+        "-5",
+        "11",
+        "0",
+        "13",
+        "3",
+        "8",
+        "12",
+        "-2",
+        "5",
+        "16"
+      ],
+      "answer_count": 10,
+      "signs": [
+        -1,
+        0,
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 16,
+      "model_coverage": {
+        "branch.maximum_location": [
+          "right",
+          "tie",
+          "vertex"
+        ],
+        "last_rise": [
+          "11",
+          "14",
+          "17",
+          "8"
+        ],
+        "peak_rise": [
+          "5",
+          "6",
+          "7",
+          "8"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "branch.maximum_location": 3,
+        "last_rise": 4,
+        "peak_rise": 4
+      },
+      "practice_task_ids": [
+        "course-polyline-maximum-0",
+        "course-polyline-maximum-415922768",
+        "course-polyline-maximum-591205068"
+      ]
+    },
+    {
+      "family_id": "successive-percentages",
+      "slot": 13,
+      "skill_ids": [
+        "finance-percentages",
+        "finance-period-changes"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-successive-percentages",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 329,
+      "candidate_answer_count": 272,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        283236205,
+        564400955,
+        817553165,
+        1098057618,
+        1351466515,
+        1610700923,
+        1884259510,
+        2182625197
+      ],
+      "answers": [
+        "990",
+        "2231,25",
+        "2160",
+        "2576",
+        "2912",
+        "2024",
+        "2600",
+        "2821",
+        "2277",
+        "2184"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 25,
+      "model_coverage": {
+        "discount_percent": [
+          "10",
+          "15",
+          "20",
+          "25",
+          "30"
+        ],
+        "increase_percent": [
+          "10",
+          "15",
+          "20",
+          "25",
+          "30"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "discount_percent": 5,
+        "increase_percent": 5
+      },
+      "practice_task_ids": [
+        "course-successive-percentages-0",
+        "course-successive-percentages-4294967295",
+        "course-successive-percentages-283236205"
+      ]
+    },
+    {
+      "family_id": "capitalized-deposit",
+      "slot": 13,
+      "skill_ids": [
+        "finance-percentages",
+        "finance-period-changes",
+        "finance-deposits"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-capitalized-deposit",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 291,
+      "candidate_answer_count": 289,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        268568802,
+        4294967295,
+        552533854,
+        820196847,
+        1076894213,
+        1344097762,
+        1753399957,
+        1957268079,
+        2162561849
+      ],
+      "answers": [
+        "108160",
+        "273526,2",
+        "235956",
+        "146410",
+        "271956,09",
+        "277136,64",
+        "182640,64",
+        "312558,75",
+        "159255,59",
+        "181500"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 18,
+      "model_coverage": {
+        "periods": [
+          "2",
+          "3"
+        ],
+        "rate_percent": [
+          "10",
+          "11",
+          "12",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "periods": 2,
+        "rate_percent": 9
+      },
+      "practice_task_ids": [
+        "course-capitalized-deposit-0",
+        "course-capitalized-deposit-268568802",
+        "course-capitalized-deposit-4294967295"
+      ]
+    },
+    {
+      "family_id": "paid-interest-deposit",
+      "slot": 13,
+      "skill_ids": [
+        "finance-percentages",
+        "finance-period-changes",
+        "finance-deposits",
+        "finance-payments"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-paid-interest-deposit",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 352,
+      "candidate_answer_count": 196,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        294258229,
+        549998296,
+        871139043,
+        1100999779,
+        1353210077,
+        1621453322,
+        1903716899,
+        2155397207
+      ],
+      "answers": [
+        "800",
+        "3780",
+        "3080",
+        "5130",
+        "3450",
+        "5760",
+        "5400",
+        "9680",
+        "11520",
+        "5280"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 27,
+      "model_coverage": {
+        "periods": [
+          "4",
+          "6",
+          "8"
+        ],
+        "rate_percent": [
+          "10",
+          "11",
+          "12",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "periods": 3,
+        "rate_percent": 9
+      },
+      "practice_task_ids": [
+        "course-paid-interest-deposit-0",
+        "course-paid-interest-deposit-4294967295",
+        "course-paid-interest-deposit-294258229"
+      ]
+    },
+    {
+      "family_id": "equal-principal-credit",
+      "slot": 13,
+      "skill_ids": [
+        "finance-percentages",
+        "finance-period-changes",
+        "finance-credit",
+        "finance-payments"
+      ],
+      "supports_runtime": true,
+      "lesson_id": "course-equal-principal-credit",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 447,
+      "candidate_answer_count": 420,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        273387781,
+        544509322,
+        808352476,
+        1201672148,
+        1351286485,
+        1626427478,
+        1897768221,
+        2188221457
+      ],
+      "answers": [
+        "33000",
+        "93775",
+        "141440",
+        "148960",
+        "157950",
+        "56350",
+        "49410",
+        "85200",
+        "161880",
+        "64400"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 10,
+      "candidate_model_count": 66,
+      "model_coverage": {
+        "periods": [
+          "3",
+          "4",
+          "5",
+          "6",
+          "7",
+          "8"
+        ],
+        "rate_percent": [
+          "10",
+          "11",
+          "12",
+          "13",
+          "14",
+          "5",
+          "6",
+          "7",
+          "8",
+          "9"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "periods": 6,
+        "rate_percent": 11
+      },
+      "practice_task_ids": [
+        "course-equal-principal-credit-0",
+        "course-equal-principal-credit-4294967295",
+        "course-equal-principal-credit-273387781"
+      ]
+    },
+    {
+      "family_id": "equal-payment-credit",
+      "slot": 13,
+      "skill_ids": [
+        "finance-period-changes",
+        "finance-credit",
+        "finance-payments"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-equal-payment-credit",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 91,
+      "candidate_answer_count": 91,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        275106428,
+        540231898,
+        808422083,
+        4294967295,
+        1092586796,
+        1417868718,
+        1637846858,
+        1887865626,
+        2175831085
+      ],
+      "answers": [
+        "22050",
+        "25410",
+        "41760",
+        "33062,5",
+        "34177,5",
+        "44770",
+        "26450",
+        "46305",
+        "31740",
+        "46080"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 4,
+      "candidate_model_count": 4,
+      "model_coverage": {
+        "periods": [
+          "2"
+        ],
+        "rate_percent": [
+          "10",
+          "15",
+          "20",
+          "5"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "periods": 1,
+        "rate_percent": 4
+      },
+      "practice_task_ids": [
+        "course-equal-payment-credit-0",
+        "course-equal-payment-credit-275106428",
+        "course-equal-payment-credit-540231898"
+      ]
+    },
+    {
+      "family_id": "family-budget",
+      "slot": 13,
+      "skill_ids": [
+        "finance-percentages",
+        "finance-personal-family-budget"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-family-budget",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 500,
+      "candidate_answer_count": 308,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        271535247,
+        546807355,
+        4294967295,
+        808307606,
+        1074644276,
+        1347051356,
+        1614274358,
+        1880874281,
+        2155851007
+      ],
+      "answers": [
+        "21000",
+        "23450",
+        "27700",
+        "28150",
+        "30100",
+        "18150",
+        "19050",
+        "31750",
+        "28250",
+        "22550"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 3,
+      "candidate_model_count": 3,
+      "model_coverage": {
+        "reserve_percent": [
+          "10",
+          "15",
+          "20"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "reserve_percent": 3
+      },
+      "practice_task_ids": [
+        "course-family-budget-0",
+        "course-family-budget-271535247",
+        "course-family-budget-546807355"
+      ]
+    },
+    {
+      "family_id": "tariff-threshold",
+      "slot": 13,
+      "skill_ids": [
+        "finance-other-models",
+        "finance-personal-family-budget",
+        "finance-payments"
+      ],
+      "supports_runtime": false,
+      "lesson_id": "course-tariff-threshold",
+      "candidate_seed_count": 523,
+      "candidate_condition_count": 229,
+      "candidate_answer_count": 23,
+      "candidate_signs": [
+        1
+      ],
+      "seeds": [
+        0,
+        4294967295,
+        278043678,
+        557774574,
+        808156825,
+        1080005805,
+        1371888766,
+        1630028903,
+        1941776964,
+        2187569867
+      ],
+      "answers": [
+        "101",
+        "156",
+        "166",
+        "151",
+        "131",
+        "116",
+        "176",
+        "201",
+        "146",
+        "141"
+      ],
+      "answer_count": 10,
+      "signs": [
+        1
+      ],
+      "normalized_model_count": 3,
+      "candidate_model_count": 3,
+      "model_coverage": {
+        "unit_price_difference": [
+          "1",
+          "2",
+          "3"
+        ]
+      },
+      "candidate_model_value_counts": {
+        "unit_price_difference": 3
+      },
+      "practice_task_ids": [
+        "course-tariff-threshold-0",
+        "course-tariff-threshold-4294967295",
+        "course-tariff-threshold-278043678"
+      ]
+    }
+  ]
+}

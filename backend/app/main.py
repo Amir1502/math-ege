@@ -1,20 +1,30 @@
 """FastAPI app factory and the uvicorn entry point ``app.main:app``."""
 
+import asyncio
 import logging
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from datetime import datetime
 
-from fastapi import FastAPI, Request
+from fastapi import Depends, FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.exceptions import HTTPException
 from starlette.responses import JSONResponse
 
-from app.api import router
+from app.accounts.api import router as accounts_router
+from app.accounts.service import AccountService
+from app.api import require_matching_identity, router
+from app.assessments.api import router as assessments_router
+from app.assessments.service import AssessmentService
+from app.background import DeadlineWorker
 from app.config import Settings
 from app.database import Database
+from app.editor.api import router as editor_router
+from app.editor.service import EditorService
 from app.errors import ApiError
+from app.learning.api import router as learning_router
+from app.operations.api import router as operations_router
 from app.security import RequestProtectionMiddleware
 from app.services import LearningService, utc_now
 
@@ -30,26 +40,46 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(application: FastAPI):
-        yield
-        database.dispose()
+        worker = DeadlineWorker(
+            application.state.assessments, application.state.operation_health, clock=clock,
+        )
+        application.state.deadline_worker = worker
+        await worker.reconcile()
+        task = asyncio.create_task(worker.run(), name="assessment-deadlines")
+        try:
+            yield
+        finally:
+            worker.stop()
+            try:
+                await asyncio.shield(task)
+            except asyncio.CancelledError:
+                await task
+                raise
+            finally:
+                database.dispose()
 
     application = FastAPI(
-        title="ЕГЭ Профиль 2027 — учебное ядро",
-        version="0.1.0",
+        title="ЕГЭ Профиль 2027",
+        version="0.2.0",
         description=(
-            "Первый этап: только гостевая практика, демонстрационные уроки и история. "
-            "Это не полный вариант ЕГЭ и не облачный аккаунт. Числа проверяются точно, "
-            "без неявного округления. Для изменяющих запросов нужны разрешённый Origin "
-            "и X-Requested-With: math-ege. История хранится на сервере; доступна только "
-            f"с HttpOnly cookie текущего браузера в течение {config.guest_access_days} дней "
-            "с создания гостя. Очистка cookie лишает доступа. Автоматическое удаление "
-            "серверных записей и облачное объединение устройств на этом этапе не реализованы."
+            "Практика, диагностика и учебный пробник первой части. Не полный вариант ЕГЭ "
+            "и не прогноз тестового балла. Числа проверяются точно, без неявного округления. "
+            "Для изменяющих запросов нужны разрешённый Origin и X-Requested-With: math-ege. "
+            "История защищена HttpOnly cookie; аккаунты включаются только после настройки "
+            "почты и политики обработки данных. Демоматериалы не прошли независимую "
+            "методическую приёмку."
         ),
         lifespan=lifespan,
+        dependencies=[Depends(require_matching_identity)],
     )
     application.state.settings = config
     application.state.database = database
     application.state.service = LearningService(database, config, clock)
+    application.state.accounts = AccountService(application.state.service)
+    application.state.assessments = AssessmentService(application.state.service)
+    application.state.learning = application.state.service.extras
+    application.state.editor = EditorService(application.state.service)
+    application.state.operation_health = application.state.service.operation_health
     application.add_middleware(RequestProtectionMiddleware, settings=config)
 
     @application.exception_handler(ApiError)
@@ -93,6 +123,11 @@ def create_app(
         )
 
     application.include_router(router)
+    application.include_router(accounts_router)
+    application.include_router(assessments_router)
+    application.include_router(learning_router)
+    application.include_router(editor_router)
+    application.include_router(operations_router)
     return application
 
 

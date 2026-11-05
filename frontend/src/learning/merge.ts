@@ -3,6 +3,7 @@ import { createRecord, type SessionRecord } from './model';
 
 /** Merge server facts without replacing a locally edited answer or the local navigation position. */
 export function mergeSession(local: SessionRecord, remote: LearningSession): SessionRecord {
+  if (remote.status === 'active' && (local.session.status === 'completed' || remote.draft_revision < local.session.draft_revision)) return local;
   const incoming = createRecord(remote);
   for (const [id, draft] of Object.entries(local.drafts)) {
     if (!incoming.drafts[id]) continue;

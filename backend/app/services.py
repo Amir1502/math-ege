@@ -14,39 +14,50 @@ from collections.abc import Callable, Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
-from typing import Any
+from functools import cached_property
+from typing import TYPE_CHECKING, Any
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
+from app.accounts.models import AccessSession
+from app.accounts.principals import owner_ids, resolve_guest
 from app.checker import AnswerFormatError, check_answer, parse_answer
 from app.config import Settings
-from app.content import ContentBundle, ContentError, load_content
+from app.content import ContentBundle, ContentError
 from app.database import Database
+from app.editor.repository import lock_catalog
+from app.eligibility import prior_numeric_ids
 from app.errors import ApiError, not_found
+from app.instances import aliases_for_task
 from app.models import (
     AttemptRecord,
     Guest,
     IdempotencyRecord,
     LearningSessionRecord,
-    SeenTask,
 )
+from app.operations.health import OperationHealth
+from app.practice import mark_seen, select_tasks
 from app.presentation import attempt_view, session_view, summary_view
 from app.schemas import (
     AttemptRequest,
     CreateSessionRequest,
     DraftRequest,
     DraftRevision,
-    Export,
     Hint,
     HintRequest,
+    IdentityResponse,
     LearningSession,
     Progress,
     Solution,
     SolutionRequest,
 )
+
+if TYPE_CHECKING:
+    from app.history import HistoryExport
+    from app.learning.service import LearningExtrasService
 
 _TOKEN = re.compile(r"[A-Za-z0-9_-]{43}\Z")
 _UUID = re.compile(r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}\Z")
@@ -79,6 +90,12 @@ class StoredResponse:
     content: str
 
 
+@dataclass(slots=True)
+class SaveObservation:
+    attempted: bool = False
+    success: bool = False
+
+
 class LearningService:
     def __init__(
         self, database: Database, settings: Settings, clock: Callable[[], datetime] = utc_now
@@ -86,41 +103,81 @@ class LearningService:
         self.database = database
         self.settings = settings
         self.clock = clock
+        self.operation_health = OperationHealth(now=clock())
 
-    def content(self) -> ContentBundle:
+    @contextmanager
+    def observe_save(self, name: str) -> Iterator[SaveObservation]:
+        observation = SaveObservation()
         try:
-            return load_content(self.settings.content_dir)
+            yield observation
+        except Exception:
+            if observation.attempted:
+                self.operation_health.record_event(name, success=False)
+            raise
+        else:
+            if observation.attempted:
+                self.operation_health.record_event(name, success=observation.success)
+
+    def reauthorize(
+        self, db: Session, token: str | None, *, write: bool = True,
+    ) -> Guest:
+        return resolve_guest(db, token, self.clock(), write=write, clock=self.clock)
+
+    def locked_content(self, db: Session, token: str | None) -> ContentBundle:
+        lock_catalog(db)
+        self.reauthorize(db, token)
+        return self.content(db)
+
+    @staticmethod
+    def owner_ids(db: Session, guest: Guest) -> list[str]:
+        return owner_ids(db, guest)
+
+    def identity(self, token: str | None) -> IdentityResponse:
+        with self._guest_transaction(token) as (db, guest):
+            return IdentityResponse(
+                id=guest.id,
+                kind="guest" if guest.token_digest == token_digest(token) else "account",
+                owner_ids=self.owner_ids(db, guest),
+            )
+
+    @cached_property
+    def extras(self) -> "LearningExtrasService":
+        from app.learning.service import LearningExtrasService
+
+        return LearningExtrasService(self)
+
+    def content(self, db: Session | None = None) -> ContentBundle:
+        from app.editor.repository import combined_content
+
+        try:
+            if db is not None:
+                return combined_content(db, self.settings)
+            with self.database.transaction() as transaction:
+                return combined_content(transaction, self.settings)
         except ContentError as exc:
             raise ApiError(503, "content_unavailable", "Учебный пакет сейчас недоступен.") from exc
 
     @contextmanager
     def _guest_transaction(self, token: str | None, *, write: bool = False) -> Iterator[tuple]:
-        digest = token_digest(token)
-        if digest is None:
-            raise ApiError(401, "guest_required", "Сначала начните гостевой сеанс.")
         with self.database.transaction(write=write) as db:
-            statement = select(Guest).where(Guest.token_digest == digest)
-            if write:
-                statement = statement.with_for_update()
-            guest = db.scalar(statement)
-            if guest is None or guest.expires_at <= self.clock():
-                raise ApiError(401, "guest_required", "Гостевой сеанс отсутствует или истёк.")
-            if write:
-                guest.last_seen_at = self.clock()
+            guest = resolve_guest(db, token, self.clock(), write=write, clock=self.clock)
             yield db, guest
 
     def guest(self, token: str | None) -> tuple[Guest, str, int]:
-        now = self.clock()
         with self.database.transaction(write=True) as db:
-            digest = token_digest(token)
-            existing = (
-                db.scalar(select(Guest).where(Guest.token_digest == digest).with_for_update())
-                if digest is not None
-                else None
-            )
-            if existing is not None and existing.expires_at > now:
-                existing.last_seen_at = now
-                return existing, token, max(1, int((existing.expires_at - now).total_seconds()))
+            try:
+                existing = resolve_guest(db, token, self.clock(), write=True, clock=self.clock)
+            except ApiError as exc:
+                if exc.status_code != 401:
+                    raise
+            else:
+                now = self.clock()
+                access = db.scalar(select(AccessSession).where(
+                    AccessSession.token_digest == token_digest(token),
+                ))
+                expires_at = access.expires_at if access else existing.expires_at
+                return existing, token, max(1, int((expires_at - now).total_seconds()))
+            now = self.clock()
             new_token = secrets.token_urlsafe(32)
             lifetime = self.settings.guest_access_days * 86_400
             created = Guest(
@@ -139,7 +196,7 @@ class LearningService:
         session = db.scalar(
             select(LearningSessionRecord).where(
                 LearningSessionRecord.id == session_id,
-                LearningSessionRecord.guest_id == guest.id,
+                LearningSessionRecord.guest_id.in_(owner_ids(db, guest)),
             )
         )
         if session is None:
@@ -191,28 +248,40 @@ class LearningService:
     ) -> StoredResponse:
         normalized_key = request_uuid(key)
         canonical = json.dumps(
-            {"operation": operation, "body": body.model_dump(mode="json")},
+            {"operation": operation, "body": body.model_dump(mode="json", exclude_unset=True)},
             ensure_ascii=False,
             allow_nan=False,
             sort_keys=True,
             separators=(",", ":"),
         )
         request_hash = hashlib.sha256(canonical.encode("utf-8")).hexdigest()
-        prior = db.scalar(
+        previous = list(db.scalars(
             select(IdempotencyRecord).where(
-                IdempotencyRecord.guest_id == guest.id,
+                IdempotencyRecord.guest_id.in_(self.owner_ids(db, guest)),
                 IdempotencyRecord.request_key == normalized_key,
-            )
-        )
-        if prior is not None:
-            if prior.request_hash != request_hash:
+            ).order_by(IdempotencyRecord.created_at, IdempotencyRecord.id)
+        ))
+        if previous:
+            matches = [record for record in previous if record.request_hash == request_hash
+                       and record.operation == operation]
+            if not matches:
                 raise ApiError(
                     409, "idempotency_conflict", "Этот ключ уже использован с другим телом запроса."
                 )
+            if len({(record.status_code, record.response_json) for record in matches}) > 1:
+                raise ApiError(
+                    409, "idempotency_ambiguous",
+                    "В объединённой истории совпали ключи разных запросов. "
+                    "Откройте сохранённое занятие из истории.",
+                )
+            prior = matches[0]
             return StoredResponse(prior.status_code, prior.response_json)
         try:
-            output = StoredResponse(200, json_text(action()))
+            with db.begin_nested():
+                output = StoredResponse(200, json_text(action()))
         except ApiError as exc:
+            if exc.status_code == 401:
+                raise
             output = StoredResponse(exc.status_code, json_text(exc.response()))
         db.add(
             IdempotencyRecord(
@@ -230,54 +299,11 @@ class LearningService:
         with self._guest_transaction(token, write=True) as (db, guest):
 
             def create() -> LearningSession:
-                bundle = self.content()
-                valid_slots = {slot.number for slot in bundle.profile.slots}
-                if not set(request.slots) <= valid_slots:
-                    raise ApiError(422, "invalid_slots", "Позиция отсутствует в текущем профиле.")
-                if not self.settings.allow_demo_content:
-                    raise ApiError(
-                        503, "demo_content_disabled",
-                        "Демонстрационный банк выключен. Нужна настройка ALLOW_DEMO_CONTENT=true.",
-                    )
+                bundle = self.locked_content(db, token)
+                selected, notice = select_tasks(
+                    self, db, guest, request, request_uuid(key), bundle,
+                )
                 now = self.clock()
-                seen_records = {
-                    record.task_id: record
-                    for record in db.scalars(select(SeenTask).where(SeenTask.guest_id == guest.id))
-                }
-                cutoff = now - timedelta(days=30)
-                excluded = {
-                    task_id for task_id, seen in seen_records.items() if seen.last_seen_at > cutoff
-                }
-                groups = {
-                    slot: [
-                        task for task in bundle.available_tasks(allow_demo_content=True)
-                        if task.slot == slot and task.id not in excluded
-                    ]
-                    for slot in request.slots
-                }
-                for group in groups.values():
-                    group.sort(
-                        key=lambda task: hashlib.sha256(
-                            f"{guest.id}:{key}:{task.id}".encode()
-                        ).digest()
-                    )
-                selected = []
-                while len(selected) < request.length and any(groups.values()):
-                    for slot in request.slots:
-                        if groups[slot] and len(selected) < request.length:
-                            selected.append(groups[slot].pop())
-                if not selected:
-                    raise ApiError(
-                        409, "bank_exhausted",
-                        "Нет новых подходящих экземпляров: уже выданные за 30 дней исключены. "
-                        "Выберите другие позиции или дождитесь расширения банка.",
-                    )
-                notice = None
-                if len(selected) < request.length:
-                    notice = (
-                        f"В банке доступно {len(selected)} из {request.length} задач. "
-                        "Уже выданные за 30 дней экземпляры исключены; скрытых повторов нет."
-                    )
                 session = LearningSessionRecord(
                     id=str(uuid4()), guest_id=guest.id, profile_id=bundle.profile.id,
                     profile_revision=bundle.profile.revision,
@@ -285,24 +311,62 @@ class LearningService:
                     status="active", created_at=now, completed_at=None, current_index=0,
                     requested_length=request.length, notice=notice, draft_revision=0,
                     tasks_snapshot=[task.model_dump(mode="json") for task in selected],
+                    options_snapshot=request.model_dump(mode="json"),
                     drafts={}, help_state={}, active_seconds={}, summary_snapshot=None,
                 )
                 db.add(session)
-                for task in selected:
-                    if task.id in seen_records:
-                        seen_records[task.id].last_seen_at = now
-                    else:
-                        db.add(
-                            SeenTask(
-                                id=str(uuid4()), guest_id=guest.id, task_id=task.id,
-                                first_seen_at=now, last_seen_at=now,
-                                assistance_seen=False, reference_seen=False,
-                            )
-                        )
+                mark_seen(self, db, session.guest_id, selected)
                 db.flush()
                 return session_view(session, [])
 
             return self._idempotent(db, guest, key, "POST /sessions", request, create)
+
+    def extend(
+        self, token: str | None, session_id: str, body: BaseModel, key: str | None,
+    ) -> StoredResponse:
+        with self._guest_transaction(token, write=True) as (db, guest):
+            session = self._owned(db, guest, session_id)
+
+            def append() -> LearningSession:
+                self._active(session)
+                options = session.options_snapshot
+                if not options or not options.get("until_stopped"):
+                    raise ApiError(409, "fixed_length", "Эта серия имеет заданную длину.")
+                if len(session.tasks_snapshot) >= 1_000:
+                    raise ApiError(409, "session_limit", "Завершите это занятие и начните новое.")
+                attempts = self._attempts(db, session.id)
+                handled = {attempt.task_id for attempt in attempts}
+                if any(task["id"] not in handled for task in session.tasks_snapshot):
+                    raise ApiError(
+                        409, "unfinished_batch", "Ответьте или пропустите текущие задачи."
+                    )
+                bundle = self.locked_content(db, token)
+                if (bundle.profile.id, bundle.profile.revision) != (
+                    session.profile_id, session.profile_revision,
+                ):
+                    raise ApiError(
+                        409, "profile_changed",
+                        "Профиль обновлён. Завершите это занятие перед новым.",
+                    )
+                selected, notice = select_tasks(
+                    self, db, guest, CreateSessionRequest.model_validate(options),
+                    request_uuid(key), bundle,
+                    exclude=frozenset(task["id"] for task in session.tasks_snapshot),
+                    exclude_tasks=tuple(session.tasks_snapshot),
+                )
+                session.current_index = len(session.tasks_snapshot)
+                session.tasks_snapshot = [
+                    *session.tasks_snapshot, *(task.model_dump(mode="json") for task in selected)
+                ]
+                session.notice = notice
+                session.draft_revision += 1
+                mark_seen(self, db, session.guest_id, selected)
+                db.flush()
+                return session_view(session, attempts)
+
+            return self._idempotent(
+                db, guest, key, f"POST /sessions/{session.id}/extend", body, append,
+            )
 
     def get_session(self, token: str | None, session_id: str) -> LearningSession:
         with self._guest_transaction(token) as (db, guest):
@@ -310,7 +374,10 @@ class LearningService:
             return session_view(session, self._attempts(db, session.id))
 
     def draft(self, token: str | None, session_id: str, request: DraftRequest) -> DraftRevision:
-        with self._guest_transaction(token, write=True) as (db, guest):
+        with (
+            self.observe_save("draft_save") as observation,
+            self._guest_transaction(token, write=True) as (db, guest),
+        ):
             session = self._owned(db, guest, session_id)
             self._active(session)
             index, _ = self._task(session, request.task_id)
@@ -320,6 +387,7 @@ class LearningService:
                     409, "draft_conflict",
                     "Черновик уже изменён. Сохраните локальный ввод и обновите сессию."
                 )
+            observation.attempted = True
             cumulative = self._track_time(session, request.task_id, request.active_seconds)
             session.drafts = {
                 **session.drafts,
@@ -327,12 +395,16 @@ class LearningService:
             }
             session.current_index = index
             session.draft_revision += 1
+            observation.success = True
             return DraftRevision(draft_revision=session.draft_revision)
 
     def attempt(
         self, token: str | None, session_id: str, request: AttemptRequest, key: str | None
     ) -> StoredResponse:
-        with self._guest_transaction(token, write=True) as (db, guest):
+        with (
+            self.observe_save("attempt_save") as observation,
+            self._guest_transaction(token, write=True) as (db, guest),
+        ):
             session = self._owned(db, guest, session_id)
 
             def submit() -> BaseModel:
@@ -344,33 +416,34 @@ class LearningService:
                         422, "invalid_skip", "При пропуске ответ должен быть пустым.", "answer"
                     )
                 try:
-                    result = (
-                        None if request.skipped else check_answer(request.answer, task["answer"])
-                    )
+                    if request.skipped:
+                        result = None
+                    else:
+                        try:
+                            result = check_answer(request.answer, task["answer"])
+                        except Exception:
+                            self.operation_health.record_event("answer_check", success=False)
+                            raise
+                        self.operation_health.record_event("answer_check", success=True)
                 except AnswerFormatError as exc:
                     raise ApiError(422, exc.code, str(exc), "answer") from exc
                 attempts = self._attempts(db, session.id)
                 previous = [attempt for attempt in attempts if attempt.task_id == request.task_id]
-                seen = db.scalar(
-                    select(SeenTask).where(
-                        SeenTask.guest_id == guest.id, SeenTask.task_id == task["id"]
-                    )
-                )
+                owners = self.owner_ids(db, guest)
+                aliases = aliases_for_task(db, owners, task)
+                seen = next((item for item in aliases.records
+                             if item.guest_id == session.guest_id and item.task_id == task["id"]),
+                            None)
                 if seen is None:
                     raise ApiError(
                         503, "state_unavailable", "Не удалось восстановить историю задачи."
                     )
-                assisted = seen.assistance_seen or seen.reference_seen
-                prior_numeric = db.scalar(
-                    select(AttemptRecord.id).where(
-                        AttemptRecord.guest_id == guest.id,
-                        AttemptRecord.task_id == request.task_id,
-                        AttemptRecord.skipped.is_(False),
-                    ).limit(1)
-                )
+                assisted = any(item.assistance_seen or item.reference_seen
+                               for item in aliases.records)
+                prior_numeric = bool(aliases.ids & prior_numeric_ids(db, owners))
                 cumulative = self._track_time(session, request.task_id, request.active_seconds)
                 record = AttemptRecord(
-                    id=str(uuid4()), guest_id=guest.id, session_id=session.id,
+                    id=str(uuid4()), guest_id=session.guest_id, session_id=session.id,
                     task_id=request.task_id, task_revision=task["revision"], sequence=len(attempts),
                     raw_answer=request.answer,
                     normalized_answer=result.normalized_answer if result else None,
@@ -378,13 +451,14 @@ class LearningService:
                     assisted=assisted, first_attempt=not previous,
                     independent=(
                         not request.skipped and not previous and not assisted
-                        and prior_numeric is None
+                        and not prior_numeric
                     ),
                     skipped=request.skipped, active_seconds=cumulative, created_at=self.clock(),
                     checker_revision="fraction-v1",
                     expected_answer=parse_answer(task["answer"], "exam").normalized_answer,
                     solution=task["solution"],
                 )
+                observation.attempted = True
                 db.add(record)
                 seen.reference_seen = True
                 handled = {attempt.task_id for attempt in [*attempts, record]}
@@ -396,9 +470,11 @@ class LearningService:
                 db.flush()
                 return attempt_view(record)
 
-            return self._idempotent(
+            response = self._idempotent(
                 db, guest, key, f"POST /sessions/{session.id}/attempts", request, submit
             )
+            observation.success = response.status_code == 200
+            return response
 
     def _help(
         self, token: str | None, session_id: str, task_id: str, level: int | None
@@ -419,15 +495,18 @@ class LearningService:
                     steps=task["solution"],
                 )
                 state = {**state, "solution": result.model_dump()}
-            seen = db.scalar(
-                select(SeenTask).where(SeenTask.guest_id == guest.id, SeenTask.task_id == task_id)
-            )
+            aliases = aliases_for_task(db, self.owner_ids(db, guest), task)
+            seen = next((item for item in aliases.records
+                         if item.guest_id == session.guest_id and item.task_id == task_id), None)
             if seen is None:
                 raise ApiError(503, "state_unavailable", "Не удалось восстановить историю задачи.")
             session.help_state = {**session.help_state, task_id: state}
             seen.assistance_seen = True
             if level is None:
                 seen.reference_seen = True
+            from app.learning.evidence import record_help
+
+            record_help(db, guest, session, task_id, self.clock(), level=level)
             return result
 
     def hint(self, token: str | None, session_id: str, request: HintRequest) -> Hint:
@@ -455,15 +534,16 @@ class LearningService:
             )
 
     def _history(self, db: Session, guest: Guest) -> tuple[list, list]:
+        owners = self.owner_ids(db, guest)
         sessions = list(
             db.scalars(
-                select(LearningSessionRecord).where(LearningSessionRecord.guest_id == guest.id)
+                select(LearningSessionRecord).where(LearningSessionRecord.guest_id.in_(owners))
                 .order_by(LearningSessionRecord.created_at.desc(), LearningSessionRecord.id.desc())
             )
         )
         attempts = list(
             db.scalars(
-                select(AttemptRecord).where(AttemptRecord.guest_id == guest.id)
+                select(AttemptRecord).where(AttemptRecord.guest_id.in_(owners))
                 .order_by(
                     AttemptRecord.created_at, AttemptRecord.session_id, AttemptRecord.sequence
                 )
@@ -472,34 +552,16 @@ class LearningService:
         return sessions, attempts
 
     def progress(self, token: str | None) -> Progress:
-        bundle = self.content()
         with self._guest_transaction(token) as (db, guest):
+            bundle = self.content(db)
+            self.reauthorize(db, token, write=False)
+            dashboard = self.extras.dashboard_for(db, guest, bundle)
             sessions, attempts = self._history(db, guest)
             snapshots = {
                 (session.id, task["id"]): task
                 for session in sessions for task in session.tasks_snapshot
             }
-            independent = [attempt for attempt in attempts if attempt.independent]
-            slots = []
-            for slot in bundle.profile.slots:
-                relevant = [
-                    attempt for attempt in independent
-                    if snapshots[(attempt.session_id, attempt.task_id)]["slot"] == slot.number
-                ]
-                latest = relevant[-5:]
-                status = "Нет данных" if not relevant else (
-                    "Закрепляю" if sum(attempt.correct for attempt in latest) >= 3 else "Изучаю"
-                )
-                covered = {
-                    skill for attempt in relevant if attempt.correct
-                    for skill in snapshots[(attempt.session_id, attempt.task_id)]["skill_ids"]
-                }
-                slots.append({
-                    "number": slot.number, "attempts": len(relevant),
-                    "correct": sum(attempt.correct for attempt in relevant), "status": status,
-                    "covered_skills": len(covered & {skill.id for skill in slot.skills}),
-                    "total_skills": len(slot.skills),
-                })
+            slots = [slot.model_dump(exclude={"skills", "title"}) for slot in dashboard.slots]
             by_session = {
                 session.id: [attempt for attempt in attempts if attempt.session_id == session.id]
                 for session in sessions
@@ -519,28 +581,27 @@ class LearningService:
             for mistake in mistakes:
                 mistake["task"] = public_task(mistake["task"])
             return Progress(
-                independent_total=len(independent),
-                independent_correct=sum(a.correct for a in independent),
-                assisted_total=sum(summary.assisted for summary in summaries.values()),
-                corrections_total=sum(summary.corrections for summary in summaries.values()),
-                skipped_total=sum(summary.skipped for summary in summaries.values()),
+                independent_total=dashboard.independent_total,
+                independent_correct=dashboard.independent_correct,
+                assisted_total=dashboard.assisted_total,
+                corrections_total=dashboard.corrections_total,
+                skipped_total=dashboard.skipped_total,
+                algorithm_version=dashboard.algorithm_version,
+                notice=dashboard.notice, excluded_total=dashboard.excluded_total,
                 active_session_id=next((s.id for s in sessions if s.status == "active"), None),
                 slots=slots,
                 recent_sessions=[
                     {"id": session.id, "status": session.status,
                      "created_at": session.created_at.isoformat(),
+                     "profile": session.profile_snapshot,
                      "summary": summaries[session.id]}
                     for session in sessions[:20]
                 ],
                 mistakes=mistakes,
             )
 
-    def export(self, token: str | None) -> Export:
-        bundle = self.content()
+    def export(self, token: str | None) -> "HistoryExport":
+        from app.history import export_history
+
         with self._guest_transaction(token) as (db, guest):
-            sessions, attempts = self._history(db, guest)
-            return Export(
-                version="1", exported_at=self.clock().isoformat(), profile_id=bundle.profile.id,
-                sessions=[session_view(session, [a for a in attempts if a.session_id == session.id])
-                          for session in sessions],
-            )
+            return export_history(self, db, guest, self.clock())

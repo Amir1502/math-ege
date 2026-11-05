@@ -8,7 +8,7 @@ import { RichText } from './math';
 export function TaskHelp({ task, controller, state }: { task: PublicTask; controller: SessionController; state: SessionSnapshot }) {
   const record = state.record!;
   const help = record.session.help[task.id];
-  const disabled = Boolean(state.busy || record.pending_attempt || record.pending_finish || state.accessDenied);
+  const disabled = Boolean(state.busy || record.pending_attempt || record.pending_finish || record.extension_key || state.accessDenied);
   const nextLevel = (help?.hints.length ?? 0) + 1;
   const titles = ['Направление мысли', 'Формула или модель', 'Следующий шаг'];
   return <aside className="task-help" aria-labelledby="help-title"><h2 id="help-title"><Lightbulb aria-hidden="true" />Если нужна опора</h2><p className="muted">Помощь до первого ответа отметится в результате. Это часть учёбы, не штраф.</p>

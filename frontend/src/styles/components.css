@@ -99,3 +99,11 @@
   .segmented label { padding-inline: var(--space-2); }
   .slot-option { gap: var(--space-2); }
 }
+.task-figure { margin: var(--space-6) 0; }
+.figure-scroll { max-width: 100%; overflow: auto; border: var(--line) solid var(--hairline); border-radius: var(--r-sm); }
+.figure-scroll svg { display: block; width: 100%; min-width: 100%; max-width: var(--figure-width); height: auto; }
+.figure-scroll svg.is-enlarged { width: 200%; min-width: var(--figure-width); max-width: none; }
+.figure-axes { stroke: var(--hairline-strong); stroke-width: var(--line); }
+.figure-shapes { fill: none; stroke: var(--ink); stroke-width: var(--line-strong); stroke-linejoin: round; }
+.figure-labels { fill: var(--ink); font: var(--text-base) var(--font-body); text-anchor: middle; dominant-baseline: middle; }
+.task-figure figcaption { color: var(--ink-muted); margin-block: var(--space-3); }

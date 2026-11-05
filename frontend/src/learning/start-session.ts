@@ -1,6 +1,7 @@
 import { api } from '../api/client';
 import type { StartBody } from '../api/types';
-import { storage } from '../storage/database';
+import { scopedStorage } from '../storage/database';
+import { identity } from '../storage/identity';
 import { createRecord } from './model';
 
 let inFlight: Promise<string> | null = null;
@@ -9,12 +10,17 @@ let inFlight: Promise<string> | null = null;
 export function startSession(body: StartBody): Promise<string> {
   if (inFlight) return inFlight;
   inFlight = (async () => {
+    if (identity.getSnapshot().changing) throw new Error('Дождитесь смены доступа.');
+    await api.guest();
+    const owner = await identity.refresh();
+    if (!owner) throw new Error('Не удалось подтвердить доступ. Повторите начало занятия.');
+    const storage = scopedStorage(owner.id);
     let pending = await storage.pendingStart();
     if (!pending) {
       pending = { key: crypto.randomUUID(), body };
       await storage.savePendingStart(pending);
     }
-    await api.guest();
+    if (identity.current() !== owner.id || identity.getSnapshot().changing) throw new Error('Доступ изменился. Начните занятие снова.');
     const session = await api.start(pending.body, pending.key);
     await storage.saveSession(createRecord(session));
     await storage.setActive(session.id);

@@ -18,13 +18,15 @@ export type SessionRecord = {
   pending_attempt: PendingAttempt | null;
   finish_key: string | null;
   pending_finish: boolean;
+  extension_key?: string | null;
+  extension_start?: number;
   saved_at: number;
 };
 
 export type SessionSnapshot = {
   record: SessionRecord | null;
   loading: boolean;
-  busy: 'attempt' | 'help' | 'finish' | null;
+  busy: 'attempt' | 'help' | 'finish' | 'extend' | null;
   syncing: boolean;
   conflict: boolean;
   error: string | null;

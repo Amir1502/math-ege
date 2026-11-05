@@ -10,6 +10,8 @@
 | Alembic | Миграции | MIT |
 | psycopg | PostgreSQL-драйвер | LGPL-3.0-or-later; бинарные сборки включают собственные уведомления |
 | Uvicorn | ASGI-сервер | BSD-3-Clause |
+| cryptography | Fernet-шифрование MFA-секрета внешним ключом | Apache-2.0 или BSD-3-Clause |
+| PyOTP | Библиотечная TOTP-проверка MFA | MIT |
 | React / React DOM | Клиент | MIT |
 | Vite и React plugin | Сборка и разработка | MIT |
 | vite-plugin-pwa / Workbox | Manifest и кэш статической оболочки | MIT |
@@ -24,6 +26,11 @@
 | Vitest / fake-indexeddb | Клиентские тесты и IndexedDB в тестовой среде | MIT / Apache-2.0 |
 | Playwright | Браузерная проверка | Apache-2.0 |
 | axe-core | Автоматическая проверка доступности | MPL-2.0 |
+
+Android-preview использует закреплённые AndroidX Browser/Core, JUnit и Gradle/AGP;
+версии, strict dependency verification и происхождение toolchain фиксируются в
+[`android-preview.md`](android-preview.md). Ключ подписи, его пароль и APK не
+входят в исходники. Эта таблица не является отдельным CVE-аудитом Android SDK.
 
 API проверки ответа не использует языковую модель или платный внешний сервис. Google Fonts не вызывается из браузера: используемые шрифты поставляются с клиентом. Никакие рекламные или сторонние аналитические SDK не подключены.
 

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ЕГЭ Профиль — превью</string>
+    <string name="product_heading">ЕГЭ Профиль 2027</string>
+    <string name="preview_label">Предварительная Android-версия</string>
+    <string name="preview_notice">Тренажёр работает на вашем сервере. Для занятий нужен доступный HTTPS-сервер приложения и подключение к интернету.</string>
+    <string name="configuration_heading">Подключить сервер</string>
+    <string name="configuration_help">Укажите адрес сервера без пути к странице, параметров и данных для входа.</string>
+    <string name="endpoint_label">HTTPS-адрес сервера</string>
+    <string name="endpoint_help">Только адрес и, при необходимости, порт. Доступность сервера проверит браузер.</string>
+    <string name="save_button">Сохранить адрес</string>
+    <string name="cancel_button">Отмена</string>
+    <string name="ready_heading">Адрес сохранён</string>
+    <string name="origin_label">Откроется этот адрес</string>
+    <string name="browser_help">Используется браузер по умолчанию. Вход, данные занятий и скачивания обрабатывает сайт в этом браузере.</string>
+    <string name="open_button">Открыть тренажёр</string>
+    <string name="change_button">Изменить адрес сервера</string>
+    <string name="preview_footer">Это серверное превью, а не автономное приложение. APK не содержит сервер и базу данных.</string>
+    <string name="error_endpoint_empty">Введите HTTPS-адрес сервера.</string>
+    <string name="error_endpoint_too_long">Адрес слишком длинный. Нужен только адрес сервера, без пути к странице.</string>
+    <string name="error_endpoint_https">Адрес должен начинаться с https://.</string>
+    <string name="error_endpoint_format">Проверьте формат адреса. Пробелы внутри адреса, управляющие символы и обратные слеши недопустимы.</string>
+    <string name="error_endpoint_host">Укажите корректное доменное имя, IPv4 или IPv6. Сокращённые и неоднозначные IP-адреса недопустимы.</string>
+    <string name="error_endpoint_port">Порт должен быть числом от 1 до 65535.</string>
+    <string name="error_endpoint_credentials">Не добавляйте логин или пароль в адрес. Для входа используйте сайт в браузере.</string>
+    <string name="error_endpoint_path">Удалите путь к странице. Сохраняется только адрес сервера, а не ссылка для входа или экспорта.</string>
+    <string name="error_endpoint_query">Удалите параметры после знака вопроса. Ссылки с токенами не сохраняются.</string>
+    <string name="error_endpoint_fragment">Удалите фрагмент после знака #. Ссылки с токенами не сохраняются.</string>
+    <string name="error_no_default_browser">Назначьте браузер по умолчанию в настройках Android и повторите попытку. Другой браузер автоматически выбран не будет.</string>
+    <string name="error_browser_unavailable">Не удалось открыть браузер по умолчанию. Проверьте его доступность и повторите попытку. Адрес сервера сохранён.</string>
+</resources>

@@ -15,5 +15,10 @@
 **/*.db-*
 **/*.sqlite*
 **/*.log
+**/*.apk
+**/*.jks
+**/*.keystore
+**/*.p12
+android
 output
 artifacts

@@ -93,6 +93,9 @@ class LearningSessionRecord(Base):
     notice: Mapped[str | None] = mapped_column(Text, nullable=True)
     draft_revision: Mapped[int] = mapped_column(Integer, nullable=False)
     tasks_snapshot: Mapped[list[dict[str, Any]]] = mapped_column(JSON, nullable=False)
+    options_snapshot: Mapped[dict[str, Any] | None] = mapped_column(
+        JSON(none_as_null=True), nullable=True
+    )
     drafts: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
     help_state: Mapped[dict[str, Any]] = mapped_column(JSON, nullable=False)
     active_seconds: Mapped[dict[str, int]] = mapped_column(JSON, nullable=False)
@@ -137,11 +140,13 @@ class SeenTask(Base):
     __table_args__ = (
         UniqueConstraint("guest_id", "task_id", name="uq_seen_tasks_guest_task"),
         Index("ix_seen_tasks_guest_seen", "guest_id", "last_seen_at"),
+        Index("ix_seen_tasks_guest_instance", "guest_id", "instance_key"),
     )
 
     id: Mapped[str] = mapped_column(String(36), primary_key=True)
     guest_id: Mapped[str] = mapped_column(ForeignKey("guests.id"), nullable=False)
     task_id: Mapped[str] = mapped_column(String(128), nullable=False)
+    instance_key: Mapped[str | None] = mapped_column(String(64), nullable=True)
     first_seen_at: Mapped[datetime] = mapped_column(UTCDateTime(), nullable=False)
     last_seen_at: Mapped[datetime] = mapped_column(UTCDateTime(), nullable=False)
     assistance_seen: Mapped[bool] = mapped_column(Boolean, nullable=False)

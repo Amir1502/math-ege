@@ -1,0 +1,57 @@
+import com.android.build.api.variant.HostTestBuilder
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace = 'ru.mathege.preview'
+    compileSdk = 37
+    buildToolsVersion = '36.0.0'
+
+    defaultConfig {
+        applicationId = 'ru.mathege.preview'
+        minSdk = 23
+        targetSdk = 37
+        versionCode = 1
+        versionName = '0.1.0-preview'
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildTypes {
+        release {
+            debuggable = false
+            minifyEnabled = true
+            shrinkResources = true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    lint {
+        abortOnError = true
+        checkReleaseBuilds = true
+        warningsAsErrors = true
+    }
+}
+
+androidComponents {
+    beforeVariants(selector().withBuildType('release')) { variantBuilder ->
+        // AGP 9.3 registers only debug host tests by default. Keep a release gate.
+        variantBuilder.hostTests.get(HostTestBuilder.UNIT_TEST_TYPE).enable = true
+    }
+}
+
+dependencies {
+    implementation 'androidx.browser:browser:1.10.0'
+    implementation 'androidx.core:core:1.13.0'
+    // These exact versions already belong to Browser's runtime graph. Expose
+    // their symbols to lint for the named manifest-removal markers; no new
+    // runtime artifact or component is introduced.
+    implementation 'androidx.startup:startup-runtime:1.1.1'
+    implementation 'androidx.profileinstaller:profileinstaller:1.3.1'
+    testImplementation 'junit:junit:4.13.2'
+}

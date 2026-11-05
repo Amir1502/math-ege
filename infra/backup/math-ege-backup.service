@@ -1,0 +1,22 @@
+[Unit]
+Description=Daily consistent Math EGE PostgreSQL archive
+After=docker.service
+Requires=docker.service
+RequiresMountsFor=/var/lib/math-ege-backups
+
+[Service]
+Type=oneshot
+User=math-ege-ops
+Group=math-ege-ops
+WorkingDirectory=/opt/math-ege
+EnvironmentFile=/etc/math-ege/backup.env
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/opt/math-ege/backend/.venv/bin/python /opt/math-ege/scripts/ops/backup.py backup --expected-head ${OPS_EXPECTED_HEAD}
+UMask=0077
+Nice=10
+TimeoutStartSec=3h
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectSystem=strict
+ProtectHome=yes
+ReadWritePaths=/var/lib/math-ege-backups

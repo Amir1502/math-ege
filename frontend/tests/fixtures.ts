@@ -34,6 +34,7 @@ export function apiFixture(): LearningApi {
     attempt: vi.fn(async () => attemptFixture()), hint: vi.fn(async (_id, _taskId, level) => ({ level, text: 'Подсказка.' })),
     solution: vi.fn(async () => ({ answer: '3', steps: ['Тестовый разбор.'] })),
     finish: vi.fn(async () => ({ ...sessionFixture(), status: 'completed', completed_at: '2026-11-05T12:00:01Z' })),
+    extend: vi.fn(async () => sessionFixture()),
   };
 }
 

@@ -5,14 +5,14 @@ import type { SessionController } from '../learning/session-controller';
 import type { SessionSnapshot } from '../learning/model';
 import { Button } from './ui';
 
-export function AnswerForm({ controller, state, taskId, onNext, last }: { controller: SessionController; state: SessionSnapshot; taskId: string; onNext: () => void; last: boolean }) {
+export function AnswerForm({ controller, state, taskId, onNext, last, nextLabel }: { controller: SessionController; state: SessionSnapshot; taskId: string; onNext: () => void; last: boolean; nextLabel?: string }) {
   const input = useRef<HTMLInputElement>(null);
   const record = state.record!;
   const draft = record.drafts[taskId];
   const attempts = record.session.attempts.filter((attempt) => attempt.task_id === taskId);
   const result = attempts.at(-1);
   const pending = record.pending_attempt;
-  const locked = Boolean(state.busy || pending || record.pending_finish || state.accessDenied);
+  const locked = Boolean(state.busy || pending || record.pending_finish || record.extension_key || state.accessDenied);
   const unchanged = Boolean(result && result.raw_answer === draft.answer);
   const settled = Boolean(result?.correct || result?.skipped || unchanged);
 
@@ -45,7 +45,7 @@ export function AnswerForm({ controller, state, taskId, onNext, last }: { contro
     <div className="answer-actions">
       {pending ? <Button variant="primary" disabled={Boolean(state.busy) || state.accessDenied} onClick={() => void controller.actions.submit()}><RotateCcw aria-hidden="true" />{state.busy === 'attempt' ? 'Проверяем…' : 'Повторить отправку'}</Button>
         : <Button variant={settled ? 'secondary' : 'primary'} type="submit" disabled={locked || Boolean(unchanged && result)} aria-busy={state.busy === 'attempt'}>{state.busy === 'attempt' ? <LoaderCircle className="spin" aria-hidden="true" /> : <CheckCircle2 aria-hidden="true" />}{state.busy === 'attempt' ? 'Проверяем…' : result && !result.skipped ? 'Проверить исправление' : 'Проверить'}</Button>}
-      {result && !pending && <Button variant={settled ? 'primary' : 'secondary'} disabled={locked} onClick={onNext}>{last ? 'К завершению' : 'Следующая задача'}<ArrowRight aria-hidden="true" /></Button>}
+      {result && !pending && <Button variant={settled ? 'primary' : 'secondary'} disabled={locked} onClick={onNext}>{nextLabel ?? (last ? 'К завершению' : 'Следующая задача')}<ArrowRight aria-hidden="true" /></Button>}
       {!result && !pending && <Button variant="quiet" disabled={locked} onClick={() => void controller.actions.submit(true)}><SkipForward aria-hidden="true" />Пропустить</Button>}
     </div>
     <div id="answer-feedback" className="answer-feedback" aria-live="polite" aria-atomic="true">
@@ -63,7 +63,7 @@ function AttemptFeedback({ attempt }: { attempt: Attempt }) {
   return <div className={`feedback ${!attempt.correct && !attempt.skipped ? 'feedback--error' : ''}`}><Icon aria-hidden="true" /><div><strong>{title}</strong>
     {attempt.skipped ? <p>Пропуск учтён отдельно, не как числовой ответ. Можно вернуться и решить.</p> : <>
       <p>{attempt.correct ? `Экзаменационная запись: ${attempt.expected_answer}.` : 'Попробуйте другой ход или откройте разбор. Ваш исходный ответ сохранён.'}</p>
-      <p>{!attempt.first_attempt ? 'Повторный ответ не меняет первую попытку.' : attempt.assisted ? 'Ответ с помощью: подсказка или решение открыты до первой попытки.' : 'Первая самостоятельная попытка.'}</p>
+      <p>{!attempt.first_attempt ? 'Повторный ответ не меняет первую попытку.' : attempt.assisted ? 'Ответ с помощью: подсказка или решение открыты до первой попытки.' : attempt.independent ? 'Первая самостоятельная попытка.' : 'Знакомый экземпляр: этот ответ не добавляет независимое достижение.'}</p>
       {attempt.normalized_answer && attempt.normalized_answer !== attempt.raw_answer && <p>Введено: «{attempt.raw_answer}». Нормализовано: {attempt.normalized_answer}.</p>}
     </>}
   </div></div>;

@@ -9,7 +9,7 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from app.config import DEFAULT_CONTENT_DIR, Settings
+from app.config import LEGACY_CONTENT_DIR, Settings
 from app.content import load_content
 from app.main import create_app
 
@@ -23,9 +23,9 @@ def content_dir(tmp_path: Path) -> Path:
     directory = tmp_path / "content"
     directory.mkdir()
     names = ("profile.json", "lessons.json", "tasks.json")
-    if all((DEFAULT_CONTENT_DIR / name).exists() for name in names):
+    if all((LEGACY_CONTENT_DIR / name).exists() for name in names):
         for name in names:
-            (directory / name).write_bytes((DEFAULT_CONTENT_DIR / name).read_bytes())
+            (directory / name).write_bytes((LEGACY_CONTENT_DIR / name).read_bytes())
         return directory
 
     slots = [

@@ -23,3 +23,10 @@ Thumbs.db
 .viora/
 output/playwright/
 .playwright-cli/
+android/.gradle/
+android/**/build/
+android/local.properties
+*.apk
+*.jks
+*.keystore
+*.p12

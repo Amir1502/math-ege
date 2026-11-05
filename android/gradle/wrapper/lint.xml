@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Update availability only: Gradle 9.5.1 is the verified AGP 9.3.3 pin.
+         Retain the advisory; re-review this classification when toolchain pins change. -->
+    <issue id="AndroidGradlePluginVersion" severity="information" />
+</lint>

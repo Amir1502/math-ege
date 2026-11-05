@@ -441,7 +441,9 @@ def test_export_uses_allowlist_and_never_exports_guest_secrets(guest_client, con
     exported = guest_client.get("/api/v1/export")
     value = exported.json()
     assert exported.status_code == 200
-    assert set(value) == {"version", "exported_at", "profile_id", "sessions"}
+    assert set(value) == {
+        "version", "exported_at", "profile_id", "sessions", "assessments", "learning", "account",
+    }
     assert value["version"] == "1"
     assert len(value["sessions"]) == 1
     raw_token = guest_client.cookies.get("math_ege_guest")
@@ -449,7 +451,8 @@ def test_export_uses_allowlist_and_never_exports_guest_secrets(guest_client, con
     assert sha256(raw_token.encode()).hexdigest() not in exported.text
     for secret in (
         "guest_id", "token_digest", "request_hash", "request_key",
-        "profile_snapshot", "tasks_snapshot"
+        "profile_snapshot", "tasks_snapshot", "browser_state_digest", "secret_ciphertext",
+        "writer_device_id", "writer_generation", "last_timecode", "access_sessions",
     ):
         assert f'"{secret}"' not in exported.text
     assert "no-store" in exported.headers["cache-control"]

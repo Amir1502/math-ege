@@ -1,0 +1,85 @@
+.account-page { min-width: 0; }
+.account-page h2, .account-page h3 { text-wrap: balance; }
+.account-page p { text-wrap: pretty; }
+.account-transition:empty, .account-feedback:empty { margin: 0; }
+.account-entry { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: var(--space-8); align-items: start; }
+.account-login, .account-complete { min-width: 0; }
+.account-complete { max-width: var(--measure); }
+.account-entry-note { padding-block: var(--space-5); color: var(--ink-muted); }
+.account-entry-note h2 { color: var(--ink); font-size: var(--text-xl); }
+.account-entry-note .button { margin-block: var(--space-2); }
+.account-entry-note > .text-link { display: flex; width: fit-content; margin-top: var(--space-3); }
+.account-form { display: grid; gap: var(--space-5); margin-top: var(--space-6); }
+.account-field { display: grid; gap: var(--space-2); min-width: 0; }
+.account-field > label { font-weight: 600; }
+.account-field > input, .account-field > textarea { width: 100%; min-width: 0; min-height: var(--control); padding: var(--space-3); border: var(--line) solid var(--hairline-strong); border-radius: var(--r-sm); background: var(--surface); color: var(--ink); font-size: var(--text-base); }
+.account-field > input[aria-invalid='true'] { border-color: var(--danger); }
+.account-field > input:disabled { background: var(--surface-2); }
+.account-field p { margin: 0; }
+.account-policy { padding-block: var(--space-4); border-block: var(--line) solid var(--hairline); }
+.account-check { display: flex; align-items: flex-start; gap: var(--space-3); min-height: var(--control); padding-block: var(--space-3); cursor: pointer; touch-action: manipulation; }
+.account-check input { width: var(--icon); height: var(--icon); flex-shrink: 0; margin: var(--space-1) 0 0; }
+.account-check span { min-width: 0; }
+.account-check:has(input:disabled) { cursor: not-allowed; }
+.account-check:has(:focus-visible) { border-radius: var(--r-sm); outline: var(--outline) solid var(--focus); outline-offset: var(--space-1); }
+.account-submit { width: 100%; }
+.account-feedback { margin-block: var(--space-3); overflow-wrap: anywhere; }
+.account-feedback strong { display: block; color: var(--ink); margin-bottom: var(--space-2); }
+.account-region { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: var(--space-8); padding-block: var(--space-8); border-top: var(--line) solid var(--hairline); }
+.account-region:first-child { padding-top: var(--space-6); }
+.account-region-heading, .account-region-content { min-width: 0; }
+.account-region-heading h2 { font-size: var(--text-xl); }
+.account-ledger { margin-bottom: var(--space-6); }
+.account-ledger > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--space-4); padding-block: var(--space-3); border-bottom: var(--line) solid var(--hairline); }
+.account-ledger dt { color: var(--ink-muted); }
+.account-ledger dd { font-weight: 600; font-variant-numeric: tabular-nums; min-width: 0; }
+.account-detail { display: block; color: var(--ink-muted); font-weight: 400; margin-top: var(--space-1); }
+.account-duration { max-width: none; }
+.account-save-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3); min-height: var(--control-min); }
+.account-save-row p { margin: 0; }
+.account-session-list { list-style: none; padding: 0; margin: 0 0 var(--space-3); }
+.account-session-list > li { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: var(--space-4); margin: 0; padding-block: var(--space-5); border-bottom: var(--line) solid var(--hairline); }
+.account-session-list > li:first-child { padding-top: 0; }
+.account-session-list > li > div { min-width: 0; flex: 1; }
+.account-session-list > li > .button { flex-shrink: 0; }
+.account-session-meta > div { display: flex; flex-wrap: wrap; gap: 0 var(--space-3); }
+.account-session-meta dt { color: var(--ink-muted); }
+.account-session-meta dd { font-variant-numeric: tabular-nums; }
+.account-export { padding-bottom: var(--space-6); }
+.account-export .notice { margin-top: var(--space-4); }
+.account-deletion { padding-top: var(--space-6); border-top: var(--line) solid var(--hairline); }
+.account-danger { border-color: var(--danger); color: var(--danger); }
+.account-receipt { border-left: var(--line-strong) solid var(--accent); padding-left: var(--space-5); margin-block: var(--space-5); }
+.account-receipt .account-ledger { margin-block: var(--space-2) var(--space-4); }
+.account-dialog { width: min(calc(100% - var(--space-8)), var(--dialog-width)); max-height: calc(100dvh - var(--space-8)); padding: var(--space-6); margin: auto; overflow: auto; overscroll-behavior: contain; border: var(--line) solid var(--hairline-strong); border-radius: var(--r-md); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-2); }
+.account-dialog::backdrop { background: var(--backdrop); }
+.account-dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-6); }
+body:has(.account-dialog[open]) { overflow: hidden; }
+.account-staff-access { display: grid; justify-items: start; gap: var(--space-3); }
+.account-staff-access p { display: flex; align-items: flex-start; gap: var(--space-2); }
+.account-staff-access .lucide { margin-top: var(--space-1); }
+.account-enrollment { margin-top: var(--space-5); }
+.account-uri { font-family: var(--font-mono); resize: vertical; overflow-wrap: anywhere; }
+.account-field > .account-uri[readonly] { background: var(--surface-2); }
+.account-field > .account-code { max-width: var(--aside-width); font-family: var(--font-mono); font-size: var(--text-xl); font-variant-numeric: tabular-nums; }
+#account-mfa-error:not(:empty) { margin-top: var(--space-5); }
+@media (hover: hover) and (pointer: fine) {
+  .account-check:hover { background: var(--accent-soft); }
+  .account-danger:hover:not(:disabled) { background: var(--danger-soft); }
+}
+@media (max-width: 1023px) {
+  .account-entry { grid-template-columns: minmax(0, 1fr); gap: var(--space-5); }
+  .account-entry-note { max-width: var(--measure); }
+  .account-region { grid-template-columns: minmax(0, 1fr); gap: var(--space-4); }
+}
+@media (max-width: 479px) {
+  .account-region { padding-block: var(--space-6); }
+  .account-ledger > div { grid-template-columns: minmax(0, 1fr); gap: var(--space-1); }
+  .account-session-list > li > div { flex-basis: 100%; }
+  .account-dialog-actions { flex-direction: column; }
+  .account-dialog-actions .button { width: 100%; }
+  .account-receipt { padding-left: var(--space-4); }
+}
+@media print {
+  .account-secret { display: none; }
+}

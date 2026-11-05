@@ -11,7 +11,7 @@ export class SessionMutations {
   async submit(skipped = false) {
     const state = this.host.getSnapshot();
     const record = state.record;
-    if (!record || state.busy || record.pending_finish || state.accessDenied || record.session.status !== 'active') return;
+    if (!record || state.busy || record.pending_finish || record.extension_key || state.accessDenied || record.session.status !== 'active') return;
     const task = record.session.tasks[record.current_index];
     if (!task) return;
     const draft = record.drafts[task.id];
@@ -97,7 +97,7 @@ export class SessionMutations {
 
   private async help(operation: (taskId: string) => Promise<void>) {
     const { record, busy, accessDenied } = this.host.getSnapshot();
-    if (!record || busy || accessDenied || record.pending_attempt || record.pending_finish || record.session.status !== 'active') return;
+    if (!record || busy || accessDenied || record.pending_attempt || record.pending_finish || record.extension_key || record.session.status !== 'active') return;
     const task = record.session.tasks[record.current_index];
     if (!task) return;
     this.host.patch({ busy: 'help', error: null });
@@ -112,7 +112,7 @@ export class SessionMutations {
 
   async finish() {
     const { record, busy, conflict, accessDenied } = this.host.getSnapshot();
-    if (!record || busy || conflict || accessDenied || record.pending_attempt || record.session.status !== 'active') return;
+    if (!record || busy || conflict || accessDenied || record.pending_attempt || record.extension_key || record.session.status !== 'active') return;
     this.host.patch({ busy: 'finish', error: null });
     try {
       await this.host.update((latest) => ({
@@ -134,6 +134,35 @@ export class SessionMutations {
       });
     } catch (error) {
       this.host.patch({ error: `Завершение ожидает подтверждения сервера. ${errorText(error)}` });
+    } finally {
+      this.host.patch({ busy: null });
+    }
+  }
+
+  async extend() {
+    const { record, busy, conflict, accessDenied } = this.host.getSnapshot();
+    if (!record || busy || conflict || accessDenied || record.pending_attempt || record.pending_finish || record.session.status !== 'active' || !record.session.options?.until_stopped) return;
+    this.host.patch({ busy: 'extend', error: null });
+    try {
+      await this.host.update((latest) => ({
+        ...latest, extension_key: latest.extension_key ?? crypto.randomUUID(),
+        extension_start: latest.extension_key ? latest.extension_start : latest.session.tasks.length,
+      }));
+      await this.drafts.flush();
+      const state = this.host.getSnapshot();
+      if (!state.record || hasDirtyDrafts(state.record) || state.conflict || state.accessDenied) return;
+      await this.host.queue.run(async () => {
+        const current = this.host.getSnapshot().record;
+        if (!current?.extension_key) return;
+        const remote = await this.host.api.extend(this.host.id, current.extension_key);
+        await this.host.update((local) => ({
+          ...mergeSession(local, remote), extension_key: null,
+          current_index: Math.min(current.extension_start ?? current.session.tasks.length, remote.tasks.length - 1),
+        }));
+      });
+    } catch (error) {
+      if (error instanceof ApiError && !error.retryable) await this.host.update((latest) => ({ ...latest, extension_key: null })).catch(() => undefined);
+      this.host.patch({ error: `Не удалось продолжить серию. ${errorText(error)}` });
     } finally {
       this.host.patch({ busy: null });
     }

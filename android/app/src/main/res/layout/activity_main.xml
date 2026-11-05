@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/preview_scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:importantForAccessibility="no"
+        android:orientation="vertical"
+        android:padding="@dimen/space_6">
+
+        <TextView
+            android:id="@+id/product_heading"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableStart="@drawable/ic_worksheet"
+            android:drawablePadding="@dimen/space_3"
+            android:gravity="center_vertical"
+            android:text="@string/product_heading"
+            android:textAppearance="@style/Text.Preview.Product" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_2"
+            android:text="@string/preview_label"
+            android:textAppearance="@style/Text.Preview.Caption" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_6"
+            android:text="@string/preview_notice"
+            android:textAppearance="@style/Text.Preview.Body" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/stroke_hairline"
+            android:layout_marginTop="@dimen/space_6"
+            android:layout_marginBottom="@dimen/space_6"
+            android:background="@color/hairline"
+            android:importantForAccessibility="no" />
+
+        <LinearLayout
+            android:id="@+id/configuration_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <TextView
+                android:id="@+id/configuration_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/configuration_heading"
+                android:textAppearance="@style/Text.Preview.Heading" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2"
+                android:text="@string/configuration_help"
+                android:textAppearance="@style/Text.Preview.Body" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_6"
+                android:labelFor="@+id/endpoint_input"
+                android:text="@string/endpoint_label"
+                android:textAppearance="@style/Text.Preview.Label" />
+            <EditText
+                android:id="@id/endpoint_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2"
+                android:background="@drawable/endpoint_field"
+                android:backgroundTint="@null"
+                android:fontFamily="sans-serif"
+                android:imeOptions="actionDone"
+                android:importantForAutofill="no"
+                android:inputType="textUri|textNoSuggestions"
+                android:minHeight="@dimen/control_height"
+                android:paddingStart="@dimen/space_4"
+                android:paddingEnd="@dimen/space_4"
+                android:paddingTop="@dimen/space_3"
+                android:paddingBottom="@dimen/space_3"
+                android:saveEnabled="false"
+                android:singleLine="true"
+                android:textColor="@color/ink"
+                android:textDirection="ltr"
+                android:textSize="@dimen/text_body" />
+            <TextView
+                android:id="@+id/endpoint_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2"
+                android:accessibilityLiveRegion="polite"
+                android:textAppearance="@style/Text.Preview.Error"
+                android:visibility="gone" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2"
+                android:text="@string/endpoint_help"
+                android:textAppearance="@style/Text.Preview.Caption" />
+            <Button
+                android:id="@+id/save_button"
+                style="@style/Widget.Preview.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_6"
+                android:text="@string/save_button" />
+            <Button
+                android:id="@+id/cancel_button"
+                style="@style/Widget.Preview.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_3"
+                android:text="@string/cancel_button"
+                android:visibility="gone" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ready_group"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/ready_heading"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/ready_heading"
+                android:textAppearance="@style/Text.Preview.Heading" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_6"
+                android:text="@string/origin_label"
+                android:textAppearance="@style/Text.Preview.Label" />
+            <TextView
+                android:id="@+id/endpoint_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_2"
+                android:background="@drawable/origin_surface"
+                android:breakStrategy="simple"
+                android:fontFamily="monospace"
+                android:padding="@dimen/space_4"
+                android:saveEnabled="false"
+                android:textAppearance="@style/Text.Preview.Body"
+                android:textDirection="ltr"
+                android:textIsSelectable="true" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_4"
+                android:text="@string/browser_help"
+                android:textAppearance="@style/Text.Preview.Body" />
+            <Button
+                android:id="@+id/open_button"
+                style="@style/Widget.Preview.Button.Primary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_6"
+                android:text="@string/open_button" />
+            <TextView
+                android:id="@+id/browser_error"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_3"
+                android:accessibilityLiveRegion="polite"
+                android:textAppearance="@style/Text.Preview.Error"
+                android:visibility="gone" />
+            <Button
+                android:id="@+id/change_button"
+                style="@style/Widget.Preview.Button.Secondary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/space_3"
+                android:text="@string/change_button" />
+        </LinearLayout>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/space_8"
+            android:text="@string/preview_footer"
+            android:textAppearance="@style/Text.Preview.Caption" />
+    </LinearLayout>
+</ScrollView>

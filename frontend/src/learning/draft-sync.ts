@@ -8,11 +8,12 @@ export class DraftSync {
   private timer: ReturnType<typeof setTimeout> | undefined;
   private running: Promise<void> | null = null;
   private retryAfter = 0;
+  private stopped = false;
 
   constructor(private readonly host: SessionHost) {}
 
   schedule() {
-    if (this.timer || this.running || this.host.getSnapshot().conflict) return;
+    if (this.stopped || this.timer || this.running || this.host.getSnapshot().conflict) return;
     const delay = Math.max(700, this.retryAfter - Date.now());
     this.timer = setTimeout(() => {
       this.timer = undefined;
@@ -21,6 +22,7 @@ export class DraftSync {
   }
 
   flush(): Promise<void> {
+    if (this.stopped) return Promise.resolve();
     if (this.timer) clearTimeout(this.timer);
     this.timer = undefined;
     if (this.running) return this.running;
@@ -81,6 +83,7 @@ export class DraftSync {
   }
 
   async keepLocal() {
+    if (this.stopped) return;
     await this.host.queue.run(async () => {
       this.host.patch({ syncing: true });
       try {
@@ -94,5 +97,11 @@ export class DraftSync {
       }
     });
     await this.flush();
+  }
+
+  stop() {
+    this.stopped = true;
+    if (this.timer) clearTimeout(this.timer);
+    this.timer = undefined;
   }
 }

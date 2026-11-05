@@ -1,4 +1,154 @@
-# Протокол проверки первого этапа
+# Протоколы технической проверки
+
+## Расширение шести подсистем — 5 ноября 2026 года
+
+Проверяется [утверждённое завершение](superpowers/specs/2026-11-05-completion-design.md)
+в приватном репозитории. Это техническая проверка, а не полная предметная приёмка
+`technical-spec.md` или разрешение публичной регистрации. Ниже сохранён
+исторический протокол гостевого ядра; его числа не складываются с новыми.
+
+### Завершённые общие проверки
+
+| Проверка | Фактический результат |
+| --- | --- |
+| Backend: Ruff, `pip check`, затем весь pytest в новом `--basetemp`, без pytest cache | **20 411 passed, 2 skipped; 607,32 с; exit 0** в свежем delivery-gate. Ruff: `All checks passed!`; pip: `No broken requirements found`. |
+| Полная серия практики из 20 задач: focused Chromium с реальным API | **1 passed, 25,0 с; exit 0**, сценарий 9,6 с. Двадцать исходных попыток/снимков и итог сохранены после reload; [границы доказательства](browser-integration.md#complete-twenty-task-practice-series). |
+| Полный frontend: ESLint, Vitest, TypeScript/Vite build | **409 passed, 20 файлов, 17,08 с**; lint/unit/build — exit 0, без пропусков. Все 9 новых PWA-регрессий включены. |
+| Все shared Chromium-сценарии, identity opt-in выключен | **26 passed, 4 намеренных identity skips, 0 failures/flaky; 108,515 с; exit 0**. Все три исходных PWA-сценария прошли без изменения их assertions. |
+| Все четыре dedicated identity-сценария вместе | **4 passed, 0 skips/failures/flaky; 73,805 с; exit 0**, одна новая изолированная database/mailbox/dist/lock-среда. |
+| Полный локальный unsigned Android strict-gate | **exit 0; 62 release-теста, 64 tooling-проверки / 6 PowerShell-файлов, 11 контрастных пар**; 0 lint errors/warnings, один wrapper-local `Hint`. [Протокол](android-preview.md). |
+| Подписанный Android-preview, отдельный read-only gate | **exit 0 по точной preview-политике**: API 23+ standard exit 0 / ровно 20 разобранных META-INF warnings; API 24+ `-Werr` exit 0 / 0 warnings. Raw API 23+ `-Werr` остаётся **RED exit 1**. Signed alignment, manifest и все 48 исходных entries проверены. [Политика и ограничения](android-signature-policy.md). |
+
+Команда из `backend/`:
+
+```powershell
+.venv/Scripts/python.exe -m ruff check .
+.venv/Scripts/python.exe -m pip check
+$run = Join-Path $env:LOCALAPPDATA ('Temp\opencode\completion-backend-final-' + [guid]::NewGuid().ToString('N'))
+if (Test-Path -LiteralPath $run) { throw 'New isolated artifact path required' }
+New-Item -ItemType Directory -Path $run | Out-Null
+.venv/Scripts/python.exe -m pytest -q -p no:cacheprovider --basetemp "$run/tests" --junitxml "$run/junit.xml"
+```
+
+Свежий JUnit сохранён вне Git в
+`%LOCALAPPDATA%\Temp\opencode\completion-backend-final-998aea5c95c8480ca87f7d98cde8194d/junit.xml`.
+SHA-256 — `5926f8ba17fa0fa8a42d528c9f49373d9daa47af62e39fb45fb9ff7f3df1ed6d`;
+JUnit содержит 20 413 cases, 0 failures, 0 errors и 2 skips; его suite time —
+606,813 с, вывод pytest — 607,32 с. `result.json` и список SHA-256 всех backend
+исходников подтверждают неизменность файлов на протяжении команды.
+Это whole local backend **после** адаптации rights/deletion, не прежние
+20 400 тестов. Два пропуска — opt-in live PostgreSQL recovery в
+`test_operations.py` и `test_postgres_recovery.py`; SQLite не подтверждает их.
+
+Предыдущий одноимённый по области gate **20 411 passed, 2 skipped, 611,45 с**
+остаётся отдельным историческим артефактом:
+`backend-final-9fd803da01954358a80e76b1c3e2fe29.junit.xml`, SHA-256
+`88a02f2946f6b3bc674a75b3fbbe6dd8c511bbfeab9931faa1fa23026c7dc794`.
+Его результаты не суммируются со свежими; прежний файл и три защищённые
+проверочные базы повторно подтверждены побайтно неизменными.
+
+### Финальные локальные клиентские артефакты
+
+Frontend и shared Chromium сохранены в новом
+`%LOCALAPPDATA%\Temp\opencode\completion-final-verification-95dd0f8c856c40768203df33da81dfac`:
+
+- `frontend/junit.xml`: **409 cases, 20 suites, 0 failures/errors/skips**;
+  SHA-256 `bbc6ca6a39fd8d660a413c22aa7e8e5afaf09e47204502e42dbbb8361d142370`.
+- `shared-chromium/report.json`: 30 сценариев, только четыре opt-in identity
+  пропущены; SHA-256
+  `2fd2658b8030f3aa25f8c5be37b79778599b79ca7581b87b86b61cd5e4d9bbbc`.
+- `source-before.json`, результаты команд и `coordinator-consumption.json`:
+  все **323 backend/frontend-файла** и их SHA-256 совпали при независимом чтении
+  после завершения трёх gates. Это проверка финального локального кода, пока не
+  свидетельство Linux CI на опубликованном commit SHA.
+- Исходный `frontend/e2e/pwa.spec.ts` побайтно сохранён, SHA-256
+  `bdee218963f254a77ff29b029c60137a2bddbccaaa48cafeea730a1169011264`.
+
+Dedicated identity runtime:
+`%LOCALAPPDATA%\Temp\opencode\completion-identity-final-c6008f8f701a4c9da64d8c3380e60e91`.
+`report.json` SHA-256 —
+`37445f815f81fa8942bde0fde967a2ff49dc6e2b9a5b724d15674ae0ceb08bf9`.
+Четыре сценария выполнены **вместе**, не посредством сложения старых A/B/C runs.
+Ни база, ни mailbox, ни dist, ни lock не переиспользованы. Automatic screenshots,
+trace и video выключены; явные снимки и JSON-выгрузки остаются приватными вне Git.
+Transient `ECONNREFUSED 127.0.0.1:8037` при startup readiness предшествовал здоровому
+API и не является падением сценария. После завершения подтверждены 0 listeners
+на 8000/5173/8037/5193 и отсутствие записанных identity runner/API процессов;
+при потреблении доказательств никакие процессы не останавливались.
+
+Первое потребление остановилось на проверке teardown: substring-фильтр command
+line выбрал сам проверяющий PowerShell-процесс. Сохранён
+`consumption-teardown-red.json`; после исключения собственного PID полный
+`consume-final.ps1` завершился exit 0. Это ошибка consumption harness, а не RED
+frontend/браузерных gates; исходники и runtime не изменялись.
+
+### Подсистемные доказательства, хронология и ожидаемый CI
+
+- [Identity/linking/export](identity-browser.md) сохраняет исторические A/B/C
+  прогоны и отдельно новый общий **4/4 GREEN** координатора: два гостя и исходные
+  ID/снимки, revoked credentials, same-owner stale-response cancellation,
+  раздельные pending-очереди, четыре полные JSON-выгрузки со 104 аннотациями и
+  раздельные закрытые/выпущенные итоги пробника. Остаточное offline
+  identity-warning после reconnect не объявляется исправленным.
+- Исторический whole frontend **400 passed / 18 файлов** до PWA и его JUnit
+  `9d7ae2ff8c6d76e6f4892aef6fa24a0da3c359d7ada931f5a49e9778896a0298`
+  не заменяются новым отчётом. Следовавший shared Chromium **RED: 24 passed,
+  4 intentional identity skips, 2 original PWA failures**, SHA-256 отчёта
+  `62723e7a4ed38caf0af17d639f9fe06639f5496691c922883f1c6f1c3b531666`,
+  сохранён в `completion-browser-final-686d446f8e3e413db80bfe835061818c`.
+  [Узкий PWA-handoff](pwa-regressions.md) подтвердил 9 новых регрессий в 61 scoped
+  тесте и **3/3** исходных сценария дважды. Свежий общий GREEN приведён выше;
+  исторический RED не переименован и числа разных срезов не суммируются.
+- [Durable account-boundary proof](account-boundaries.md): **20 mounted +
+  13 real IdentityManager**; portable focused run **33 passed** без
+  `LOCALAPPDATA`/screenshots. Исторические 126/164 scoped gates остаются
+  отдельными, а эти тесты включены в свежие 409.
+- Linux CI на точном опубликованном SHA, расширенный Compose smoke и live
+  PostgreSQL workload/recovery ещё не заявляются успешными. Локальные
+  frontend/shared/identity gates завершены; CI-доказательства добавляются
+  только после окончания соответствующих команд.
+- Подготовка CI исправлена на уровне порядка зависимостей: Chromium устанавливается
+  после `npm ci` и **до** `npm test`, поскольку mounted-компонентные тесты используют
+  настоящий браузер. Новый порядок сначала воспроизведён как failing assertion в
+  `scripts/verify-infra.mjs`, затем проверен exit 0 вместе с остальными invariants.
+  `check-source.mjs` на прежнем срезе проверил 421 файл, exit 0. `.dockerignore`
+  дополнительно исключает Android-дерево, APK и keystore-форматы; новые invariants
+  наблюдались RED, затем GREEN. Свежие actionlint и read-only CI-audit: exit 0,
+  один workflow, 0 findings/chains; внутренности actions и OCI CVE не проверены.
+  Предыдущая сверка документации: 37 файлов, 0 несуществующих относительных
+  ссылок. После финальной reconciliation повторены source hygiene (**429 файлов**),
+  infrastructure invariants, actionlint и read-only CI-audit (**1 workflow,
+  0 findings/chains**) — все exit 0. Финальный document checker: **39 документов,
+  0 несуществующих относительных ссылок**, все **18 FR / 5 NFR / 27 AC** и
+  неизменённое исходное ТЗ сохранены. Артефакты:
+  `%LOCALAPPDATA%\Temp\opencode\completion-publish-abc814e2304c4ed3a7e532d4c139e474`.
+  Это статические gates, не заявление об успешном выполнении Linux workflow.
+- Unsigned Android gate и отдельный signed verifier завершены; исходный
+  warning-strict **RED API 23+** сохранён. [Точная preview-политика](android-signature-policy.md)
+  не устраняет API 23 META-INF integrity limitation. Signed APK: **90 065 байт**,
+  SHA-256 `42199293d99b16b7003e7450e3f92a071b5971795c06c74c9ea340000f009dfd`;
+  один ожидаемый preview сертификат, v1/v2/v3, actual `debuggable=false`, signed
+  alignment exit 0; все 48 исходных ZIP entries сохранены, новый ключ/повторная
+  подпись не выполнялись. Private prerelease, установка и действующий HTTPS
+  endpoint пока не подтверждены. [Полная хронология](android-preview.md).
+
+### Границы поставки
+
+Кандидатный курс остаётся `demo`, профиль `draft`, независимые рецензенты —
+`null`: 845 задач/99 уроков/26 runtime-шаблонов не заменяют ≥650 независимо
+проверенных экземпляров и ручную проверку каждого шаблона. Программные пробелы
+FR-03, FR-05/AC-06, положительного округления FR-12/AC-08 и событий/режима
+аналитики NFR-05 сохраняются в [матрице приёмки](acceptance-status.md).
+Авторитетное стирание после восстановления не реализовано:
+`restore_replay_available=false`; production-promotion заблокирован.
+
+Публичный HTTPS endpoint не назначен. APK-preview — только нативный запускатель
+настраиваемого HTTPS-origin в браузере, не FastAPI/PostgreSQL внутри APK и не
+автономное офлайн-приложение. Юридический режим, почта/TLS, реальные устройства,
+screen reader, двухверсионное обновление PWA, production RPO/RTO и независимая
+предметная приёмка не подтверждаются автоматическими локальными тестами.
+
+## Исторический протокол первого этапа
 
 Дата: **5 ноября 2026 года**. Проверяется утверждённое гостевое учебное ядро, не полная поставка `technical-spec.md`. Границы реализации: `docs/acceptance-status.md`; состояние банка: `docs/content-status.md`.
 

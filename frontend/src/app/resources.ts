@@ -1,7 +1,8 @@
 import { useEffect, useSyncExternalStore } from 'react';
-import { api, ApiError, errorText } from '../api/client';
+import { api, ApiError, errorText, request } from '../api/client';
 import type { Lesson, Profile, Progress } from '../api/types';
-import { storage } from '../storage/database';
+import { cachedLessonRevision, storage } from '../storage/database';
+import { identity } from '../storage/identity';
 
 export type ResourceState<T> = { data: T | null; loading: boolean; error: string | null; cached: boolean };
 
@@ -10,6 +11,7 @@ export class Resource<T> {
   private listeners = new Set<() => void>();
   private inFlight: Promise<void> | null = null;
   private loaded = false;
+  private generation = 0;
 
   constructor(
     private readonly fetcher: () => Promise<T>,
@@ -30,24 +32,35 @@ export class Resource<T> {
     if (this.inFlight) return this.inFlight;
     if (this.loaded && !force) return Promise.resolve();
     this.patch({ loading: !this.state.data, error: null });
+    const generation = this.generation;
     this.inFlight = (async () => {
       if (!this.state.data && this.cached) {
         const data = await this.cached().catch(() => undefined);
-        if (data) this.patch({ data, cached: true, loading: false });
+        if (data && generation === this.generation) this.patch({ data, cached: true, loading: false });
       }
       try {
         const data = await this.fetcher();
+        if (generation !== this.generation) return;
         this.patch({ data, cached: false, error: null });
         if (this.save) await this.save(data).catch(() => undefined);
       } catch (error) {
-        this.patch({ error: errorText(error) });
+        if (generation === this.generation) this.patch({ error: errorText(error) });
       } finally {
-        this.loaded = true;
-        this.patch({ loading: false });
-        this.inFlight = null;
+        if (generation === this.generation) {
+          this.loaded = true;
+          this.patch({ loading: false });
+          this.inFlight = null;
+        }
       }
     })();
     return this.inFlight;
+  }
+
+  reset() {
+    this.generation += 1;
+    this.loaded = false;
+    this.inFlight = null;
+    this.patch({ data: null, loading: true, error: null, cached: false });
   }
 }
 
@@ -60,16 +73,32 @@ export const progressResource = new Resource<Progress | null>(async () => {
   }
 });
 
-const lessons = new Map<number, Resource<Lesson>>();
-export function lessonResource(slot: number) {
-  let resource = lessons.get(slot);
+identity.beforeChange(async () => { progressResource.reset(); });
+
+const lessons = new Map<string, Resource<Lesson>>();
+export function lessonResource(slot: number, lessonId?: string) {
+  const profile = profileResource.getSnapshot().data;
+  const revision = profile ? `${profile.id}:${profile.revision}` : 'unverified';
+  const key = `${revision}:${lessonId ?? slot}`;
+  let resource = lessons.get(key);
   if (!resource) {
     resource = new Resource(
-      () => api.lesson(slot),
-      async () => (await storage.lesson(slot))?.lesson,
-      (lesson) => storage.saveLesson(lesson),
+      () => lessonId ? request<Lesson>(`/lessons/by-id/${encodeURIComponent(lessonId)}`) : api.lesson(slot),
+      async () => {
+        await profileResource.load();
+        const current = profileResource.getSnapshot().data;
+        const cachedRevision = current ? `${current.id}:${current.revision}` : await cachedLessonRevision();
+        if (!cachedRevision || (revision !== 'unverified' && cachedRevision !== revision)) return undefined;
+        return (await storage.lesson(lessonId ?? slot, cachedRevision))?.lesson;
+      },
+      (lesson) => {
+        const current = profileResource.getSnapshot().data;
+        return current && revision === `${current.id}:${current.revision}`
+          ? storage.saveLesson(lesson, revision, lessonId ?? slot)
+          : Promise.resolve();
+      },
     );
-    lessons.set(slot, resource);
+    lessons.set(key, resource);
   }
   return resource;
 }

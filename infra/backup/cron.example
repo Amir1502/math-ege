@@ -1,0 +1,6 @@
+# Install in the backup operator's crontab. The host cron timezone must be UTC.
+# Choose this OR the systemd timer, so that there is one scheduler.
+SHELL=/bin/sh
+PATH=/usr/local/bin:/usr/bin:/bin
+0 2 * * * /bin/sh /opt/math-ege/scripts/ops/daily_backup.sh
+# Retention is intentionally a separate, reviewed operator command.

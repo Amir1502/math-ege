@@ -1,0 +1,19 @@
+buildscript {
+    configurations.classpath {
+        resolutionStrategy.activateDependencyLocking()
+    }
+    dependencyLocking {
+        lockMode = LockMode.STRICT
+    }
+}
+
+plugins {
+    id 'com.android.application' version '9.3.3' apply false
+}
+
+allprojects {
+    dependencyLocking {
+        lockAllConfigurations()
+        lockMode = LockMode.STRICT
+    }
+}

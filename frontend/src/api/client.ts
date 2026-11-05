@@ -1,4 +1,6 @@
-import type { Attempt, AttemptBody, DraftBody, Hint, HistoryExport, LearningSession, Lesson, Profile, Progress, Solution, StartBody } from './types';
+import type { Attempt, AttemptBody, DraftBody, Hint, LearningSession, Lesson, Profile, Progress, Solution, StartBody } from './types';
+import { parseHistoryExport } from './history-export';
+import { identity } from '../storage/identity';
 
 export class ApiError extends Error {
   constructor(
@@ -16,8 +18,15 @@ export class ApiError extends Error {
   }
 }
 
-export async function request<T>(path: string, method = 'GET', body?: unknown, key?: string): Promise<T> {
+export async function request<T>(path: string, method = 'GET', body?: unknown, key?: string, owner = identity.current()): Promise<T> {
   const headers: Record<string, string> = { Accept: 'application/json' };
+  const privateRequest = !/^\/(?:auth(?:\/|$)|identity$|guest$|profile$|lessons(?:\/|$)|curriculum$)/.test(path);
+  if (privateRequest && owner) {
+    if (identity.getSnapshot().changing || identity.current() !== owner) {
+      throw new ApiError(409, 'identity_changed', 'Доступ изменился. Откройте занятие заново; локальный ввод сохранён.');
+    }
+    headers['X-Learning-Owner'] = owner;
+  }
   if (method !== 'GET') {
     headers['Content-Type'] = 'application/json';
     headers['X-Requested-With'] = 'math-ege';
@@ -52,20 +61,44 @@ export async function request<T>(path: string, method = 'GET', body?: unknown, k
   return payload as T;
 }
 
-export const api = {
-  profile: () => request<Profile>('/profile'),
-  lesson: (slot: number) => request<Lesson>(`/lessons/${slot}`),
-  progress: () => request<Progress>('/progress'),
-  export: () => request<HistoryExport>('/export'),
-  guest: () => request<{ id: string }>('/guest', 'POST', {}),
-  start: (body: StartBody, key: string) => request<LearningSession>('/sessions', 'POST', body, key),
-  session: (id: string) => request<LearningSession>(`/sessions/${encodeURIComponent(id)}`),
-  draft: (id: string, body: DraftBody) => request<{ draft_revision: number }>(`/sessions/${encodeURIComponent(id)}/draft`, 'PUT', body),
-  attempt: (id: string, body: AttemptBody, key: string) => request<Attempt>(`/sessions/${encodeURIComponent(id)}/attempts`, 'POST', body, key),
-  hint: (id: string, taskId: string, level: 1 | 2 | 3) => request<Hint>(`/sessions/${encodeURIComponent(id)}/hints`, 'POST', { task_id: taskId, level }),
-  solution: (id: string, taskId: string) => request<Solution>(`/sessions/${encodeURIComponent(id)}/solution`, 'POST', { task_id: taskId }),
-  finish: (id: string, key: string) => request<LearningSession>(`/sessions/${encodeURIComponent(id)}/finish`, 'POST', {}, key),
-};
+function createApi(owner?: string | null) {
+  const call = <T>(path: string, method = 'GET', body?: unknown, key?: string) => request<T>(path, method, body, key, owner);
+  return {
+  profile: () => call<Profile>('/profile'),
+  lesson: (slot: number) => call<Lesson>(`/lessons/${slot}`),
+  progress: () => call<Progress>('/progress'),
+  export: async () => {
+    const snapshot = identity.getSnapshot();
+    const exportOwner = owner === undefined ? identity.current() : owner;
+    const changed = () => {
+      const current = identity.getSnapshot();
+      return current.changing || current.error !== null || current.epoch !== snapshot.epoch || identity.current() !== exportOwner;
+    };
+    const identityChanged = () => new ApiError(409, 'identity_changed', 'Доступ изменился. Откройте историю заново.');
+    if (changed()) throw identityChanged();
+    let current = true;
+    const unsubscribe = identity.subscribe(() => { if (changed()) current = false; });
+    try {
+      const payload = await call<unknown>('/export');
+      if (!current || changed()) throw identityChanged();
+      try { return parseHistoryExport(payload); }
+      catch { throw new ApiError(502, 'invalid_response', 'Не удалось прочитать полную историю. Повторите загрузку.'); }
+    } finally { unsubscribe(); }
+  },
+  guest: () => call<{ id: string }>('/guest', 'POST', {}),
+  start: (body: StartBody, key: string) => call<LearningSession>('/sessions', 'POST', body, key),
+  session: (id: string) => call<LearningSession>(`/sessions/${encodeURIComponent(id)}`),
+  draft: (id: string, body: DraftBody) => call<{ draft_revision: number }>(`/sessions/${encodeURIComponent(id)}/draft`, 'PUT', body),
+  attempt: (id: string, body: AttemptBody, key: string) => call<Attempt>(`/sessions/${encodeURIComponent(id)}/attempts`, 'POST', body, key),
+  hint: (id: string, taskId: string, level: 1 | 2 | 3) => call<Hint>(`/sessions/${encodeURIComponent(id)}/hints`, 'POST', { task_id: taskId, level }),
+  solution: (id: string, taskId: string) => call<Solution>(`/sessions/${encodeURIComponent(id)}/solution`, 'POST', { task_id: taskId }),
+  finish: (id: string, key: string) => call<LearningSession>(`/sessions/${encodeURIComponent(id)}/finish`, 'POST', {}, key),
+  extend: (id: string, key: string) => call<LearningSession>(`/sessions/${encodeURIComponent(id)}/extend`, 'POST', {}, key),
+  };
+}
+
+export const api = createApi();
+export const boundApi = (owner: string | null) => createApi(owner);
 
 export type LearningApi = typeof api;
 
@@ -73,7 +106,7 @@ export function errorText(error: unknown): string {
   if (error instanceof ApiError) {
     if (error.status === 401) return 'Гостевой доступ не найден. Возможно, cookie удалены. Локальный черновик не удалён.';
     if (error.status === 404) return 'Материал или занятие недоступны в этом браузере.';
-    if (error.status === 503) return 'Демонстрационный банк выключен на сервере. Для этого этапа нужен ALLOW_DEMO_CONTENT=true.';
+    if (error.status === 503) return error.message;
     if (error.code === 'bank_exhausted') return 'Новые задачи для этих номеров закончились. Выберите другие номера: встречавшиеся экземпляры не выдаются 30 дней.';
     return error.message;
   }

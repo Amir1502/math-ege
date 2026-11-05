@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Native equivalents of the approved frontend worksheet tokens. -->
+    <color name="canvas">#f8fafc</color>
+    <color name="surface">#ffffff</color>
+    <color name="ink">#172337</color>
+    <color name="ink_muted">#475569</color>
+    <color name="hairline">#dce3ec</color>
+    <color name="control_border">#7b8ba1</color>
+    <color name="accent">#2563eb</color>
+    <color name="accent_pressed">#1d4ed8</color>
+    <color name="accent_soft">#eef4ff</color>
+    <color name="focus">#1d4ed8</color>
+    <color name="error">#9b3a20</color>
+    <color name="ripple_accent">#202563eb</color>
+    <color name="ripple_primary">#20172337</color>
+</resources>

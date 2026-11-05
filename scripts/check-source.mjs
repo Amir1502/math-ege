@@ -6,7 +6,7 @@ const paths = execFileSync('git', ['ls-files', '-z', '--cached', '--others', '--
   encoding: 'utf8',
 }).split('\0').filter(Boolean);
 const problems = [];
-const forbiddenFile = /(^|\/)(?:\.env(?:\..+)?|id_rsa|id_ed25519|credentials\.json|.*\.(?:db|sqlite|sqlite3|pem|key))$/i;
+const forbiddenFile = /(^|\/)(?:\.env(?:\..+)?|id_rsa|id_ed25519|credentials\.json|.*\.(?:db|sqlite|sqlite3|pem|key|apk|jks|keystore|p12|pfx))$/i;
 const secretPatterns = [
   /\bgh[pousr]_[A-Za-z0-9]{30,}\b/,
   /\bgithub_pat_[A-Za-z0-9_]{40,}\b/,
@@ -19,7 +19,7 @@ for (const path of paths) {
   if (forbiddenFile.test(path) && !path.endsWith('.env.example')) {
     problems.push(`${path}: файл с данными или секретом не должен попадать в git`);
   }
-  if (!/\.(?:json|[cm]?js|tsx?|py|md|txt|ya?ml|ini|toml|html|css|svg)$/.test(path)) continue;
+  if (!/\.(?:json|[cm]?js|tsx?|py|md|txt|ya?ml|ini|toml|html|css|svg|java|kts|gradle|xml|properties|ps1|bat)$/.test(path)) continue;
   const source = readFileSync(path, 'utf8');
   for (const [index, line] of source.split('\n').entries()) {
     if (secretPatterns.some(pattern => pattern.test(line))) {

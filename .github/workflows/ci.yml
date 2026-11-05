@@ -15,7 +15,7 @@ concurrency:
 jobs:
   tests:
     runs-on: ubuntu-24.04
-    timeout-minutes: 15
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
@@ -41,17 +41,19 @@ jobs:
         run: |
           .venv/bin/python -m pytest -q
           .venv/bin/python -m ruff check .
-      - name: Frontend install, lint and production build
+      - name: Install frontend dependencies
+        working-directory: frontend
+        run: npm ci --ignore-scripts
+      - name: Install Chromium
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+      - name: Frontend lint, unit tests and production build
         working-directory: frontend
         run: |
-          npm ci --ignore-scripts
           npm run lint
           npm test
           npm run build
           npm audit --omit=dev --audit-level=high
-      - name: Install Chromium
-        working-directory: frontend
-        run: npx playwright install --with-deps chromium
       - name: Browser integration and accessibility
         working-directory: frontend
         run: npm run test:e2e
@@ -92,3 +94,124 @@ jobs:
       - name: Stop containers without deleting volumes
         if: always()
         run: docker compose stop
+
+  postgres-operations:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    env:
+      OPS_VERIFY_COMMIT: ${{ github.sha }}
+      PGHOST: '127.0.0.1'
+      PGPORT: '55432'
+      PGUSER: verify_admin
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.13'
+      - name: Reserve evidence and private PostgreSQL credentials
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          set -C
+          umask 077
+          OPS_EVIDENCE_ROOT="$RUNNER_TEMP/postgres-operations-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}"
+          mkdir -m 700 "$OPS_EVIDENCE_ROOT"
+          printf 'OPS_EVIDENCE_ROOT=%s\n' "$OPS_EVIDENCE_ROOT" >> "$GITHUB_ENV"
+          suffix="$(openssl rand -hex 16)"
+          auth_dir="$RUNNER_TEMP/verify_pg_auth_$suffix"
+          mkdir -m 700 "$auth_dir"
+          password="$(openssl rand -hex 32)"
+          echo "::add-mask::$password"
+          printf '%s\n' "$password" > "$auth_dir/server-password"
+          printf '127.0.0.1:55432:*:verify_admin:%s\n' "$password" > "$auth_dir/pgpass"
+          printf 'PGPASSFILE=%s\n' "$auth_dir/pgpass" >> "$GITHUB_ENV"
+          printf 'VERIFY_PG_AUTH_DIR=%s\n' "$auth_dir" >> "$GITHUB_ENV"
+          printf 'VERIFY_PG_CONTAINER=verify_pg_%s\n' "$suffix" >> "$GITHUB_ENV"
+          printf 'VERIFY_PG_VOLUME=verify_pgdata_%s\n' "$suffix" >> "$GITHUB_ENV"
+          printf '{"container":"verify_pg_%s","volume":"verify_pgdata_%s","database":"postgres","automatic_cleanup":false,"fixture_data_only":true}\n' \
+            "$suffix" "$suffix" > "$OPS_EVIDENCE_ROOT/provisioning.json"
+          printf '%s\n' 'postgres:18-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5' \
+            > "$OPS_EVIDENCE_ROOT/postgres-image.txt"
+      - name: Install backend in a project environment
+        timeout-minutes: 7
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/bin/python -m pip install -r backend/requirements-dev.txt
+          backend/.venv/bin/python -m pip check
+      - name: Install PostgreSQL 18 clients from the signed PGDG repository
+        timeout-minutes: 5
+        shell: bash
+        run: |
+          set -euo pipefail
+          key="$VERIFY_PG_AUTH_DIR/pgdg.asc"
+          curl --proto '=https' --tlsv1.2 --fail --silent --show-error --max-time 60 \
+            https://www.postgresql.org/media/keys/ACCC4CF8.asc --output "$key"
+          fingerprint="$(gpg --batch --show-keys --with-colons "$key" | awk -F: '$1 == "fpr" { print $10; exit }')"
+          test "$fingerprint" = B97B0AFCAA1A47F044F244A07FCC7D46ACCC4CF8
+          test ! -e /usr/share/keyrings/math-ege-verify-pgdg.asc
+          test ! -e /etc/apt/sources.list.d/math-ege-verify-pgdg.list
+          sudo install -m 0644 "$key" /usr/share/keyrings/math-ege-verify-pgdg.asc
+          printf '%s\n' 'deb [signed-by=/usr/share/keyrings/math-ege-verify-pgdg.asc] https://apt.postgresql.org/pub/repos/apt noble-pgdg main' \
+            | sudo tee /etc/apt/sources.list.d/math-ege-verify-pgdg.list > /dev/null
+          sudo apt-get -o Acquire::Retries=3 -o Acquire::https::Timeout=30 -o Acquire::http::Timeout=30 update
+          sudo env DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends \
+            -o Acquire::Retries=3 -o Acquire::https::Timeout=30 install postgresql-client-18
+          printf '%s\n' '/usr/lib/postgresql/18/bin' >> "$GITHUB_PATH"
+      - name: Start an isolated PostgreSQL 18 server
+        timeout-minutes: 4
+        shell: bash
+        run: |
+          set -euo pipefail
+          if docker container inspect "$VERIFY_PG_CONTAINER" > /dev/null 2>&1; then
+            echo 'Verification container already exists' >&2
+            exit 1
+          fi
+          if docker volume inspect "$VERIFY_PG_VOLUME" > /dev/null 2>&1; then
+            echo 'Verification volume already exists' >&2
+            exit 1
+          fi
+          docker run --detach --name "$VERIFY_PG_CONTAINER" \
+            --cidfile "$VERIFY_PG_AUTH_DIR/container.cid" \
+            --publish 127.0.0.1:55432:5432 --shm-size 256m \
+            --mount "type=volume,source=$VERIFY_PG_VOLUME,target=/var/lib/postgresql" \
+            --mount "type=bind,source=$VERIFY_PG_AUTH_DIR/server-password,target=/run/secrets/postgres_password,readonly" \
+            --env POSTGRES_USER=verify_admin --env POSTGRES_DB=postgres \
+            --env POSTGRES_PASSWORD_FILE=/run/secrets/postgres_password \
+            --env POSTGRES_INITDB_ARGS=--auth-host=scram-sha-256 \
+            postgres:18-alpine@sha256:10a5c69a83035ab5239f5620d708520e8b28f5aa1f2b20143e6024532edadfb5 \
+            > /dev/null
+      - name: Real populated migration, restore and 500-user ten-minute workload
+        timeout-minutes: 28
+        working-directory: backend
+        run: |
+          .venv/bin/python -m ruff check --config pyproject.toml \
+            tests/test_postgres_recovery.py ../scripts/ops/verify_postgres.py
+          .venv/bin/python ../scripts/ops/verify_postgres.py \
+            --artifacts-dir "$OPS_EVIDENCE_ROOT/gate" \
+            --expected-commit "$OPS_VERIFY_COMMIT" \
+            --content-dir "$GITHUB_WORKSPACE/backend/content/course"
+      - name: Stop the owned PostgreSQL container and preserve its volume
+        if: always()
+        timeout-minutes: 2
+        shell: bash
+        run: |
+          set -euo pipefail
+          set -C
+          if [ -n "${VERIFY_PG_AUTH_DIR:-}" ] && [ -f "$VERIFY_PG_AUTH_DIR/container.cid" ]; then
+            container_id="$(cat "$VERIFY_PG_AUTH_DIR/container.cid")"
+            [[ "$container_id" =~ ^[a-f0-9]{64}$ ]]
+            docker stop --time 30 "$container_id" > /dev/null
+            printf '%s\n' '{"container_stopped":true,"volume_deleted":false}' \
+              > "$OPS_EVIDENCE_ROOT/postgres-stop.json"
+          fi
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        timeout-minutes: 5
+        with:
+          name: postgres-operations-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/postgres-operations-${{ github.run_id }}-${{ github.run_attempt }}/
+          retention-days: 30
+          if-no-files-found: warn
