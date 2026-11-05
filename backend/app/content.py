@@ -1,6 +1,7 @@
 """Load and validate data-only content. Loading is not permission to issue it."""
 
 import json
+import threading
 from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
@@ -187,13 +188,42 @@ def validate_content(profile: Any, lessons: Any, tasks: Any) -> ContentBundle:
         raise ContentError("Invalid content package") from exc
 
 
+_BUNDLES: dict[tuple[str, tuple[tuple[int, int], ...]], ContentBundle] = {}
+_BUNDLE_LOCK = threading.Lock()
+_BUNDLE_LIMIT = 8
+_PACKAGE_FILES = ("profile.json", "lessons.json", "tasks.json")
+
+
+def _package_key(directory: Path) -> tuple[str, tuple[tuple[int, int], ...]] | None:
+    """Identify one exact on-disk package; unreadable paths are never cached."""
+    try:
+        signature = tuple(
+            (stat.st_mtime_ns, stat.st_size) for stat in (
+                (directory / name).stat() for name in _PACKAGE_FILES
+            )
+        )
+        return (str(directory.resolve()), signature)
+    except OSError:
+        return None
+
+
 def load_content(content_dir: Path | str | None = None) -> ContentBundle:
     """Read profile.json object, lessons.json array and tasks.json array.
 
     The default path is absolute and relative to the backend package. The
     caller must still enforce ALLOW_DEMO_CONTENT before issuing demo content.
+
+    Validating the full package is CPU-bound and happens on every content
+    request, so an unchanged package is reused. The signature covers mtime and
+    size of all three files; a rewritten or replaced file is revalidated.
     """
     directory = Path(content_dir) if content_dir is not None else DEFAULT_CONTENT_DIR
+    key = _package_key(directory)
+    if key is not None:
+        with _BUNDLE_LOCK:
+            cached = _BUNDLES.get(key)
+        if cached is not None:
+            return cached
     try:
         values = [
             json.loads((directory / name).read_text(encoding="utf-8"))
@@ -201,4 +231,10 @@ def load_content(content_dir: Path | str | None = None) -> ContentBundle:
         ]
     except (OSError, ValueError) as exc:
         raise ContentError("Content package is missing or is not valid JSON") from exc
-    return validate_content(*values)
+    bundle = validate_content(*values)
+    if key is not None:
+        with _BUNDLE_LOCK:
+            if len(_BUNDLES) >= _BUNDLE_LIMIT:
+                _BUNDLES.pop(next(iter(_BUNDLES)))
+            _BUNDLES[key] = bundle
+    return bundle

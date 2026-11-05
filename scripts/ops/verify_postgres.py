@@ -426,6 +426,34 @@ def durable_load_counts(tools: PostgresTools, database: str) -> dict[str, int]:
     return result
 
 
+def capture_load_diagnostics(
+    tools: PostgresTools, database: str, directory: Path,
+) -> None:
+    """Record live server state when a workload threshold fails.
+
+    A timeout alone cannot distinguish a slow database from a stalled client, so
+    this never runs on the passing path and never masks the original error.
+    """
+    statement = (
+        "SELECT coalesce(json_agg(item ORDER BY item->>'pid'), '[]')::text FROM ("
+        "SELECT json_build_object("
+        "'pid', pid, 'state', state, 'wait_event_type', wait_event_type, "
+        "'wait_event', wait_event, 'blocked_by', pg_blocking_pids(pid), "
+        "'xact_age_seconds', "
+        "coalesce(round(extract(epoch FROM (now() - xact_start))), 0)::bigint, "
+        f"'query', left(query, 240)) AS item "
+        f"FROM pg_stat_activity WHERE datname = '{database}') AS activity;"
+    )
+    try:
+        with tools.session(database) as session:
+            lines = session.query(statement)
+        write_new_json(directory / "pg-activity.json", {
+            "database": database, "sessions": json.loads(lines[0]),
+        })
+    except Exception:  # noqa: BLE001 - diagnostics must never replace the failure
+        return
+
+
 def run_workload(directory: Path, environment: Mapping[str, str], content_dir: Path, head: str):
     namespace = "verify_load_" + uuid4().hex
     config = LoadConfig(target=LOAD_TARGET, route="/api/v1", namespace=namespace)
@@ -442,6 +470,7 @@ def run_workload(directory: Path, environment: Mapping[str, str], content_dir: P
         "CONTENT_DIR": str(content_dir), "OPS_VERIFICATION_NAMESPACE": namespace,
         "OPS_LOAD_TARGET": config.target, "PGDATABASE": namespace,
     })
+    api_log = (directory / "api.log").open("wb")
     migrated, process = False, None
     try:
         result = run_child(
@@ -459,10 +488,10 @@ def run_workload(directory: Path, environment: Mapping[str, str], content_dir: P
             listener.bind(("127.0.0.1", 8001))
         process = subprocess.Popen(
             [sys.executable, "-m", "uvicorn", "app.main:app", "--host", "127.0.0.1",
-             "--port", "8001", "--workers", "1", "--no-access-log", "--log-level", "critical",
+             "--port", "8001", "--workers", "1", "--no-access-log", "--log-level", "error",
              "--timeout-graceful-shutdown", "15"],
-            cwd=BACKEND, env=env, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL, start_new_session=os.name == "posix",
+            cwd=BACKEND, env=env, stdin=subprocess.DEVNULL, stdout=api_log,
+            stderr=subprocess.STDOUT, start_new_session=os.name == "posix",
         )
         wait_for_api(process, config)
         status, profile = HttpTransport(
@@ -483,20 +512,24 @@ def run_workload(directory: Path, environment: Mapping[str, str], content_dir: P
             env, seconds=720, evidence=directory / "load-process.json",
             output=directory / "workload.json",
         )
-        require_successful_child(result)
-        report_path = directory / "workload.json"
-        regular_file(report_path)
-        if report_path.stat().st_size > 1_048_576:
-            raise OperationError("workload_report_size_limit_exceeded")
-        require_full_workload(
-            json.loads(report_path.read_bytes()), config, result["elapsed_seconds"],
-        )
-        counts = durable_load_counts(tools, namespace)
-        write_new_json(directory / "load-durable-counts.json", counts)
-        if counts["guests"] != 500 or counts["completed_five_task_session_owners"] != 500 or (
-            counts["attempts"] < 2500 or counts["idempotency_records"] < 3500
-        ):
-            raise OperationError("durable_workload_not_completed")
+        try:
+            require_successful_child(result)
+            report_path = directory / "workload.json"
+            regular_file(report_path)
+            if report_path.stat().st_size > 1_048_576:
+                raise OperationError("workload_report_size_limit_exceeded")
+            require_full_workload(
+                json.loads(report_path.read_bytes()), config, result["elapsed_seconds"],
+            )
+            counts = durable_load_counts(tools, namespace)
+            write_new_json(directory / "load-durable-counts.json", counts)
+            if counts["guests"] != 500 or counts["completed_five_task_session_owners"] != 500 or (
+                counts["attempts"] < 2500 or counts["idempotency_records"] < 3500
+            ):
+                raise OperationError("durable_workload_not_completed")
+        except BaseException:
+            capture_load_diagnostics(tools, namespace, directory)
+            raise
         if process.poll() is not None:
             raise OperationError("verification_api_exited_during_workload")
         if content_inventory(content_dir) != inventory:
@@ -504,6 +537,7 @@ def run_workload(directory: Path, environment: Mapping[str, str], content_dir: P
     finally:
         if process is not None:
             write_new_json(directory / "api-stop.json", stop_child(process))
+        api_log.close()
         if migrated:
             # Persist the synthetic workload DB, even when a load threshold fails.
             # A stopped hosted runner's volume alone is not a durable CI artifact.

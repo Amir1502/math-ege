@@ -64,23 +64,13 @@ def combined_content(
     submitted lesson must itself stop referring to a withdrawn task.
     """
     base = load_content(settings.content_dir)
-    profile = base.profile.model_dump(mode="json")
-    tasks = {task.id: task.model_dump(mode="json") for task in base.tasks}
-    lessons = {lesson.id: lesson.model_dump(mode="json") for lesson in base.lessons}
     # PostgreSQL READ COMMITTED takes a new snapshot per statement. A shared
     # catalog lock keeps profile and pointer reads in the same publication epoch.
     # SQLite's explicit read transaction already supplies a consistent snapshot.
     catalog = db.scalar(
         select(EditorCatalog).where(EditorCatalog.id == 1).with_for_update(read=True)
     )
-    if catalog is not None and catalog.profile_revision_id is not None:
-        revision = db.get(EditorRevision, catalog.profile_revision_id)
-        if revision is None or revision.status != "published":
-            raise ContentError("Опубликованный профиль недоступен.")
-        profile = copy.deepcopy(revision.payload)
-    withdrawn: set[str] = set()
-    withdrawn_families: set[str] = set()
-    pointers = (
+    pointers = tuple(
         db.execute(
             select(EditorPublication, EditorRevision).outerjoin(
                 EditorRevision,
@@ -88,8 +78,26 @@ def combined_content(
             ),
         )
         if catalog is not None
-        else []
+        else ()
     )
+    if not pointers and not candidates and (
+        catalog is None or catalog.profile_revision_id is None
+    ):
+        # Nothing is published, so the validated base package is exactly the
+        # served projection. Re-dumping and revalidating all tasks per request
+        # would be pure overhead on the read path.
+        validate_links(base)
+        return base
+    profile = base.profile.model_dump(mode="json")
+    tasks = {task.id: task.model_dump(mode="json") for task in base.tasks}
+    lessons = {lesson.id: lesson.model_dump(mode="json") for lesson in base.lessons}
+    if catalog is not None and catalog.profile_revision_id is not None:
+        revision = db.get(EditorRevision, catalog.profile_revision_id)
+        if revision is None or revision.status != "published":
+            raise ContentError("Опубликованный профиль недоступен.")
+        profile = copy.deepcopy(revision.payload)
+    withdrawn: set[str] = set()
+    withdrawn_families: set[str] = set()
     for pointer, revision in pointers:
         target = tasks if pointer.kind == "task" else lessons if pointer.kind == "lesson" else None
         if target is None:

@@ -13,6 +13,7 @@
 | --- | --- |
 | Backend: Ruff, `pip check`, затем весь pytest в новом `--basetemp`, без pytest cache | **20 411 passed, 2 skipped; 607,32 с; exit 0** в свежем delivery-gate. Ruff: `All checks passed!`; pip: `No broken requirements found`. |
 | Backend после исправления PostgreSQL-схемы: Ruff, `pip check`, весь pytest в новом `--basetemp` | **20 414 passed, 2 skipped; 606,14 с; exit 0**; Ruff и `pip check` — exit 0; SHA-256 списка backend-файлов до/после совпадают. JUnit — 20 416 cases, 0 failures/errors, SHA-256 `5bc3bcd7eda694a93f0a36b56614f43099ac3d298c02bb7eec23cfc8ee907181`. Это тот же whole backend плюс два offline PostgreSQL-теста схемы и unit-проверка libpq environment; предыдущий gate `20 411` остаётся отдельным артефактом. |
+| Backend после workload-исправления, включая четыре cache-регрессии | **20 418 passed, 2 skipped; 599,07 с; exit 0**. Ruff, `pip check`, inventory — exit 0, все 157 backend/ops-файлов неизменны; JUnit 20 420 cases, 0 failures/errors, SHA-256 `db3f652ed4e96401812d625fe26a08c6a9486da12e644d3f92b79d45473416fa`. |
 | Все shared Chromium-сценарии после исправления миграций, identity opt-in выключен | **26 passed, 4 намеренных identity skips, 0 failures/flaky; 1,9 мин; exit 0**. API поднят с нуля через `alembic upgrade head` на свежей SQLite, поэтому переименованный FK реально применяется в браузерном gate. Исходные PWA assertions не изменены. |
 | Полная серия практики из 20 задач: focused Chromium с реальным API | **1 passed, 25,0 с; exit 0**, сценарий 9,6 с. Двадцать исходных попыток/снимков и итог сохранены после reload; [границы доказательства](browser-integration.md#complete-twenty-task-practice-series). |
 | Полный frontend: ESLint, Vitest, TypeScript/Vite build | **409 passed, 20 файлов, 17,08 с**; lint/unit/build — exit 0, без пропусков. Все 9 новых PWA-регрессий включены. |
@@ -161,8 +162,8 @@ Android исключения остаются ниже общих правил. 
   SHA-256 `42199293d99b16b7003e7450e3f92a071b5971795c06c74c9ea340000f009dfd`;
   один ожидаемый preview сертификат, v1/v2/v3, actual `debuggable=false`, signed
   alignment exit 0; все 48 исходных ZIP entries сохранены, новый ключ/повторная
-  подпись не выполнялись. Private prerelease, установка и действующий HTTPS
-  endpoint пока не подтверждены. [Полная хронология](android-preview.md).
+  подпись не выполнялись. Private prerelease подтверждён позднее ниже; установка
+  и действующий HTTPS endpoint не подтверждены. [Полная хронология](android-preview.md).
 
 ### Первая exact-SHA публикация и сохранённый CI RED
 
@@ -193,9 +194,10 @@ Git; GitHub ZIP digest
 также скачан. Оба job/log/report среза сохранены в delivery evidence root;
 production RPO/RTO и нагрузочная приёмка по ним не установлены.
 
-Private APK assets подготовлены вне Git, но prerelease **не опубликован**:
-публикация ждёт устранения причины старта и нового exact-SHA CI GREEN, а не
-ослабления readiness, подсчётов, длительности нагрузки или тестов.
+На момент первого CI RED private APK assets были подготовлены вне Git, но
+prerelease **не был опубликован**. Действовавшее тогда условие публикации —
+новый exact-SHA CI GREEN, без ослабления readiness, подсчётов, длительности
+нагрузки или тестов. Позднейшее решение владельца и публикация записаны ниже.
 
 ### Причины первого CI RED и их исправление
 
@@ -236,6 +238,70 @@ Private APK assets подготовлены вне Git, но prerelease **не �
   (`pg-identifier-red-reproduction.log`). Для readiness RED сохранён
   CI-артефакт и разбор libpq 18.6; unit gate проверяет, что пустые
   `PGSERVICE`/`PGSERVICEFILE` больше не появляются.
+
+### Второй exact-SHA прогон: workload RED и причина
+
+CI [42108367591](https://github.com/Amir1502/math-ege/actions/runs/42108367591)
+для `9a388c5`: `tests` — success, `containers` — success, `postgres-operations`
+— failure. Стадия `recovery` прошла за **5,13 с**; нагрузочная стадия завершилась
+`verification_child_failed_or_timed_out` через 613,5 с: **528 успешных ответов
+из 18 000**, 1 500 transport errors, `create_session` — 0 успехов, все 500
+пользователей отключены. Артефакт `postgres-operations-42108367591-1` сохранён.
+
+Локальный разбор выявил перегрузку read-path, согласующуюся с CI-симптомами:
+`combined_content()` на **каждый** запрос контента делал `model_dump` всех 845
+задач, копировал словари и заново валидировал весь пакет. Замер на SQLite с тем
+же расширенным пакетом (`content/course`) подтверждает этот локальный механизм,
+но не заменяет повторную полную PostgreSQL-нагрузку:
+
+| Сценарий | До | После |
+| --- | ---: | ---: |
+| `GET /api/v1/profile`, 1 поток, p50 | 268,9 мс (3,5 rps) | **23,8 мс (48,8 rps)** |
+| `GET /api/v1/profile`, 30 потоков, p50 | 4 009,9 мс, **86 из 97 запросов failed** | **210,3 мс, 0 failed, 133,6 rps** |
+| `GET /api/v1/health`, 30 потоков | 90,2 мс / 121 rps | 91,5 мс / 299 rps |
+
+Исправление на ответственном слое, без ослабления условий (500 пользователей,
+30 RPS, 600 с, 18 000 запросов, 5-секундный timeout сохранены):
+
+- `app/content.py`: `load_content` переиспользует уже провалидированный пакет,
+  если mtime и размер всех трёх файлов не изменились; ключ включает каталог,
+  ошибки чтения не кешируются, кеш ограничен 8 пакетами.
+- `app/editor/repository.py`: при отсутствии опубликованных указателей и
+  кандидатов отдаётся тот же провалидированный базовый пакет (после
+  `validate_links`) вместо повторного dump/validate всех задач. Опубликованный
+  каталог обрабатывается прежним путём.
+- `backend/tests/test_content_cache.py` (**4 теста**): переиспользование,
+  инвалидация по перезаписи файла, изоляция каталогов, отсутствие кеширования
+  ошибок и fast-path `combined_content`.
+
+APK-preview опубликован отдельно (private prerelease `v0.1.0-preview`) по
+прямому указанию владельца; публикация не заявляет о пройденной нагрузочной
+приёмке PostgreSQL. GitHub подтвердил `isPrerelease=true`, `isDraft=false`,
+target `9a388c539797d098bbddf8741848f8f7ffcf6c82`, четыре загруженных asset и
+digest APK `sha256:42199293d99b16b7003e7450e3f92a071b5971795c06c74c9ea340000f009dfd`:
+[private release](https://github.com/Amir1502/math-ege/releases/tag/v0.1.0-preview).
+Этот APK по-прежнему требует внешний HTTPS-сервер.
+
+Промежуточный backend-прогон workload-исправления:
+**20 414 passed, 2 skipped, 602,37 с**, Ruff exit 0, JUnit SHA-256
+`cb61f520f41a1913f23ed665c6688d3aedd61bac86f2de2a08ad57c7c8438fb5`.
+Он не является gate итогового набора файлов: во время команды добавлен
+`test_content_cache.py` (151 → 152 backend-файла), его четыре теста не вошли.
+Артефакт сохранён в `completion-workload-fix-5f36663b19fb41f0903f4a15d14fb3ae`;
+повтор полного backend с неизменностью исходников выполнен отдельно:
+**20 418 passed, 2 skipped, 599,07 с**, Ruff и `pip check` exit 0.
+Все 157 backend/ops-файлов до/после совпали. JUnit 20 420 cases,
+0 failures/errors; SHA-256
+`db3f652ed4e96401812d625fe26a08c6a9486da12e644d3f92b79d45473416fa`,
+suite time 598,581 с. Артефакты:
+`completion-workload-final-46cd655f9cbe4a1eb629e5110d42ce89`.
+
+Повторный shared Chromium после workload-исправления: **26 passed,
+4 intentional identity skips, 1,5 мин, exit 0**, все 330 backend/frontend/ops
+файлов до/после совпали. Отчёт
+`completion-workload-shared-7c135180ab264e8caa37ebb9477ca756/playwright-report/index.html`,
+SHA-256 `663a16539f104150847cfe4694cef8c8773f758385e874a85881ac797d68876d`.
+Исходные PWA assertions и прежние reports не заменены.
 
 ### Границы поставки
 
