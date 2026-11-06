@@ -326,6 +326,28 @@ HTTP 200, `server_error_rate=0`, 500 логических пользовател
 30 in-flight) не ослаблены: полная PostgreSQL-приёмка остаётся **RED**,
 production-promotion по-прежнему заблокирован.
 
+### Четвёртый прогон: `8d1149e`, tests/containers GREEN и остаточный workload RED
+
+CI [42200736307](https://github.com/Amir1502/math-ege/actions/runs/42200736307)
+для `8d1149e1084ec09cb60285e823cb3d026b544009`: `tests` — **success**
+(8 мин 54 с, включая frontend lint/unit/build и browser integration),
+`containers` — **success** (1 мин 33 с), `postgres-operations` — **failure**
+(10 мин 56 с). Стадия `recovery` — 3,774 с, passed; `workload` —
+610,81 с, `verification_child_failed_or_timed_out`.
+
+Фактическая нагрузка: **16 471 из 18 000** ответов, **1 529** пропущенных
+слотов, `achieved_rps_including_drain=27,452`, `execution_complete=false`,
+`workload_complete=false`, 0 server errors, 500 завершённых сессий.
+`create_session` p50 **2 634,002 мс**, p95 **2 786,638 мс**, max 3 160,154 мс;
+`get_session` p95 8,108 мс; `profile` p95 5,311 мс; `attempt` p95 16,272 мс;
+`health` p95 2,724 мс. Это лучше прогона `70c1126` (15 285 ответов,
+p95 4 025,06 мс), но условий приёмки не выполняет: полная
+PostgreSQL-нагрузка остаётся **RED**, production-promotion заблокирован.
+
+Предыдущий прогон `a52975b` (42200428659) был отменён concurrency после
+push документационного коммита, поэтому его незавершённые стадии не
+считаются результатом.
+
 ### Границы поставки
 
 Кандидатный курс остаётся `demo`, профиль `draft`, независимые рецензенты —
@@ -426,8 +448,13 @@ screen reader, двухверсионное обновление PWA, production
 `sha256:b5de3f1b32236546c6fb0955aceedcb9b45817d3e8ae20ae771faa946cc580ba`
 и digest сертификата
 `sha256:e17ebff9a819267517c7605e437482fc31434b166f47145f30776c4fb44231b7`.
-CI для этого коммита — [42200428659](https://github.com/Amir1502/math-ege/actions/runs/42200428659);
-на момент публикации он не завершён, поэтому релиз не заявляет о его успехе.
+CI для коммита `a52975b` — [42200428659](https://github.com/Amir1502/math-ege/actions/runs/42200428659),
+он был отменён concurrency после push документационного коммита `8d1149e`.
+Итоговый прогон для `8d1149e` —
+[42200736307](https://github.com/Amir1502/math-ege/actions/runs/42200736307):
+`tests` — success, `containers` — success, `postgres-operations` — failure
+(workload RED: 16 471/18 000 ответов, `create_session` p95 2 786,638 мс).
+Релиз не заявляет о пройденной нагрузочной или предметной приёмке.
 `v0.1.0-preview` и его доказательства не заменены.
 
 ### Границы
