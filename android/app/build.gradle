@@ -1,7 +1,35 @@
 import com.android.build.api.variant.HostTestBuilder
+import org.gradle.api.DefaultTask
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.OutputDirectory
+import org.gradle.api.tasks.TaskAction
 
 plugins {
     id 'com.android.application'
+}
+
+abstract class SyncOfflineAssets extends DefaultTask {
+    @InputDirectory
+    abstract DirectoryProperty getFrom()
+
+    @OutputDirectory
+    abstract DirectoryProperty getInto()
+
+    @TaskAction
+    void sync() {
+        File root = into.get().asFile
+        project.delete(root)
+        project.copy {
+            from(from.get().asFile)
+            into(new File(root, 'www'))
+        }
+    }
+}
+
+def offlineAssets = tasks.register('syncOfflineAssets', SyncOfflineAssets) {
+    from.set(layout.projectDirectory.dir('../../frontend/dist-offline'))
+    into.set(layout.buildDirectory.dir('generated/offlineAssets'))
 }
 
 android {
@@ -13,8 +41,8 @@ android {
         applicationId = 'ru.mathege.preview'
         minSdk = 23
         targetSdk = 37
-        versionCode = 1
-        versionName = '0.1.0-preview'
+        versionCode = 2
+        versionName = '0.2.0-offline-preview'
     }
 
     compileOptions {
@@ -39,6 +67,9 @@ android {
 }
 
 androidComponents {
+    onVariants(selector().all()) { variant ->
+        variant.sources.assets?.addGeneratedSourceDirectory(offlineAssets) { task -> task.into }
+    }
     beforeVariants(selector().withBuildType('release')) { variantBuilder ->
         // AGP 9.3 registers only debug host tests by default. Keep a release gate.
         variantBuilder.hostTests.get(HostTestBuilder.UNIT_TEST_TYPE).enable = true

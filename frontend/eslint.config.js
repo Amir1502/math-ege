@@ -6,7 +6,7 @@ import hooks from 'eslint-plugin-react-hooks';
 import refresh from 'eslint-plugin-react-refresh';
 
 export default defineConfig(
-  { ignores: ['dist/**', 'node_modules/**', 'test-results/**', 'playwright-report/**'] },
+  { ignores: ['dist/**', 'dist-offline/**', 'node_modules/**', 'test-results/**', 'playwright-report/**'] },
   {
     files: ['**/*.{ts,tsx}'],
     extends: [js.configs.recommended, tseslint.configs.recommended],
@@ -25,5 +25,9 @@ export default defineConfig(
     files: ['**/*.{js,mjs}'],
     extends: [js.configs.recommended],
     languageOptions: { globals: globals.node },
+  },
+  {
+    files: ['offline-public/*.js'],
+    languageOptions: { globals: globals.browser },
   },
 );

@@ -303,6 +303,29 @@ suite time 598,581 с. Артефакты:
 SHA-256 `663a16539f104150847cfe4694cef8c8773f758385e874a85881ac797d68876d`.
 Исходные PWA assertions и прежние reports не заменены.
 
+### Третий exact-SHA прогон: cache-исправление и остаточный workload RED
+
+CI [42116546868](https://github.com/Amir1502/math-ege/actions/runs/42116546868)
+для `70c11265e0ca1c6df6f748798a7866c4ff350ede` (`main`, workflow
+«Verify learning core»): `tests` — success, `containers` — success,
+`postgres-operations` — failure. Стадия `recovery` прошла за **4,877 с**,
+стадия `workload` завершилась `verification_child_failed_or_timed_out`
+через **613,791 с**. Артефакт `postgres-operations-42116546868-1` сохранён.
+
+Фактическая нагрузка: **15 285 из 18 000** запланированных ответов,
+**2 715** пропущенных слотов, `achieved_rps_including_drain=25,475`,
+`execution_complete=false`, `workload_complete=false`. Все ответы —
+HTTP 200, `server_error_rate=0`, 500 логических пользователей активны
+каждую минуту, 500 сессий завершено, банк не исчерпан. Клиентская
+латентность включает сеть: `create_session` p50 **3 796,836 мс**, p95
+**4 025,06 мс**, max 4 276,094 мс; `get_session` p95 14,434 мс;
+`profile` p95 52,31 мс; `attempt` p95 49,894 мс; `health` p95 3,244 мс.
+Остаточная стоимость сосредоточена в `create_session` при 500
+пользователях и 30 in-flight запросах, а не в ошибках API. Условия
+(500 пользователей, 30 RPS, 600 с, 5-секундный timeout, 18 000 запросов,
+30 in-flight) не ослаблены: полная PostgreSQL-приёмка остаётся **RED**,
+production-promotion по-прежнему заблокирован.
+
 ### Границы поставки
 
 Кандидатный курс остаётся `demo`, профиль `draft`, независимые рецензенты —
@@ -318,6 +341,95 @@ FR-03, FR-05/AC-06, положительного округления FR-12/AC-0
 автономное офлайн-приложение. Юридический режим, почта/TLS, реальные устройства,
 screen reader, двухверсионное обновление PWA, production RPO/RTO и независимая
 предметная приёмка не подтверждаются автоматическими локальными тестами.
+
+## Автономное Android-приложение 0.2.0 — 6 ноября 2026 года
+
+Проверяется [утверждённый дизайн](superpowers/specs/2026-11-06-offline-android-design.md)
+и [план](superpowers/plans/2026-11-06-offline-android.md). Версия
+`0.2.0-offline-preview` запускает упакованный курс без сервера; онлайн-ядро,
+БД, история и `v0.1.0-preview` не заменены. Учётные записи, синхронизация,
+редактор и авторитетные экзамены остаются серверными.
+
+### Пакет и runtime
+
+- Пакет собран из неизменённых байтов `content/course`; ревизия
+  `offline-v1-4e62fddb949989ee8b1d63bc9368f40a42c0f45e03026a0b8eddb08209bfcaed`,
+  **845 задач, 99 уроков, 13 слотов, 26 runtime-семейств**, SHA-256 каждого
+  файла в `course/manifest.json` сверяется при загрузке.
+- Проверка ответов повторяет Python-грамматику `fraction-v1` на `BigInt`;
+  при отсутствии `BigInt` показывается несовместимость, а не приближённый ответ.
+- Прогресс — только на устройстве: IndexedDB `math-ege-offline-v1` schema 1,
+  отдельный UUID, транзакционные очередь/подтверждения, повтор после
+  перезапуска. 30-дневное исключение одинаковых условий и явные пометки
+  знакомых повторов; мастерство и облако не имитируются.
+- WebView получает только виртуальный origin
+  `https://appassets.androidplatform.net/assets/www/`; разрешённые GET отдают
+  файлы из APK, остальное закрывается. Нет INTERNET permission, JS-моста,
+  file/content доступа, загрузок и внешней навигации; CSP и `no-store`
+  выставляются на каждый ответ.
+
+### Фактические проверки
+
+| Проверка | Результат |
+| --- | --- |
+| Offline Chromium, 11 сценариев | **11 passed, 23,8 с, exit 0** в `browser-full-final-12` после пересборки: первый запуск, сбой черновика, подтверждения UUID, повреждённая очередь, finish-UUID, skip-link, 320/390/1440 px, ES2020, BigInt |
+| Frontend unit / lint / build | **424 passed / 23 файла**; lint exit 0; online-сборка с PWA — success, 69 precache entries |
+| Android clean gate | **BUILD SUCCESSFUL** за 51–56 с: `:app:clean :app:testReleaseUnitTest :app:assembleRelease :app:lintRelease`; **144 теста** в 6 suite, 0 failures/errors/skips; lint — 0 errors/0 warnings |
+| Unsigned APK | **1 671 541 байт**, SHA-256 `e307c1a22ea1f2d53c8cefe45d29d564c62c9b185ba5116b0924ca9cedcfe228`, versionCode 2, `0.2.0-offline-preview` |
+| `validate-preview.ps1` | GREEN: 6 offline-файлов побайтно равны `frontend/dist-offline`, одна exported Activity, `MainActivity` не экспортирована, INTERNET/JNI/signing block отсутствуют, `zipalign` exit 0 |
+| Resource contrast | 11 пар; минимум 3,05:1 при пороге 3,0:1, текст ≥4,5:1 |
+
+### Сохранённые RED и исправления
+
+1. Skip-link: автфокус `h1` перехватывал фокус; теперь заголовок фокусируется
+   только при реальной смене hash, ссылка пропуска использует
+   `preventDefault`, фокусирует `main` и не меняет URL. RED `browser-skip-red`
+   → GREEN `browser-skip-green`.
+2. CSP: инлайн `data:font` блокировался; `assetsInlineLimit: 0` убрал
+   `data:font` (`data-font-index=-1`). RED `browser-csp-red` → GREEN
+   `browser-csp-green`, затем полный gate `browser-full-green-11`.
+3. Lint: `android:enableOnBackInvokedCallback` на minSdk 23 давал
+   `UnusedAttribute`; добавлен `tools:targetApi="33"`, лишний
+   `uses-permission INTERNET ... tools:node="remove"` удалён, поскольку
+   merged manifest и так без INTERNET. `lintRelease` — success.
+4. Упаковка assets: первый запуск нового валидатора — **RED**
+   `Missing bundled offline asset: offline.html`. AGP использовал
+   `.../offlineAssets/www` как корень, файлы попадали в `assets/offline.html`
+   вместо `assets/www/offline.html`. `SyncOfflineAssets` теперь копирует пакет
+   в подкаталог `www`, AGP регистрирует родительский каталог; чистая
+   пересборка даёт 80 записей `assets/www/...` и GREEN.
+5. Подпись: `apksigner sign` печатает в stdout два приглашения пароля, из-за
+   чего harness падал на проверке пустого вывода. Принимаются ровно эти две
+   строки, stderr обязан быть пустым, пароль не логируется.
+
+### Подписанный APK
+
+| Проверка | Факт |
+| --- | --- |
+| Signed APK | **1 691 132 байта**, SHA-256 `b5de3f1b32236546c6fb0955aceedcb9b45817d3e8ae20ae771faa946cc580ba` |
+| Unsigned вход | SHA-256 `e307c1a22ea1f2d53c8cefe45d29d564c62c9b185ba5116b0924ca9cedcfe228`, не изменён |
+| Схемы / сертификат | v1/v2/v3 true, v4/v3.1 false, 1 signer, `e17ebff9a819267517c7605e437482fc31434b166f47145f30776c4fb44231b7` |
+| API 23+ / API 24+ | standard exit 0; `-Werr --min-sdk-version 24` exit 0, 0 warnings |
+| Raw API 23+ `-Werr` | exit 1, ровно те же **20** `META-INF/... not protected by signature`; RED сохранён |
+| Payload / alignment | все **128** исходных ZIP-записей с теми же длиной и SHA-256; `zipalign -c -P 16 4` exit 0; key/password files не изменены |
+
+Артефакты: `completion-offline-final-9740de4a6d4242f5873881ab0a02b05c`
+(логи, `unsigned-validation-offline.json`, `lint-offline.xml`,
+`android-sign-offline-3.log`) и
+`offline-signed-007517dd5cf64c3491e5addf046658a0`
+(`signed-result.json`, `SHA256SUMS.txt`, verification-логи).
+
+### Границы
+
+Реальная установка, первый запуск в авиарежиме, OEM/WebView-версии, TalkBack,
+крупный шрифт, IME и обновление поверх `0.1.0-preview` с сохранением данных
+не проверены: устройство/эмулятор не подключены. Курс остаётся `demo`,
+профиль `draft`, рецензенты `null`; ≥650 независимо проверенных экземпляров,
+пять семейств на позицию, ручная проверка 26 генераторов, FR-03, FR-05/AC-06,
+FR-12/AC-08 и NFR-05 не закрыты. Полная PostgreSQL-нагрузка остаётся RED
+(см. выше), поэтому production-promotion и публичное развёртывание для
+учеников не разрешены. Публикация `0.2.0` — отдельный private prerelease с
+явными ограничениями.
 
 ## Исторический протокол первого этапа
 

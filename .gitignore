@@ -13,6 +13,8 @@ htmlcov/
 *.sqlite*
 node_modules/
 dist/
+dist-offline/
+offline-reports/
 coverage/
 playwright-report/
 test-results/

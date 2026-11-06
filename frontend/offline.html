@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ru" data-offline-supported="false">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f8fafc" />
+    <meta name="description" content="Демонстрационный курс ЕГЭ по математике. Уроки, практика и история на этом устройстве, без облачной синхронизации." />
+    <title>ЕГЭ Профиль 2027 · На устройстве</title>
+    <link rel="stylesheet" href="./src/offline/styles.css" />
+  </head>
+  <body>
+    <section id="offline-compatibility" class="offline-boot" aria-labelledby="compatibility-title">
+      <h1 id="compatibility-title">Нужна новая версия WebView</h1>
+      <p>Для точной проверки чисел нужен Android System WebView с поддержкой JavaScript ES2020 и BigInt. Обновите WebView и снова откройте приложение.</p>
+      <p>Приложение не удаляло сохранённую историю. Не очищайте его данные для обновления WebView.</p>
+    </section>
+    <div id="root" hidden>
+      <div class="offline-boot" role="status">
+        <p>Открываем встроенный курс…</p>
+        <p>Уроки и задачи поставляются вместе с приложением.</p>
+      </div>
+    </div>
+    <noscript>
+      <section class="offline-boot">
+        <h1>Для практики нужен JavaScript</h1>
+        <p>Включите JavaScript в браузере или откройте приложение в поддерживаемом WebView. История на устройстве не удалялась.</p>
+      </section>
+    </noscript>
+    <script src="/offline-compatibility.js"></script>
+    <script type="module" src="./src/offline/main.tsx"></script>
+  </body>
+</html>

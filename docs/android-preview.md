@@ -1,8 +1,94 @@
 # Android: предварительная версия
 
-Android APK в этом проекте является небольшим нативным запускателем серверного приложения «ЕГЭ Профиль 2027», а не автономной копией тренажёра.
+Android APK существует в двух версиях. `0.1.0-preview` — небольшой нативный
+запускатель серверного приложения «ЕГЭ Профиль 2027». `0.2.0-offline-preview` —
+автономный офлайн-тренажёр: упакованные 99 уроков и 845 задач, точная проверка
+ответов и локальный прогресс работают без сервера с первого запуска. Учётные
+записи, синхронизация, редактор и авторитетные экзамены остаются серверными.
 
-## Статус проверки — 5 ноября 2026
+## Автономная версия 0.2.0 — 6 ноября 2026
+
+Проверяется [утверждённый дизайн](superpowers/specs/2026-11-06-offline-android-design.md)
+и [план](superpowers/plans/2026-11-06-offline-android.md). Это техническая
+проверка сборки и браузерного поведения, не предметная приёмка и не проверка
+на реальном устройстве.
+
+- Пакет курса собирается из неизменённых байтов `content/course` и профиля;
+  ревизия `offline-v1-4e62fddb949989ee8b1d63bc9368f40a42c0f45e03026a0b8eddb08209bfcaed`,
+  845 задач, 99 уроков, 13 слотов, 26 runtime-семейств. SHA-256 каждого файла
+  записан в `course/manifest.json` и сверяется при загрузке.
+- Проверка ответов повторяет Python-грамматику `fraction-v1` на `BigInt`;
+  приближённое сравнение не используется. WebView без `BigInt` показывает
+  сообщение о несовместимости, а не «похожий» ответ.
+- Прогресс хранится только на устройстве в IndexedDB `math-ege-offline-v1`
+  (schema 1). Владелец — отдельный UUID устройства; очередь и подтверждения
+  переживают перезапуск. Исключение одинаковых условий действует 30 дней,
+  знакомые повторы помечаются явно. Мастерство и облачная синхронизация не
+  выдумываются.
+- React-клиент открывается в системном WebView через виртуальный origin
+  `https://appassets.androidplatform.net/assets/www/`; только разрешённые GET
+  отдают файлы из APK, остальное закрывается. Нет INTERNET permission,
+  JavaScript-моста, доступа к файлам, загрузок и внешней навигации.
+- `offline.html` по умолчанию объявляет среду неподдерживаемой; внешний
+  неизменённый compatibility-скрипт включает React только после проверки
+  ES2020/BigInt. CSP запрещает `data:`-шрифты, поэтому offline-сборка
+  использует `assetsInlineLimit: 0`.
+
+### Фактические проверки
+
+| Проверка | Результат |
+| --- | --- |
+| Offline Chromium, 11 сценариев | **11 passed, 23,8 с, exit 0** в свежем `browser-full-final-12` после пересборки пакета; первый запуск, черновик, подтверждения UUID, повреждённая очередь, finish-UUID, skip-link, 320/390/1440 px, ES2020 и BigInt |
+| Frontend unit | **424 passed / 23 файла**; lint exit 0; online-сборка с PWA — success, 69 precache entries |
+| Android clean gate | `:app:clean :app:testReleaseUnitTest :app:assembleRelease :app:lintRelease`, **BUILD SUCCESSFUL за 51–56 с**; **144 теста** в 6 suite, 0 failures/errors/skips; lint — 0 errors/0 warnings |
+| Unsigned APK | **1 671 541 байт**, SHA-256 `e307c1a22ea1f2d53c8cefe45d29d564c62c9b185ba5116b0924ca9cedcfe228`, versionCode 2, versionName `0.2.0-offline-preview` |
+| `validate-preview.ps1` | GREEN: 6 упакованных offline-файлов побайтно совпадают с `frontend/dist-offline`, ровно одна exported Activity (`OfflineActivity`), `MainActivity` не экспортирована, INTERNET отсутствует, JNI/signing block отсутствуют, alignment exit 0, отчёт `validation.json` |
+| Resource contrast | 11 пар, минимум 3,05:1 при требуемых 3,0:1 и 4,5:1 для текста |
+
+Первый запуск обновлённого валидатора был **RED**: `Missing bundled offline
+asset: offline.html`. Причина — `addGeneratedSourceDirectory` использовал
+`.../offlineAssets/www` как корень assets, поэтому файлы попадали в
+`assets/offline.html`, а политика и валидатор ожидают `assets/www/offline.html`.
+Исправление — копировать пакет в подкаталог `www` и регистрировать у AGP
+родительский каталог; после чистой пересборки APK содержит 80 записей
+`assets/www/...`, и валидатор GREEN. RED и исправление сохранены в хронологии.
+
+### Подписанный APK
+
+Подпись выполняется существующим preview-ключом (сертификат
+`e17ebff9a819267517c7605e437482fc31434b166f47145f30776c4fb44231b7`) без
+создания нового ключа и без пересборки payload.
+
+| Проверка | Факт |
+| --- | --- |
+| Signed APK | **1 691 132 байта**, SHA-256 `b5de3f1b32236546c6fb0955aceedcb9b45817d3e8ae20ae771faa946cc580ba` |
+| Unsigned вход | SHA-256 `e307c1a22ea1f2d53c8cefe45d29d564c62c9b185ba5116b0924ca9cedcfe228`, не изменён подписью |
+| Схемы | v1/v2/v3 = true, v4/v3.1 = false, один signer, ожидаемый сертификат; API 23+ standard exit 0, API 24+ `-Werr` exit 0 |
+| Raw API 23+ `-Werr` | exit 1 с теми же **20** предупреждениями `META-INF/... not protected by signature`; политика не переименована в GREEN |
+| Payload | все **128** исходных ZIP-записей сохранили длину и SHA-256; добавлены только `META-INF/MATH-EGE.SF`, `.RSA`, `MANIFEST.MF` |
+| Alignment/key | `zipalign -c -P 16 4` exit 0; private key/password files не изменились, пароль не сохранён в логах |
+
+Первый прогон harness был **RED** на проверке «пустого» вывода `apksigner`:
+`apksigner sign` печатает в stdout две строки приглашения пароля
+(`Keystore password for signer #1:`, `Key "..." password for signer #1:`).
+Harness теперь принимает ровно эти две строки и требует пустой stderr;
+пароль в вывод не попадает. RED и исправление сохранены.
+
+Подписанный файл:
+`%LOCALAPPDATA%\Temp\opencode\offline-signed-007517dd5cf64c3491e5addf046658a0\math-ege-offline-preview-0.2.0.apk`
+с `signed-result.json`, `SHA256SUMS.txt` и логами в той же директории.
+Публикация выполняется отдельным prerelease; установка на реальные устройства
+и обновление поверх `0.1.0-preview` не проверены.
+
+### Что не проверено
+
+Реальная установка и первый запуск в авиарежиме, версии/OEM WebView, TalkBack,
+крупный шрифт, IME, обновление поверх `0.1.0-preview` с сохранением данных,
+серверные учётные записи, синхронизация, редактор, авторитетные экзамены,
+юридический режим и независимая предметная приёмка. Курс остаётся `demo`,
+профиль — `draft`, рецензенты — `null`.
+
+## Статус проверки 0.1.0 — 5 ноября 2026 (архив)
 
 **Полный локальный unsigned strict-gate завершён с exit 0.** Итоговая проверка координатора выполнила **64 tooling-проверки** с разбором **6 PowerShell-файлов**, обычную strict-сборку с сохранёнными locks, **62 release unit tests**, `assembleRelease` с R8/resource shrinking, `lintRelease`, APK inspection и **11 resource-color/ripple контрастных проверок**. Ошибок и предупреждений lint — **0**.
 
@@ -10,7 +96,9 @@ Android APK в этом проекте является небольшим на�
 
 Прежний handoff исполнителя `blocked-lint` и две воспроизводимые unsigned-сборки до wrapper-local lint policy сохранены ниже как отдельная историческая RED-хронология. Unsigned APK остаётся побайтно прежним (**78 186 байт**). Подписанный APK (**90 065 байт**) независимо проверен без изменения payload или повторной подписи: v1/v2/v3, один ожидаемый сертификат, signed alignment exit 0 и фактический `debuggable=false`. Принята только [точная preview-политика API 23 META-INF](android-signature-policy.md): исходный `-Werr --min-sdk-version 23` остаётся **RED (exit 1)**; стандартная проверка API 23+ — exit 0 с ровно 20 разобранными предупреждениями, строгая API 24+ — exit 0 без предупреждений. Проверка на устройстве и живой HTTPS endpoint не подтверждены. [Private prerelease `v0.1.0-preview`](https://github.com/Amir1502/math-ege/releases/tag/v0.1.0-preview) опубликован по прямому указанию владельца; он не означает успешную PostgreSQL-нагрузку или автономность приложения. [Протокол публикации](verification.md#второй-exact-sha-прогон-workload-red-и-причина).
 
-## Что получает пользователь
+## Что получает пользователь 0.1.0 (архив)
+
+Ниже описано поведение версии `0.1.0-preview` — запускателя серверного приложения.
 
 - При первом запуске адрес сервера не задан.
 - Пользователь вводит HTTPS-origin, сохраняет его и видит точный выбранный адрес перед открытием браузера.
@@ -20,7 +108,7 @@ Android APK в этом проекте является небольшим на�
 
 Для работы нужны доступный сервер приложения и HTTPS-сертификат, которому доверяет браузер. Сервер, база данных, почтовая доставка и домен не поставляются внутри APK. Публичная публикация или развёртывание сервера не выполняются автоматически.
 
-## Границы безопасности
+## Границы безопасности 0.1.0 (архив)
 
 В приложении нет WebView, JavaScript-моста, перехвата ссылок входа, нативного сетевого клиента или обработки скачиваний. Нативное приложение сохраняет только проверенный origin. Сеансы, cookies, service worker, экспорт и ссылки из писем остаются в браузере.
 
@@ -157,7 +245,7 @@ AndroidX Core может добавлять собственное `ru.mathege.p
 
 После успешного полного unsigned gate создаётся `android/app/build/reports/android-preview/validation.json` и его внешняя копия в директории доказательств ниже. Единственная запись в `lint-results-release.xml` — wrapper-local `AndroidGradlePluginVersion` со `severity="Hint"`; ошибок и предупреждений `0`. Рядом сохраняются decoded manifest, вывод `apksigner` для unsigned APK и проверка alignment. Полный Gradle log находится в изолированном toolchain root; путь печатается при сборке. Ожидаемый ненулевой код `apksigner` на неподписанном APK подтверждает именно unsigned артефакт, а не проверку подписи.
 
-### Артефакт и сохранённые доказательства
+### Артефакт и сохранённые доказательства 0.1.0 (архив)
 
 Unsigned APK: `android/app/build/outputs/apk/release/app-release-unsigned.apk`, **78 186 байт**. Application ID `ru.mathege.preview`, versionCode `1`, versionName `0.1.0-preview`.
 
@@ -221,7 +309,7 @@ JUnit XML находятся в `android/app/build/test-results/testReleaseUnitT
 
 В каждом root сохранён `toolchain.json`; bootstrap сверял официальный ZIP до исполнения. Эти временные файлы, APK и build reports не являются исходниками для release commit.
 
-## Подпись и передача APK
+## Подпись и передача APK 0.1.0 (архив)
 
 Локальный unsigned gate завершён без изменения закреплённых версий. Для подписи используется уже существующий внешний закрытый preview-keystore **вне Git**:
 `%LOCALAPPDATA%\Temp\opencode\math-ege-preview-signing-a8bfcaae16af4acfb573d9eda997f09c`

@@ -38,10 +38,14 @@ if ($sdk.GetAttribute('minSdkVersion', $android) -ne '23' -or $sdk.GetAttribute(
     throw 'Unexpected minimum/target SDK.'
 }
 $activities = @($application.SelectNodes('activity'))
-if ($activities.Count -ne 1 -or $activities[0].GetAttribute('name', $android) -ne 'ru.mathege.preview.MainActivity' `
-        -or $activities[0].GetAttribute('exported', $android) -ne 'true') {
-    throw 'Exactly one exported launcher Activity is required.'
+$launchers = @($activities | Where-Object { $_.GetAttribute('name', $android) -eq 'ru.mathege.preview.OfflineActivity' `
+        -and $_.GetAttribute('exported', $android) -eq 'true' })
+if ($activities.Count -ne 2 -or $launchers.Count -ne 1) {
+    throw 'Exactly one exported offline launcher and one retained configuration Activity are required.'
 }
+$legacy = @($activities | Where-Object { $_.GetAttribute('name', $android) -eq 'ru.mathege.preview.MainActivity' `
+        -and $_.GetAttribute('exported', $android) -eq 'false' })
+if ($legacy.Count -ne 1) { throw 'The retained configuration Activity must not be exported.' }
 $components = $application.SelectNodes('activity|activity-alias|receiver|service|provider')
 if (@($components | Where-Object { $_.GetAttribute('exported', $android) -eq 'true' }).Count -ne 1) {
     throw 'Another component is exported.'
@@ -49,7 +53,7 @@ if (@($components | Where-Object { $_.GetAttribute('exported', $android) -eq 'tr
 if ($application.SelectNodes('provider|receiver').Count -ne 0) {
     throw 'Unused startup/profiling providers or receivers must not enter the launcher.'
 }
-$filters = @($activities[0].SelectNodes('intent-filter'))
+$filters = @($launchers[0].SelectNodes('intent-filter'))
 if ($filters.Count -ne 1 -or $filters[0].SelectNodes('data').Count -ne 0) { throw 'Unexpected link capture or launcher filters.' }
 $actions = @($filters[0].SelectNodes('action') | ForEach-Object { $_.GetAttribute('name', $android) })
 $categories = @($filters[0].SelectNodes('category') | ForEach-Object { $_.GetAttribute('name', $android) })
@@ -67,6 +71,26 @@ try {
     }
     if (@($archive.Entries | Where-Object { $_.FullName -match '^lib/.*\.so$' }).Count -ne 0) {
         throw 'This native-Java launcher must not contain JNI libraries.'
+    }
+    $offlineRoot = [IO.Path]::GetFullPath((Join-Path $ProjectRoot '..\frontend\dist-offline'))
+    $bundled = @('offline.html', 'offline-compatibility.js', 'course/profile.json', 'course/lessons.json',
+        'course/tasks.json', 'course/manifest.json')
+    foreach ($relative in $bundled) {
+        $entry = $archive.GetEntry('assets/www/' + $relative.Replace('\', '/'))
+        if ($null -eq $entry) { throw "Missing bundled offline asset: $relative." }
+        $sourcePath = Join-Path $offlineRoot $relative
+        if (-not (Test-Path -LiteralPath $sourcePath -PathType Leaf)) {
+            throw 'Build the offline frontend (npm run build:offline) before the Android gate.'
+        }
+        $stream = $entry.Open()
+        try {
+            $sha = [Security.Cryptography.SHA256]::Create()
+            try { $actual = ([BitConverter]::ToString($sha.ComputeHash($stream)) -replace '-', '').ToLowerInvariant() }
+            finally { $sha.Dispose() }
+        } finally { $stream.Dispose() }
+        if ($actual -ne (Get-FileHash -LiteralPath $sourcePath -Algorithm SHA256).Hash.ToLowerInvariant()) {
+            throw "Bundled offline asset differs from the built package: $relative."
+        }
     }
 } finally { $archive.Dispose() }
 $bytes = [IO.File]::ReadAllBytes($apk)
@@ -104,7 +128,9 @@ foreach ($file in $testFiles) {
     $testCount += [int]$suite.tests
     $classes += [string]$suite.name
 }
-foreach ($required in @('ru.mathege.preview.EndpointTest', 'ru.mathege.preview.EndpointInvalidTest', 'ru.mathege.preview.BrowserPolicyTest')) {
+foreach ($required in @('ru.mathege.preview.EndpointTest', 'ru.mathege.preview.EndpointInvalidTest',
+        'ru.mathege.preview.BrowserPolicyTest', 'ru.mathege.preview.OfflineAssetPolicyTest',
+        'ru.mathege.preview.OfflineAssetsTest')) {
     if ($classes -notcontains $required) { throw "Missing release unit-test suite: $required." }
 }
 if ($testCount -eq 0) { throw 'No release unit tests were executed.' }
@@ -137,9 +163,12 @@ foreach ($button in $layout.SelectNodes('//Button')) {
     }
 }
 $sources = Get-ChildItem -LiteralPath (Join-Path $ProjectRoot 'app\src\main\java') -Recurse -Filter '*.java' -File
-$forbidden = 'android\.webkit|addJavascriptInterface|java\.net\.(URL|URLConnection|HttpURLConnection|Socket)|okhttp|retrofit|DownloadManager|\.warmup\(|getStringExtra\(|getIntent\('
+$forbidden = 'addJavascriptInterface|java\.net\.(URL|URLConnection|HttpURLConnection|Socket)|okhttp|retrofit|DownloadManager|\.warmup\(|getStringExtra\(|getIntent\('
 foreach ($source in $sources) {
     if ([IO.File]::ReadAllText($source.FullName) -match $forbidden) { throw "Forbidden network/bridge/intent-input API in $($source.Name)." }
+    if ($source.Name -ne 'OfflineActivity.java' -and [IO.File]::ReadAllText($source.FullName) -match 'android\.webkit') {
+        throw "WebView must be confined to OfflineActivity.java."
+    }
 }
 
 function Get-RelativeLuminance {
@@ -199,7 +228,8 @@ $report = [ordered]@{
     Signed = $false
     NativeInternetPermission = $false
     NativePermissions = $permissions
-    ExportedComponents = @('ru.mathege.preview.MainActivity')
+    ExportedComponents = @('ru.mathege.preview.OfflineActivity')
+    BundledOfflineAssets = 6
     LocalUnitTests = $testCount
     LintErrorsAndWarnings = 0
     LintInformational = @($lint.SelectNodes('//issue') | Where-Object { $_.severity -eq 'Hint' } | ForEach-Object {
