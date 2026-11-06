@@ -75,6 +75,8 @@ try {
     $offlineRoot = [IO.Path]::GetFullPath((Join-Path $ProjectRoot '..\frontend\dist-offline'))
     $bundled = @('offline.html', 'offline-compatibility.js', 'course/profile.json', 'course/lessons.json',
         'course/tasks.json', 'course/manifest.json')
+    $offlineEntries = @($archive.Entries | Where-Object { $_.FullName -like 'assets/www/*' }).Count
+    if ($offlineEntries -lt $bundled.Count) { throw 'Packaged offline assets are incomplete.' }
     foreach ($relative in $bundled) {
         $entry = $archive.GetEntry('assets/www/' + $relative.Replace('\', '/'))
         if ($null -eq $entry) { throw "Missing bundled offline asset: $relative." }
@@ -229,7 +231,8 @@ $report = [ordered]@{
     NativeInternetPermission = $false
     NativePermissions = $permissions
     ExportedComponents = @('ru.mathege.preview.OfflineActivity')
-    BundledOfflineAssets = 6
+    VerifiedOfflineAssets = 6
+    PackagedOfflineEntries = $offlineEntries
     LocalUnitTests = $testCount
     LintErrorsAndWarnings = 0
     LintInformational = @($lint.SelectNodes('//issue') | Where-Object { $_.severity -eq 'Hint' } | ForEach-Object {

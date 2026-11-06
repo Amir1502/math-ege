@@ -419,6 +419,17 @@ screen reader, двухверсионное обновление PWA, production
 `offline-signed-007517dd5cf64c3491e5addf046658a0`
 (`signed-result.json`, `SHA256SUMS.txt`, verification-логи).
 
+Публикация: private prerelease
+[v0.2.0-offline-preview](https://github.com/Amir1502/math-ege/releases/tag/v0.2.0-offline-preview)
+на `a52975b93fae914704ecccfa443356c875f335a1`; GitHub подтвердил
+`isPrerelease=true`, `isDraft=false`, digest APK
+`sha256:b5de3f1b32236546c6fb0955aceedcb9b45817d3e8ae20ae771faa946cc580ba`
+и digest сертификата
+`sha256:e17ebff9a819267517c7605e437482fc31434b166f47145f30776c4fb44231b7`.
+CI для этого коммита — [42200428659](https://github.com/Amir1502/math-ege/actions/runs/42200428659);
+на момент публикации он не завершён, поэтому релиз не заявляет о его успехе.
+`v0.1.0-preview` и его доказательства не заменены.
+
 ### Границы
 
 Реальная установка, первый запуск в авиарежиме, OEM/WebView-версии, TalkBack,
