@@ -73,7 +73,7 @@ try {
         throw 'This native-Java launcher must not contain JNI libraries.'
     }
     $offlineRoot = [IO.Path]::GetFullPath((Join-Path $ProjectRoot '..\frontend\dist-offline'))
-    $bundled = @('offline.html', 'offline-compatibility.js', 'course/profile.json', 'course/lessons.json',
+    $bundled = @('offline.html', 'offline-compatibility.js', 'offline-theme.js', 'course/profile.json', 'course/lessons.json',
         'course/tasks.json', 'course/manifest.json')
     $offlineEntries = @($archive.Entries | Where-Object { $_.FullName -like 'assets/www/*' }).Count
     if ($offlineEntries -lt $bundled.Count) { throw 'Packaged offline assets are incomplete.' }
@@ -231,7 +231,7 @@ $report = [ordered]@{
     NativeInternetPermission = $false
     NativePermissions = $permissions
     ExportedComponents = @('ru.mathege.preview.OfflineActivity')
-    VerifiedOfflineAssets = 6
+    VerifiedOfflineAssets = $bundled.Count
     PackagedOfflineEntries = $offlineEntries
     LocalUnitTests = $testCount
     LintErrorsAndWarnings = 0

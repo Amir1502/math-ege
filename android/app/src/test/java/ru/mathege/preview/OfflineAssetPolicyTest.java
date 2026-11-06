@@ -31,6 +31,8 @@ public final class OfflineAssetPolicyTest {
             assertFalse(OfflineAssetPolicy.navigation(base + "course/" + name + ".json"));
         }
         assertEquals("text/javascript", OfflineAssetPolicy.asset(base + "offline-compatibility.js", "GET").mimeType);
+        assertEquals("text/javascript", OfflineAssetPolicy.asset(base + "offline-theme.js", "GET").mimeType);
+        assertFalse(OfflineAssetPolicy.navigation(base + "offline-theme.js"));
         assertEquals("text/javascript", OfflineAssetPolicy.asset(base + "assets/offline-A0_-.js", "GET").mimeType);
         assertEquals("text/css", OfflineAssetPolicy.asset(base + "assets/offline-A0_-.css", "GET").mimeType);
         assertEquals("image/svg+xml", OfflineAssetPolicy.asset(base + "assets/figure.svg", "GET").mimeType);

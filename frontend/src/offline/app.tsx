@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
-import { BookOpen, ChartNoAxesColumnIncreasing, CircleHelp, PencilLine } from 'lucide-react';
+import { BookOpen, ChartNoAxesColumnIncreasing, Moon, PencilLine, Sun } from 'lucide-react';
+import { Button } from '../components/ui';
 import { loadOfflineCourse } from './content';
 import { OfflineRuntime } from './practice';
 import type { OfflineCourse } from './types';
@@ -10,13 +11,13 @@ import LessonsPage from './pages/lessons';
 import LessonPage from './pages/lesson';
 import ProgressPage from './pages/progress';
 import SummaryPage from './pages/summary';
-import HelpPage from './pages/help';
 import { OfflineFailure, OfflineHeading, OfflineLoading } from './pages/shared';
 import type { Failure, LeaveGuard, RegisterLeaveGuard, RuntimeState } from './pages/shared';
 import { failure } from './pages/operations';
+import { useOfflineTheme } from './theme';
 
 type Loaded = { course: OfflineCourse; runtime: OfflineRuntime; state: RuntimeState | null; storageError: Failure | null };
-type Route = { hash: string; section: 'practice' | 'lessons' | 'progress' | 'help' | 'missing'; view: 'list' | 'session' | 'summary' | 'lesson'; id: string; query: URLSearchParams };
+type Route = { hash: string; section: 'practice' | 'lessons' | 'progress' | 'missing'; view: 'list' | 'session' | 'summary' | 'lesson'; id: string; query: URLSearchParams };
 
 function readRoute(): Route {
   const hash = window.location.hash || '#/practice';
@@ -27,7 +28,6 @@ function readRoute(): Route {
   if (path === '/' || path === '/practice' || path === '') return { hash, section: 'practice', view: 'list', id: '', query };
   if (path === '/lessons') return { hash, section: 'lessons', view: 'list', id: '', query };
   if (path === '/progress') return { hash, section: 'progress', view: 'list', id: '', query };
-  if (path === '/help') return { hash, section: 'help', view: 'list', id: '', query };
   const match = /^\/(session|summary|lessons)\/([^/]+)$/.exec(path);
   if (match) {
     try {
@@ -42,10 +42,10 @@ const navigation = [
   { section: 'practice', label: 'Практика', Icon: PencilLine },
   { section: 'lessons', label: 'Уроки', Icon: BookOpen },
   { section: 'progress', label: 'Прогресс', Icon: ChartNoAxesColumnIncreasing },
-  { section: 'help', label: 'О приложении', Icon: CircleHelp },
 ] as const;
 
 export default function OfflineApp() {
+  const { theme, toggleTheme } = useOfflineTheme();
   const [route, setRoute] = useState(readRoute);
   const [loaded, setLoaded] = useState<Loaded | null>(null);
   const [bootError, setBootError] = useState<Failure | null>(null);
@@ -55,6 +55,21 @@ export default function OfflineApp() {
   const acceptedHash = useRef(route.hash);
   const leaveGuard = useRef<LeaveGuard | null>(null);
   const navigationRevision = useRef(0);
+  const navigationElement = useRef<HTMLElement>(null);
+
+  useLayoutEffect(() => {
+    const nav = navigationElement.current;
+    if (!nav) return;
+    const root = document.documentElement;
+    const reserveSpace = () => root.style.setProperty('--offline-nav-clearance', `${nav.getBoundingClientRect().height}px`);
+    reserveSpace();
+    const observer = new ResizeObserver(reserveSpace);
+    observer.observe(nav);
+    return () => {
+      observer.disconnect();
+      root.style.removeProperty('--offline-nav-clearance');
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -154,8 +169,6 @@ export default function OfflineApp() {
     page = <LessonsPage key={route.hash} course={loaded.course} query={route.query} />;
   } else if (route.section === 'progress') {
     page = <ProgressPage course={loaded.course} runtime={loaded.runtime} />;
-  } else if (route.section === 'help') {
-    page = <HelpPage course={loaded.course} />;
   } else {
     page = <><OfflineHeading title="Такого экрана нет" /><p>Ссылка не соответствует разделам приложения. История на устройстве не менялась.</p>
       <a className="button button--primary" href="#/practice">К практике</a></>;
@@ -163,15 +176,23 @@ export default function OfflineApp() {
 
   return <div className="offline-shell">
     <a className="offline-skip-link" href="#offline-main" onClick={skipToMain}>Перейти к содержанию</a>
-    <header className="offline-brand">
-      <a href="#/practice" aria-label="ЕГЭ Профиль 2027. Практика">ЕГЭ Профиль <span>2027</span></a>
-      <p>Демонстрационный проект</p>
-    </header>
-    <nav className="offline-nav" aria-label="Разделы приложения">
-      {navigation.map(({ section, label, Icon }) => <a key={section} href={`#/${section}`}
-        aria-current={route.section === section ? 'page' : undefined}><Icon aria-hidden="true" /><span>{label}</span></a>)}
-    </nav>
-    <div className="offline-device-mark"><span>Хранение на устройстве</span><span>Без облачной синхронизации</span></div>
+    <div className="offline-sidebar">
+      <header className="offline-brand">
+        <div className="offline-brand-heading">
+          <a href="#/practice" aria-label="ЕГЭ Профиль 2027. Практика">ЕГЭ Профиль <span>2027</span></a>
+          <Button variant="quiet" className="offline-theme-toggle" aria-label="Тёмная тема" aria-pressed={theme === 'dark'}
+            title={theme === 'dark' ? 'Включить светлую тему' : 'Включить тёмную тему'} onClick={toggleTheme}>
+            {theme === 'dark' ? <Sun aria-hidden="true" /> : <Moon aria-hidden="true" />}
+          </Button>
+        </div>
+        <p>Демонстрационный проект</p>
+      </header>
+      <nav ref={navigationElement} className="offline-nav" aria-label="Разделы приложения">
+        {navigation.map(({ section, label, Icon }) => <a key={section} href={`#/${section}`}
+          aria-current={route.section === section ? 'page' : undefined}><Icon aria-hidden="true" /><span>{label}</span></a>)}
+      </nav>
+      <div className="offline-device-mark"><span>Хранение на устройстве</span><span>Без облачной синхронизации</span></div>
+    </div>
     <main id="offline-main" className="offline-main" tabIndex={-1}>{page}</main>
   </div>;
 }

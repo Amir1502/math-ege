@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Keep the first WebView frame and system bars aligned with the dark worksheet tokens. -->
+    <color name="offline_canvas">#0a0f14</color>
+    <color name="offline_accent">#4ba3e8</color>
+</resources>

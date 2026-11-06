@@ -55,7 +55,9 @@ final class OfflineAssetPolicy {
         String name = uri.getRawPath().substring(PREFIX.length());
         if (name.equals("offline.html")) return new Asset(name, "text/html", "UTF-8");
         if (uri.getRawFragment() != null) return null;
-        if (name.equals("offline-compatibility.js")) return new Asset(name, "text/javascript", "UTF-8");
+        if (name.equals("offline-compatibility.js") || name.equals("offline-theme.js")) {
+            return new Asset(name, "text/javascript", "UTF-8");
+        }
         if (name.matches("course/(profile|lessons|tasks|manifest)\\.json")) return new Asset(name, "application/json", "UTF-8");
         if (!RESOURCE.matcher(name).matches()) return null;
         String extension = name.substring(name.lastIndexOf('.') + 1);

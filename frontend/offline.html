@@ -3,9 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- viora-allow: raw-hex Browser metadata needs a literal initial color; the theme hook updates it from the canvas token. -->
     <meta name="theme-color" content="#f8fafc" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="description" content="Демонстрационный курс ЕГЭ по математике. Уроки, практика и история на этом устройстве, без облачной синхронизации." />
     <title>ЕГЭ Профиль 2027 · На устройстве</title>
+    <script src="/offline-theme.js"></script>
     <link rel="stylesheet" href="./src/offline/styles.css" />
   </head>
   <body>
@@ -22,6 +25,7 @@
     </div>
     <noscript>
       <section class="offline-boot">
+        <!-- viora-allow: h1-multiple These fallback headings are outside React; a supported Android WebView renders only the app heading. -->
         <h1>Для практики нужен JavaScript</h1>
         <p>Включите JavaScript в браузере или откройте приложение в поддерживаемом WebView. История на устройстве не удалялась.</p>
       </section>

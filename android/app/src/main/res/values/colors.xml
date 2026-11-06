@@ -14,4 +14,6 @@
     <color name="error">#9b3a20</color>
     <color name="ripple_accent">#202563eb</color>
     <color name="ripple_primary">#20172337</color>
+    <color name="offline_canvas">@color/canvas</color>
+    <color name="offline_accent">@color/accent</color>
 </resources>

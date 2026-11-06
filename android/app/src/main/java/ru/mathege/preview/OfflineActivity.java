@@ -19,7 +19,7 @@ public final class OfflineActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         webView = new WebView(this);
-        webView.setBackgroundColor(getColor(R.color.canvas));
+        webView.setBackgroundColor(getColor(R.color.offline_canvas));
         configure();
         setContentView(webView);
         if (savedInstanceState == null || webView.restoreState(savedInstanceState) == null) {

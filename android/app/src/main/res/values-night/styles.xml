@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- A dark platform parent exposes prefers-color-scheme: dark to WebView. -->
+    <style name="Theme.MathEgeOffline" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:colorAccent">@color/offline_accent</item>
+        <item name="android:colorControlHighlight">@color/ripple_accent</item>
+        <item name="android:windowBackground">@color/offline_canvas</item>
+        <item name="android:statusBarColor">@color/offline_canvas</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:navigationBarColor">@color/offline_canvas</item>
+    </style>
+</resources>
